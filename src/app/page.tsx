@@ -52,12 +52,6 @@ export default function HomePage() {
         </div>
 
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8 sm:space-y-10">
-          {/* Location Badge */}
-          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#121A14]/90 border border-[#25C440]/30 text-xs font-semibold tracking-widest uppercase text-[#25C440] shadow-xl shadow-black/60 backdrop-blur-md">
-            <span className="w-2 h-2 rounded-full bg-[#25C440] animate-pulse" />
-            <span>PACAJUS — CEARÁ · ALTO PADRÃO MASCULINO</span>
-          </div>
-
           {/* Masked Hero Headline with Animated Green Line Sweep */}
           <HeroHeadline />
 
