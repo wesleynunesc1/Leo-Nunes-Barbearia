@@ -102,130 +102,132 @@ export default function HomePage() {
       </section>
 
       {/* =========================================================================
-          SERVIÇOS EM DESTAQUE (#servicos) - Spotlight Cards & Pure Brand Colors
+          SERVIÇOS EM DESTAQUE (#servicos) - Tema Branco Premium
          ========================================================================= */}
-      <section id="servicos" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-28">
-        <ScrollReveal>
-          <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16 space-y-3 sm:space-y-4">
-            <span className="text-xs font-bold tracking-widest uppercase text-[#25C440] bg-[#121A14] px-3.5 py-1 rounded-full border border-[#25C440]/30">
-              Tradição & Visagismo
-            </span>
-            <h2 className="font-heading text-2xl sm:text-5xl font-extrabold text-[#F5F7F3] tracking-tight">
-              Nossos Serviços
-            </h2>
-            <p className="text-sm sm:text-base text-[#9BA59E] leading-relaxed">
-              Cada corte e finalização é executado com visagismo anatômico e produtos profissionais de alta performance.
-            </p>
-          </div>
-        </ScrollReveal>
-
-        {/* 4 Feature Columns with Spotlight and Strict Palette */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-12">
-          {/* Card 1 */}
-          <ScrollReveal delay={100}>
-            <SpotlightCard className="h-full rounded-xl sm:rounded-2xl p-5 sm:p-6 flex flex-col justify-between space-y-4">
-              <div className="space-y-3">
-                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#142618] border border-[#25C440]/30 flex items-center justify-center text-[#25C440] shadow-lg shadow-[#25C440]/10">
-                  <Scissors className="w-5 h-5 sm:w-6 sm:h-6" />
-                </div>
-                <h3 className="font-heading text-lg sm:text-xl font-bold text-[#F5F7F3]">
-                  Cortes de Precisão
-                </h3>
-                <p className="text-xs text-[#9BA59E] leading-relaxed">
-                  Degradês suaves, fade milimétrico, tesoura e cortes clássicos personalizados de acordo com seu estilo e formato de rosto.
-                </p>
-              </div>
-              <div className="pt-3.5 border-t border-[#1C2620] text-xs text-[#25C440] font-semibold flex items-center justify-between">
-                <span>Geral e com Léo Nunes</span>
-                <span>Disponível →</span>
-              </div>
-            </SpotlightCard>
-          </ScrollReveal>
-
-          {/* Card 2 */}
-          <ScrollReveal delay={180}>
-            <SpotlightCard className="h-full rounded-xl sm:rounded-2xl p-5 sm:p-6 flex flex-col justify-between space-y-4">
-              <div className="space-y-3">
-                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#142618] border border-[#25C440]/30 flex items-center justify-center text-[#25C440] shadow-lg shadow-[#25C440]/10">
-                  <Flame className="w-5 h-5 sm:w-6 sm:h-6" />
-                </div>
-                <h3 className="font-heading text-lg sm:text-xl font-bold text-[#F5F7F3]">
-                  Barba & Barboterapia
-                </h3>
-                <p className="text-xs text-[#9BA59E] leading-relaxed">
-                  Desenho anatômico, navalhamento seguro, toalha quente revigorante e óleos hidratantes para maciez e alívio da pele.
-                </p>
-              </div>
-              <div className="pt-3.5 border-t border-[#1C2620] text-xs text-[#25C440] font-semibold flex items-center justify-between">
-                <span>Toalha quente relaxante</span>
-                <span>Disponível →</span>
-              </div>
-            </SpotlightCard>
-          </ScrollReveal>
-
-          {/* Card 3 */}
-          <ScrollReveal delay={260}>
-            <SpotlightCard className="h-full rounded-xl sm:rounded-2xl p-5 sm:p-6 flex flex-col justify-between space-y-4">
-              <div className="space-y-3">
-                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#142618] border border-[#25C440]/30 flex items-center justify-center text-[#25C440] shadow-lg shadow-[#25C440]/10">
-                  <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />
-                </div>
-                <h3 className="font-heading text-lg sm:text-xl font-bold text-[#F5F7F3]">
-                  Combos Completos
-                </h3>
-                <p className="text-xs text-[#9BA59E] leading-relaxed">
-                  Cabelo + Barba, Cabelo + Barba + Sobrancelha. A solução prática para renovar o visual integralmente em uma só visita.
-                </p>
-              </div>
-              <div className="pt-3.5 border-t border-[#1C2620] text-xs text-[#25C440] font-semibold flex items-center justify-between">
-                <span>Mais procurado da barbearia</span>
-                <span>Disponível →</span>
-              </div>
-            </SpotlightCard>
-          </ScrollReveal>
-
-          {/* Card 4 */}
-          <ScrollReveal delay={340}>
-            <SpotlightCard className="h-full rounded-xl sm:rounded-2xl p-5 sm:p-6 flex flex-col justify-between space-y-4">
-              <div className="space-y-3">
-                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#142618] border border-[#25C440]/30 flex items-center justify-center text-[#25C440] shadow-lg shadow-[#25C440]/10">
-                  <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6" />
-                </div>
-                <h3 className="font-heading text-lg sm:text-xl font-bold text-[#F5F7F3]">
-                  Estética & Fios
-                </h3>
-                <p className="text-xs text-[#9BA59E] leading-relaxed">
-                  Limpeza facial purificante, hidratação capilar, alinhamento com botox capilar, penteados e design limpo de sobrancelhas.
-                </p>
-              </div>
-              <div className="pt-3.5 border-t border-[#1C2620] text-xs text-[#25C440] font-semibold flex items-center justify-between">
-                <span>Cuidado masculino completo</span>
-                <span>Disponível →</span>
-              </div>
-            </SpotlightCard>
-          </ScrollReveal>
-        </div>
-
-        {/* Informative Price Notice */}
-        <ScrollReveal delay={200}>
-          <SpotlightCard className="rounded-xl sm:rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
-            <div className="space-y-1 text-center sm:text-left">
-              <p className="text-sm font-semibold text-[#F5F7F3]">
-                Quer conferir os preços exatos e disponibilidade em tempo real?
-              </p>
-              <p className="text-xs text-[#9BA59E]">
-                Os valores e durações são atualizados individualmente na agenda de cada profissional no calendário oficial.
+      <section id="servicos" className="w-full bg-[#FFFFFF] text-[#0A0D0A] py-16 sm:py-24 border-y border-[#E2E8E4] scroll-mt-28">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ScrollReveal>
+            <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16 space-y-3 sm:space-y-4">
+              <span className="text-xs font-bold tracking-widest uppercase text-[#158028] bg-[#EAF7ED] px-3.5 py-1 rounded-full border border-[#25C440]/30 shadow-sm">
+                Tradição & Visagismo
+              </span>
+              <h2 className="font-heading text-2xl sm:text-5xl font-extrabold text-[#090C0A] tracking-tight">
+                Nossos Serviços
+              </h2>
+              <p className="text-sm sm:text-base text-[#4C5850] leading-relaxed">
+                Cada corte e finalização é executado com visagismo anatômico e produtos profissionais de alta performance.
               </p>
             </div>
-            <Link
-              href="/agendar"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-bold text-sm px-6 py-3.5 rounded-xl btn-green-glow transition-all duration-200 shrink-0"
-            >
-              <span>Escolher Barbeiro</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </SpotlightCard>
-        </ScrollReveal>
+          </ScrollReveal>
+
+          {/* 4 Feature Columns in White Theme */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-12">
+            {/* Card 1 */}
+            <ScrollReveal delay={100}>
+              <div className="h-full rounded-xl sm:rounded-2xl p-5 sm:p-6 bg-[#F8FAF8] border border-[#E0E6E2] hover:border-[#25C440] hover:shadow-xl transition-all duration-300 shadow-sm flex flex-col justify-between space-y-4 group">
+                <div className="space-y-3">
+                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#EAF7ED] border border-[#25C440]/40 flex items-center justify-center text-[#158028] shadow-sm group-hover:scale-105 transition-transform">
+                    <Scissors className="w-5 h-5 sm:w-6 sm:h-6" />
+                  </div>
+                  <h3 className="font-heading text-lg sm:text-xl font-bold text-[#090C0A]">
+                    Cortes de Precisão
+                  </h3>
+                  <p className="text-xs text-[#505D53] leading-relaxed">
+                    Degradês suaves, fade milimétrico, tesoura e cortes clássicos personalizados de acordo com seu estilo e formato de rosto.
+                  </p>
+                </div>
+                <div className="pt-3.5 border-t border-[#E5ECE7] text-xs text-[#158028] font-bold flex items-center justify-between">
+                  <span>Geral e com Léo Nunes</span>
+                  <span>Disponível →</span>
+                </div>
+              </div>
+            </ScrollReveal>
+
+            {/* Card 2 */}
+            <ScrollReveal delay={180}>
+              <div className="h-full rounded-xl sm:rounded-2xl p-5 sm:p-6 bg-[#F8FAF8] border border-[#E0E6E2] hover:border-[#25C440] hover:shadow-xl transition-all duration-300 shadow-sm flex flex-col justify-between space-y-4 group">
+                <div className="space-y-3">
+                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#EAF7ED] border border-[#25C440]/40 flex items-center justify-center text-[#158028] shadow-sm group-hover:scale-105 transition-transform">
+                    <Flame className="w-5 h-5 sm:w-6 sm:h-6" />
+                  </div>
+                  <h3 className="font-heading text-lg sm:text-xl font-bold text-[#090C0A]">
+                    Barba & Barboterapia
+                  </h3>
+                  <p className="text-xs text-[#505D53] leading-relaxed">
+                    Desenho anatômico, navalhamento seguro, toalha quente revigorante e óleos hidratantes para maciez e alívio da pele.
+                  </p>
+                </div>
+                <div className="pt-3.5 border-t border-[#E5ECE7] text-xs text-[#158028] font-bold flex items-center justify-between">
+                  <span>Toalha quente relaxante</span>
+                  <span>Disponível →</span>
+                </div>
+              </div>
+            </ScrollReveal>
+
+            {/* Card 3 */}
+            <ScrollReveal delay={260}>
+              <div className="h-full rounded-xl sm:rounded-2xl p-5 sm:p-6 bg-[#F8FAF8] border border-[#E0E6E2] hover:border-[#25C440] hover:shadow-xl transition-all duration-300 shadow-sm flex flex-col justify-between space-y-4 group">
+                <div className="space-y-3">
+                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#EAF7ED] border border-[#25C440]/40 flex items-center justify-center text-[#158028] shadow-sm group-hover:scale-105 transition-transform">
+                    <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />
+                  </div>
+                  <h3 className="font-heading text-lg sm:text-xl font-bold text-[#090C0A]">
+                    Combos Completos
+                  </h3>
+                  <p className="text-xs text-[#505D53] leading-relaxed">
+                    Cabelo + Barba, Cabelo + Barba + Sobrancelha. A solução prática para renovar o visual integralmente em uma só visita.
+                  </p>
+                </div>
+                <div className="pt-3.5 border-t border-[#E5ECE7] text-xs text-[#158028] font-bold flex items-center justify-between">
+                  <span>Mais procurado da barbearia</span>
+                  <span>Disponível →</span>
+                </div>
+              </div>
+            </ScrollReveal>
+
+            {/* Card 4 */}
+            <ScrollReveal delay={340}>
+              <div className="h-full rounded-xl sm:rounded-2xl p-5 sm:p-6 bg-[#F8FAF8] border border-[#E0E6E2] hover:border-[#25C440] hover:shadow-xl transition-all duration-300 shadow-sm flex flex-col justify-between space-y-4 group">
+                <div className="space-y-3">
+                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#EAF7ED] border border-[#25C440]/40 flex items-center justify-center text-[#158028] shadow-sm group-hover:scale-105 transition-transform">
+                    <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6" />
+                  </div>
+                  <h3 className="font-heading text-lg sm:text-xl font-bold text-[#090C0A]">
+                    Estética & Fios
+                  </h3>
+                  <p className="text-xs text-[#505D53] leading-relaxed">
+                    Limpeza facial purificante, hidratação capilar, alinhamento com botox capilar, penteados e design limpo de sobrancelhas.
+                  </p>
+                </div>
+                <div className="pt-3.5 border-t border-[#E5ECE7] text-xs text-[#158028] font-bold flex items-center justify-between">
+                  <span>Cuidado masculino completo</span>
+                  <span>Disponível →</span>
+                </div>
+              </div>
+            </ScrollReveal>
+          </div>
+
+          {/* Informative Price Notice */}
+          <ScrollReveal delay={200}>
+            <div className="rounded-xl sm:rounded-2xl p-5 sm:p-6 bg-[#F2F6F3] border border-[#DCE4DF] flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 shadow-sm">
+              <div className="space-y-1 text-center sm:text-left">
+                <p className="text-sm font-bold text-[#090C0A]">
+                  Quer conferir os preços exatos e disponibilidade em tempo real?
+                </p>
+                <p className="text-xs text-[#505D53]">
+                  Os valores e durações são atualizados individualmente na agenda de cada profissional no calendário oficial.
+                </p>
+              </div>
+              <Link
+                href="/agendar"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#25C440] hover:bg-[#20A937] text-[#080B09] font-bold text-sm px-6 py-3.5 rounded-xl btn-green-glow transition-all duration-200 shrink-0 shadow-md"
+              >
+                <span>Escolher Barbeiro</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </ScrollReveal>
+        </div>
       </section>
 
       {/* =========================================================================
@@ -252,19 +254,19 @@ export default function HomePage() {
       </section>
 
       {/* =========================================================================
-          COMO AGENDAR (3 Passos Claros com Conexão Visual Progressiva)
+          COMO AGENDAR (3 Passos Claros) - Tema Branco Premium
          ========================================================================= */}
-      <section className="bg-gradient-to-b from-[#0B100C] via-[#0D140E] to-[#0B100C] border-y border-[#1C2620] py-16 sm:py-24 relative overflow-hidden">
+      <section className="w-full bg-[#FFFFFF] text-[#090C0A] border-y border-[#E2E8E4] py-16 sm:py-24 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-16 space-y-2.5 sm:space-y-3">
-              <span className="text-xs font-bold tracking-widest uppercase text-[#25C440]">
+              <span className="text-xs font-bold tracking-widest uppercase text-[#158028] bg-[#EAF7ED] px-3.5 py-1 rounded-full border border-[#25C440]/30 shadow-sm">
                 Passo a Passo
               </span>
-              <h2 className="font-heading text-2xl sm:text-4xl font-extrabold text-[#F5F7F3] tracking-tight">
+              <h2 className="font-heading text-2xl sm:text-4xl font-extrabold text-[#090C0A] tracking-tight">
                 Como Funciona o Agendamento
               </h2>
-              <p className="text-xs sm:text-sm text-[#9BA59E]">
+              <p className="text-xs sm:text-sm text-[#505D53]">
                 Processo direto, transparente e sem necessidade de downloads ou cadastros complicados.
               </p>
             </div>
@@ -274,54 +276,54 @@ export default function HomePage() {
           <div className="relative">
             {/* Desktop Connecting Line */}
             <div
-              className="hidden md:block absolute top-1/2 left-12 right-12 h-[2px] bg-gradient-to-r from-[#25C440]/10 via-[#25C440]/40 to-[#25C440]/10 -translate-y-12 z-0"
+              className="hidden md:block absolute top-1/2 left-12 right-12 h-[2px] bg-gradient-to-r from-[#25C440]/10 via-[#25C440]/30 to-[#25C440]/10 -translate-y-12 z-0"
               aria-hidden="true"
             />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 relative z-10">
               {/* Step 1 */}
               <ScrollReveal delay={100}>
-                <SpotlightCard className="h-full rounded-xl sm:rounded-2xl p-5 sm:p-8 relative space-y-3 sm:space-y-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#25C440] text-[#080B09] font-black text-lg sm:text-xl flex items-center justify-center font-heading shadow-lg shadow-[#25C440]/30">
+                <div className="h-full rounded-xl sm:rounded-2xl p-5 sm:p-8 bg-[#F8FAF8] border border-[#E0E6E2] hover:border-[#25C440] hover:shadow-lg transition-all shadow-sm relative space-y-3 sm:space-y-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#25C440] text-[#080B09] font-black text-lg sm:text-xl flex items-center justify-center font-heading shadow-md">
                     1
                   </div>
-                  <h3 className="font-heading text-lg sm:text-xl font-bold text-[#F5F7F3]">
+                  <h3 className="font-heading text-lg sm:text-xl font-bold text-[#090C0A]">
                     Escolha o Barbeiro
                   </h3>
-                  <p className="text-xs sm:text-sm text-[#9BA59E] leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[#505D53] leading-relaxed">
                     Selecione o profissional de sua preferência: Léo Nunes, Aleffer Nunes, Hélio Victor ou Guilherme Oliveira.
                   </p>
-                </SpotlightCard>
+                </div>
               </ScrollReveal>
 
               {/* Step 2 */}
               <ScrollReveal delay={200}>
-                <SpotlightCard className="h-full rounded-xl sm:rounded-2xl p-5 sm:p-8 relative space-y-3 sm:space-y-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#142618] border border-[#25C440]/50 text-[#25C440] font-black text-lg sm:text-xl flex items-center justify-center font-heading shadow-md shadow-[#25C440]/15">
+                <div className="h-full rounded-xl sm:rounded-2xl p-5 sm:p-8 bg-[#F8FAF8] border border-[#E0E6E2] hover:border-[#25C440] hover:shadow-lg transition-all shadow-sm relative space-y-3 sm:space-y-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#EAF7ED] border border-[#25C440]/40 text-[#158028] font-black text-lg sm:text-xl flex items-center justify-center font-heading shadow-sm">
                     2
                   </div>
-                  <h3 className="font-heading text-lg sm:text-xl font-bold text-[#F5F7F3]">
+                  <h3 className="font-heading text-lg sm:text-xl font-bold text-[#090C0A]">
                     Selecione o Serviço
                   </h3>
-                  <p className="text-xs sm:text-sm text-[#9BA59E] leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[#505D53] leading-relaxed">
                     Visualize os serviços oferecidos por aquele profissional — cortes, barboterapia, combos e estética.
                   </p>
-                </SpotlightCard>
+                </div>
               </ScrollReveal>
 
               {/* Step 3 */}
               <ScrollReveal delay={300}>
-                <SpotlightCard className="h-full rounded-xl sm:rounded-2xl p-5 sm:p-8 relative space-y-3 sm:space-y-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#142618] border border-[#25C440]/50 text-[#25C440] font-black text-lg sm:text-xl flex items-center justify-center font-heading shadow-md shadow-[#25C440]/15">
+                <div className="h-full rounded-xl sm:rounded-2xl p-5 sm:p-8 bg-[#F8FAF8] border border-[#E0E6E2] hover:border-[#25C440] hover:shadow-lg transition-all shadow-sm relative space-y-3 sm:space-y-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#EAF7ED] border border-[#25C440]/40 text-[#158028] font-black text-lg sm:text-xl flex items-center justify-center font-heading shadow-sm">
                     3
                   </div>
-                  <h3 className="font-heading text-lg sm:text-xl font-bold text-[#F5F7F3]">
+                  <h3 className="font-heading text-lg sm:text-xl font-bold text-[#090C0A]">
                     Confirme no Calendário
                   </h3>
-                  <p className="text-xs sm:text-sm text-[#9BA59E] leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[#505D53] leading-relaxed">
                     Você é direcionado diretamente para o calendário oficial do profissional no Wix para escolher dia e horário com confirmação imediata.
                   </p>
-                </SpotlightCard>
+                </div>
               </ScrollReveal>
             </div>
           </div>
@@ -329,7 +331,7 @@ export default function HomePage() {
           <div className="text-center pt-8 sm:pt-14">
             <Link
               href="/agendar"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-bold text-sm sm:text-base px-8 py-4 rounded-xl btn-green-glow transition-all duration-300 transform active:scale-95"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-[#25C440] hover:bg-[#20A937] text-[#080B09] font-bold text-sm sm:text-base px-8 py-4 rounded-xl btn-green-glow transition-all duration-300 transform active:scale-95 shadow-lg shadow-[#25C440]/25"
             >
               <Calendar className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
               <span>Iniciar Meu Agendamento Agora</span>
