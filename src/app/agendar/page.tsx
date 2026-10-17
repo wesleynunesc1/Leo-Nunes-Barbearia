@@ -40,8 +40,8 @@ export default function AgendarBarbeiroPage() {
         </p>
       </div>
 
-      {/* Barbers Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+      {/* Barbers Grid: 2 columns on mobile, 4 columns on desktop */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-6 lg:gap-8">
         {barbers.map((barber, index) => (
           <BarberCard key={barber.id} barber={barber} priority={index < 2} />
         ))}

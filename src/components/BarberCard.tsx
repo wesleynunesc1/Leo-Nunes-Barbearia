@@ -31,38 +31,39 @@ export function BarberCard({ barber, priority = false }: BarberCardProps) {
         <div className="absolute inset-0 bg-gradient-to-t from-[#080A08] via-transparent to-black/25 opacity-90 group-hover:opacity-75 transition-opacity duration-500" />
 
         {/* Badge: Services Count */}
-        <div className="absolute top-3.5 right-3.5 z-20">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#080A08]/85 backdrop-blur-md text-[#25C440] border border-[#25C440]/30 shadow-md">
-            <Scissors className="w-3 h-3" />
+        <div className="absolute top-2.5 right-2.5 sm:top-3.5 sm:right-3.5 z-20">
+          <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold bg-[#080A08]/85 backdrop-blur-md text-[#25C440] border border-[#25C440]/30 shadow-md">
+            <Scissors className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
             <span>{barber.services.length} serviços</span>
           </span>
         </div>
 
         {/* Name on image bottom */}
-        <div className="absolute bottom-3.5 left-3.5 right-3.5 z-20">
-          <p className="text-[11px] font-semibold tracking-wider uppercase text-[#25C440]">
+        <div className="absolute bottom-2.5 left-2.5 right-2.5 sm:bottom-3.5 sm:left-3.5 sm:right-3.5 z-20">
+          <p className="text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase text-[#25C440]">
             {barber.role}
           </p>
-          <h3 className="font-heading text-2xl font-extrabold text-[#FFFFFF] leading-tight group-hover:text-[#25C440] transition-colors duration-300">
+          <h3 className="font-heading text-lg sm:text-2xl font-extrabold text-[#FFFFFF] leading-tight group-hover:text-[#25C440] transition-colors duration-300">
             {barber.name}
           </h3>
         </div>
       </div>
 
       {/* Content */}
-      <div className="p-5 flex-1 flex flex-col justify-between space-y-4 bg-[#0F1410]/50">
-        <p className="text-xs text-[#9BA59E] leading-relaxed line-clamp-2">
+      <div className="p-3 sm:p-5 flex-1 flex flex-col justify-between space-y-3 sm:space-y-4 bg-[#0F1410]/50">
+        <p className="text-[11px] sm:text-xs text-[#9BA59E] leading-relaxed line-clamp-2">
           {barber.tagline}
         </p>
 
-        <div className="pt-2">
+        <div className="pt-1 sm:pt-2">
           <Link
             href={`/agendar/${barber.slug}`}
-            className="w-full flex items-center justify-center gap-2 bg-[#162018] hover:bg-[#25C440] text-[#FFFFFF] hover:text-[#080A08] font-bold text-sm py-3 px-4 rounded-xl border border-[#25C440]/30 hover:border-transparent transition-all duration-300 group-hover:bg-[#25C440] group-hover:text-[#080A08] shadow-sm"
+            className="w-full flex items-center justify-center gap-1.5 sm:gap-2 bg-[#162018] hover:bg-[#25C440] text-[#FFFFFF] hover:text-[#080A08] font-bold text-xs sm:text-sm py-2.5 sm:py-3 px-2 sm:px-4 rounded-xl border border-[#25C440]/30 hover:border-transparent transition-all duration-300 group-hover:bg-[#25C440] group-hover:text-[#080A08] shadow-sm text-center"
           >
-            <CalendarCheck className="w-4 h-4" />
-            <span>Ver Serviços & Horários</span>
-            <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1.5" />
+            <CalendarCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+            <span>Ver Serviços</span>
+            <span className="hidden md:inline"> & Horários</span>
+            <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-300 group-hover:translate-x-1.5 shrink-0" />
           </Link>
         </div>
       </div>
