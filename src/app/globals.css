@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+:root {
+  --background: #080B09;
+  --foreground: #F5F7F3;
+  --brand-green: #25C440;
+  --brand-green-hover: #2CD64A;
+  --brand-green-dark: #1A942E;
+  --brand-green-glow: rgba(37, 196, 64, 0.18);
+  --surface-1: #101611;
+  --surface-2: #161F18;
+  --surface-card: #121813;
+  --surface-card-hover: #18221A;
+  --border-subtle: #202A22;
+  --border-medium: #2B382E;
+  --text-muted: #9BA59E;
+  --text-dimmed: #6F7B72;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-brand-green: var(--brand-green);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-card: var(--surface-card);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-medium: var(--border-medium);
+  --color-text-muted: var(--text-muted);
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: var(--font-montserrat), sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #080B09;
+}
+::-webkit-scrollbar-thumb {
+  background: #202A22;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #25C440;
+}
+
+/* Selection */
+::selection {
+  background-color: #25C440;
+  color: #080B09;
+}
+
+/* Editorial Glass Card */
+.editorial-card {
+  background: rgba(16, 22, 17, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.editorial-card:hover {
+  background: rgba(22, 31, 24, 0.95);
+  border-color: rgba(37, 196, 64, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.6), 0 0 24px -4px var(--brand-green-glow);
+}
+
+/* Button glow effects */
+.btn-green-glow {
+  box-shadow: 0 0 20px -3px rgba(37, 196, 64, 0.35);
+  transition: all 0.25s ease;
+}
+
+.btn-green-glow:hover {
+  box-shadow: 0 0 28px 0px rgba(37, 196, 64, 0.55);
+  transform: translateY(-1px);
+}
+
+/* Subtle image overlay gradient */
+.hero-gradient {
+  background: linear-gradient(
+    180deg,
+    rgba(8, 11, 9, 0.75) 0%,
+    rgba(8, 11, 9, 0.85) 60%,
+    #080B09 100%
+  );
+}
