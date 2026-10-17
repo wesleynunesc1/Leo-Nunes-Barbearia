@@ -3,20 +3,29 @@
 :root {
   --font-montserrat: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-inter: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --background: #080B09;
-  --foreground: #F5F7F3;
+  --background: #080A08;
+  --foreground: #FFFFFF;
   --brand-green: #25C440;
   --brand-green-hover: #2CD64A;
   --brand-green-dark: #1A942E;
-  --brand-green-glow: rgba(37, 196, 64, 0.18);
-  --surface-1: #101611;
-  --surface-2: #161F18;
-  --surface-card: #121813;
-  --surface-card-hover: #18221A;
-  --border-subtle: #202A22;
-  --border-medium: #2B382E;
+  --brand-green-glow: rgba(37, 196, 64, 0.16);
+  --brand-green-subtle: rgba(37, 196, 64, 0.08);
+  --surface-1: #0F1410;
+  --surface-2: #151C16;
+  --surface-card: #111712;
+  --surface-card-hover: #172019;
+  --border-subtle: #1E2720;
+  --border-medium: #27342A;
+  --border-highlight: rgba(37, 196, 64, 0.35);
   --text-muted: #9BA59E;
   --text-dimmed: #6F7B72;
+
+  /* Motion Tokens */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-smooth: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-micro: 200ms;
+  --duration-content: 650ms;
+  --duration-title: 850ms;
 }
 
 @theme inline {
@@ -48,18 +57,18 @@ body {
 
 h1, h2, h3, h4, h5, h6, .font-heading {
   font-family: var(--font-montserrat), sans-serif;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 7px;
 }
 ::-webkit-scrollbar-track {
-  background: #080B09;
+  background: #080A08;
 }
 ::-webkit-scrollbar-thumb {
-  background: #202A22;
+  background: #1E2720;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
@@ -69,41 +78,184 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 /* Selection */
 ::selection {
   background-color: #25C440;
-  color: #080B09;
+  color: #080A08;
 }
 
 /* Editorial Glass Card */
 .editorial-card {
-  background: rgba(16, 22, 17, 0.85);
-  backdrop-filter: blur(12px);
+  background: rgba(15, 20, 16, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border: 1px solid var(--border-subtle);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.35s var(--ease-out-expo),
+              border-color 0.35s var(--ease-out-expo),
+              box-shadow 0.35s var(--ease-out-expo),
+              background 0.35s var(--ease-out-expo);
+  will-change: transform;
 }
 
 .editorial-card:hover {
-  background: rgba(22, 31, 24, 0.95);
-  border-color: rgba(37, 196, 64, 0.4);
-  transform: translateY(-2px);
-  box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.6), 0 0 24px -4px var(--brand-green-glow);
+  background: rgba(21, 28, 22, 0.96);
+  border-color: var(--border-highlight);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.7), 0 0 28px -4px var(--brand-green-glow);
 }
 
-/* Button glow effects */
+/* Button micro-interactions */
 .btn-green-glow {
-  box-shadow: 0 0 20px -3px rgba(37, 196, 64, 0.35);
-  transition: all 0.25s ease;
+  box-shadow: 0 4px 20px -2px rgba(37, 196, 64, 0.32);
+  transition: transform 0.25s var(--ease-out-expo),
+              box-shadow 0.25s var(--ease-out-expo),
+              background-color 0.2s ease;
 }
 
 .btn-green-glow:hover {
-  box-shadow: 0 0 28px 0px rgba(37, 196, 64, 0.55);
-  transform: translateY(-1px);
+  box-shadow: 0 6px 28px 0px rgba(37, 196, 64, 0.48);
+  transform: translateY(-2px);
 }
 
-/* Subtle image overlay gradient */
-.hero-gradient {
-  background: linear-gradient(
-    180deg,
-    rgba(8, 11, 9, 0.75) 0%,
-    rgba(8, 11, 9, 0.85) 60%,
-    #080B09 100%
-  );
+.btn-green-glow:active {
+  transform: translateY(0px);
+}
+
+/* Headline Reveal Masks */
+.title-line-mask {
+  overflow: hidden;
+  display: block;
+}
+
+.title-line-inner {
+  display: block;
+  transform: translateY(110%);
+  animation: titleLineReveal 0.9s var(--ease-out-expo) forwards;
+}
+
+.title-line-delay-1 {
+  animation-delay: 0.15s;
+}
+
+.title-line-delay-2 {
+  animation-delay: 0.35s;
+}
+
+@keyframes titleLineReveal {
+  from {
+    transform: translateY(110%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+}
+
+/* Green Line Accent Sweep */
+.green-sweep-bar {
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  height: 2px;
+  width: 0%;
+  background: linear-gradient(90deg, #25C440, #FFFFFF, #25C440);
+  animation: lineSweep 1.2s var(--ease-out-expo) 0.8s forwards;
+}
+
+@keyframes lineSweep {
+  0% {
+    width: 0%;
+    left: 0;
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  70% {
+    width: 100%;
+    left: 0;
+    opacity: 1;
+  }
+  100% {
+    width: 100%;
+    left: 0;
+    opacity: 0.85;
+  }
+}
+
+/* Floating Scroll Indicator */
+@keyframes floatScroll {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(6px);
+    opacity: 0.3;
+  }
+}
+
+.animate-float-scroll {
+  animation: floatScroll 2.2s ease-in-out infinite;
+}
+
+/* Clean Scroll Reveal Utilities */
+.reveal-fade-up {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.75s var(--ease-out-expo),
+              transform 0.75s var(--ease-out-expo);
+  will-change: opacity, transform;
+}
+
+.reveal-fade-left {
+  opacity: 0;
+  transform: translateX(-32px);
+  transition: opacity 0.75s var(--ease-out-expo),
+              transform 0.75s var(--ease-out-expo);
+  will-change: opacity, transform;
+}
+
+.reveal-fade-right {
+  opacity: 0;
+  transform: translateX(32px);
+  transition: opacity 0.75s var(--ease-out-expo),
+              transform 0.75s var(--ease-out-expo);
+  will-change: opacity, transform;
+}
+
+.reveal-scale-up {
+  opacity: 0;
+  transform: scale(0.96) translateY(16px);
+  transition: opacity 0.75s var(--ease-out-expo),
+              transform 0.75s var(--ease-out-expo);
+  will-change: opacity, transform;
+}
+
+.reveal-active {
+  opacity: 1 !important;
+  transform: translate(0, 0) scale(1) !important;
+}
+
+/* Reduced Motion Respect */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .title-line-inner {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  .green-sweep-bar {
+    width: 100% !important;
+    opacity: 0.8 !important;
+  }
+  .reveal-fade-up,
+  .reveal-fade-left,
+  .reveal-fade-right,
+  .reveal-scale-up {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }

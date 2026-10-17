@@ -1,6 +1,7 @@
 import React from "react";
-import { Scissors, Sparkles, Clock, ExternalLink, ShieldCheck } from "lucide-react";
+import { Clock, ExternalLink, ShieldCheck } from "lucide-react";
 import { BarberService } from "@/data/barbers";
+import { SpotlightCard } from "@/components/MotionSystem";
 
 interface ServiceCardProps {
   service: BarberService;
@@ -8,23 +9,36 @@ interface ServiceCardProps {
 }
 
 export function ServiceCard({ service, barberName }: ServiceCardProps) {
-  const categoryLabels: Record<string, { label: string; color: string }> = {
-    cabelo: { label: "Cabelo", color: "text-[#62D876] bg-[#142618] border-[#25C440]/30" },
-    barba: { label: "Barba", color: "text-[#E6A960] bg-[#291F14] border-[#E6A960]/30" },
-    combo: { label: "Combo Especial", color: "text-[#38BDF8] bg-[#102433] border-[#38BDF8]/30" },
-    tratamento: { label: "Cuidado Facial / Fios", color: "text-[#D946EF] bg-[#2A142E] border-[#D946EF]/30" },
+  // Strict palette: Green, Black and White only
+  const categoryLabels: Record<string, { label: string; badgeClass: string }> = {
+    cabelo: {
+      label: "Corte",
+      badgeClass: "text-[#25C440] bg-[#111A13] border-[#25C440]/30",
+    },
+    barba: {
+      label: "Barba",
+      badgeClass: "text-[#FFFFFF] bg-[#171E19] border-white/20",
+    },
+    combo: {
+      label: "Combo Especial",
+      badgeClass: "text-[#25C440] bg-[#142618] border-[#25C440]/50 font-bold",
+    },
+    tratamento: {
+      label: "Cuidado Facial / Fios",
+      badgeClass: "text-[#9BA59E] bg-[#131A15] border-[#232F26]",
+    },
   };
 
   const badge = categoryLabels[service.category] || categoryLabels.cabelo;
 
   return (
-    <article
+    <SpotlightCard
       className="editorial-card rounded-2xl p-6 flex flex-col justify-between h-full group"
       id={`service-card-${service.id}`}
     >
       <div className="space-y-3.5">
         <div className="flex items-center justify-between gap-2 flex-wrap">
-          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider border ${badge.color}`}>
+          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider border ${badge.badgeClass}`}>
             {badge.label}
           </span>
           <span className="text-[11px] text-[#6F7B72] flex items-center gap-1 font-medium">
@@ -34,7 +48,7 @@ export function ServiceCard({ service, barberName }: ServiceCardProps) {
         </div>
 
         <div>
-          <h3 className="font-heading text-lg sm:text-xl font-bold text-[#F5F7F3] group-hover:text-[#25C440] transition-colors leading-snug">
+          <h3 className="font-heading text-lg sm:text-xl font-bold text-[#FFFFFF] group-hover:text-[#25C440] transition-colors leading-snug">
             {service.name}
           </h3>
           <p className="text-xs text-[#25C440] font-medium mt-0.5">
@@ -63,18 +77,18 @@ export function ServiceCard({ service, barberName }: ServiceCardProps) {
         {/* Primary CTA - literal exact bookingUrl */}
         <a
           href={service.bookingUrl}
-          className="w-full flex items-center justify-center gap-2 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-bold text-sm py-3 px-4 rounded-xl btn-green-glow transition-all duration-200"
+          className="w-full flex items-center justify-center gap-2 bg-[#25C440] hover:bg-[#2CD64A] text-[#080A08] font-bold text-sm py-3 px-4 rounded-xl btn-green-glow transition-all duration-200"
           id={`btn-book-${service.id}`}
           aria-label={`Agendar ${service.name} com ${barberName}`}
         >
           <span>Escolher Dia e Horário</span>
-          <ExternalLink className="w-4 h-4 shrink-0" />
+          <ExternalLink className="w-4 h-4 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
         </a>
 
         <p className="text-[10px] text-center text-[#6F7B72] leading-tight">
           Você continuará no sistema oficial de agendamento (Wix)
         </p>
       </div>
-    </article>
+    </SpotlightCard>
   );
 }
