@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { WhatsAppFloatingButton } from "@/components/WhatsAppFloatingButton";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://leonunesbarbearia.com.br"),
@@ -127,7 +126,6 @@ export default function RootLayout({
         <Header />
         <main className="flex-1 pt-20">{children}</main>
         <Footer />
-        <WhatsAppFloatingButton />
       </body>
     </html>
   );

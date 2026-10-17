@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { BarberService } from "@/data/barbers";
 import { ServiceCard } from "@/components/ServiceCard";
-import { Scissors, Sparkles, Layers, Shield } from "lucide-react";
+import { Scissors, Layers, Shield, CheckCircle2, Droplets } from "lucide-react";
 
 interface ServiceListProps {
   services: BarberService[];
@@ -24,7 +24,7 @@ export function ServiceList({ services, barberName }: ServiceListProps) {
     {
       id: "combo",
       label: "Combos",
-      icon: Sparkles,
+      icon: CheckCircle2,
       count: services.filter((s) => s.category === "combo").length,
     },
     {
@@ -36,7 +36,7 @@ export function ServiceList({ services, barberName }: ServiceListProps) {
     {
       id: "tratamento",
       label: "Tratamentos & Estética",
-      icon: Sparkles,
+      icon: Droplets,
       count: services.filter((s) => s.category === "tratamento").length,
     },
   ].filter((c) => c.id === "all" || c.count > 0);

@@ -23,12 +23,12 @@ export function BarberCard({ barber, priority = false }: BarberCardProps) {
           alt={`Foto oficial do barbeiro ${barber.name}`}
           fill
           priority={priority}
-          sizes="(max-width: 640px) 85vw, (max-width: 1024px) 50vw, 25vw"
-          className="object-cover object-top filter grayscale contrast-[1.08] group-hover:grayscale-0 group-hover:scale-[1.035] transition-all duration-700 ease-out will-change-transform"
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
+          className="object-cover object-top group-hover:scale-[1.035] transition-transform duration-700 ease-out will-change-transform"
         />
 
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#080A08] via-transparent to-black/25 opacity-90 group-hover:opacity-75 transition-opacity duration-500" />
+        {/* Gradient Overlay for bottom text legibility */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#080A08] via-[#080A08]/15 to-transparent opacity-85" />
 
         {/* Badge: Services Count */}
         <div className="absolute top-2.5 right-2.5 sm:top-3.5 sm:right-3.5 z-20">

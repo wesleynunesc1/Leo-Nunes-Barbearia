@@ -10,7 +10,8 @@ import {
   Scissors,
   CheckCircle2,
   ArrowRight,
-  Sparkles,
+  Award,
+  Flame,
   ExternalLink,
   Users,
 } from "lucide-react";
@@ -92,7 +93,7 @@ export default function HomePage() {
                 <span>4 Barbeiros Especialistas</span>
               </div>
               <div className="col-span-2 md:col-span-1 flex items-center justify-center gap-2.5 text-left text-xs sm:text-sm text-[#A6AEA8]">
-                <Sparkles className="w-5 h-5 text-[#25C440] shrink-0" />
+                <Award className="w-5 h-5 text-[#25C440] shrink-0" />
                 <span>Biossegurança e Higiene</span>
               </div>
             </div>
@@ -146,7 +147,7 @@ export default function HomePage() {
             <SpotlightCard className="h-full rounded-2xl p-6 flex flex-col justify-between space-y-4">
               <div className="space-y-3">
                 <div className="w-12 h-12 rounded-xl bg-[#142618] border border-[#25C440]/30 flex items-center justify-center text-[#25C440] shadow-lg shadow-[#25C440]/10">
-                  <Sparkles className="w-6 h-6" />
+                  <Flame className="w-6 h-6" />
                 </div>
                 <h3 className="font-heading text-xl font-bold text-[#F5F7F3]">
                   Barba & Barboterapia
