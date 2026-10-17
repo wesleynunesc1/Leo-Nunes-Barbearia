@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
 :root {
+  --font-montserrat: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-inter: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --background: #080B09;
   --foreground: #F5F7F3;
   --brand-green: #25C440;
