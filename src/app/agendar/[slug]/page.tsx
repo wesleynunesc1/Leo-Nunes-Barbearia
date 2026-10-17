@@ -59,7 +59,7 @@ export default async function BarberServicesPage({ params }: PageProps) {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8 space-y-6 sm:space-y-10">
       {/* Breadcrumbs */}
       <Breadcrumbs
         items={[
@@ -69,10 +69,10 @@ export default async function BarberServicesPage({ params }: PageProps) {
       />
 
       {/* Compact Hero Card with selected barber */}
-      <div className="editorial-card rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 border border-[#202A22]">
-        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 text-center sm:text-left">
+      <div className="editorial-card rounded-xl sm:rounded-2xl p-4 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 border border-[#202A22]">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-5 text-center sm:text-left">
           {/* Barber Photo */}
-          <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-2 border-[#25C440]/40 shrink-0 bg-[#121A14]">
+          <div className="relative w-16 h-16 sm:w-24 sm:h-24 rounded-xl sm:rounded-2xl overflow-hidden border-2 border-[#25C440]/40 shrink-0 bg-[#121A14]">
             <Image
               src={barber.photo}
               alt={barber.name}
@@ -83,11 +83,11 @@ export default async function BarberServicesPage({ params }: PageProps) {
             />
           </div>
 
-          <div className="space-y-1.5">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-[#142618] text-[#25C440] border border-[#25C440]/30">
+          <div className="space-y-1">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-wider bg-[#142618] text-[#25C440] border border-[#25C440]/30">
               {barber.role}
             </div>
-            <h1 className="font-heading text-2xl sm:text-4xl font-extrabold text-[#F5F7F3]">
+            <h1 className="font-heading text-xl sm:text-4xl font-extrabold text-[#F5F7F3]">
               {barber.name}
             </h1>
             <p className="text-xs sm:text-sm text-[#A6AEA8] max-w-xl">
@@ -97,10 +97,10 @@ export default async function BarberServicesPage({ params }: PageProps) {
         </div>
 
         {/* Change Barber Button */}
-        <div className="shrink-0 flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+        <div className="shrink-0 w-full sm:w-auto">
           <Link
             href="/agendar"
-            className="inline-flex items-center justify-center gap-2 text-xs font-bold text-[#F5F7F3] hover:text-[#25C440] bg-[#141B15] hover:bg-[#1A241C] border border-[#222E25] hover:border-[#25C440]/40 px-4 py-3 rounded-xl transition-all"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 text-xs font-bold text-[#F5F7F3] hover:text-[#25C440] bg-[#141B15] hover:bg-[#1A241C] border border-[#222E25] hover:border-[#25C440]/40 px-4 py-2.5 sm:py-3 rounded-xl transition-all"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Trocar Barbeiro</span>
@@ -109,12 +109,12 @@ export default async function BarberServicesPage({ params }: PageProps) {
       </div>
 
       {/* Services Section Header */}
-      <div className="space-y-2 pt-2">
+      <div className="space-y-1.5 pt-1">
         <div className="flex items-center gap-2 text-xs font-bold tracking-wider uppercase text-[#25C440]">
           <span className="w-2 h-2 rounded-full bg-[#25C440]" />
           <span>Passo 2 de 2: Escolha o Serviço</span>
         </div>
-        <h2 className="font-heading text-2xl sm:text-3xl font-bold text-[#F5F7F3]">
+        <h2 className="font-heading text-xl sm:text-3xl font-bold text-[#F5F7F3]">
           Serviços Disponíveis com {barber.name}
         </h2>
         <p className="text-xs sm:text-sm text-[#9BA59E]">
@@ -126,9 +126,9 @@ export default async function BarberServicesPage({ params }: PageProps) {
       <ServiceList services={barber.services} barberName={barber.name} />
 
       {/* Support and Safety Note */}
-      <div className="pt-6 border-t border-[#1C2620] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#9BA59E]">
+      <div className="pt-5 sm:pt-6 border-t border-[#1C2620] flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-xs text-[#9BA59E] text-center sm:text-left">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-[#25C440]" />
+          <ShieldCheck className="w-4 h-4 text-[#25C440] shrink-0" />
           <span>
             Ao clicar em &quot;Escolher Dia e Horário&quot;, você continua no calendário Wix original de {barber.name}.
           </span>

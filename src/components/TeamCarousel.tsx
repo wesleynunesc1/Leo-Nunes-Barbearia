@@ -13,7 +13,7 @@ export function TeamCarousel({ barbers }: TeamCarouselProps) {
   return (
     <div className="w-full">
       {/* 2 columns on mobile (2x2 grid), 4 columns on desktop with staggered entrance */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-6 lg:gap-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-6 lg:gap-8">
         {barbers.map((barber, index) => (
           <ScrollReveal
             key={barber.id}

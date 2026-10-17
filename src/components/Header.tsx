@@ -116,38 +116,39 @@ export function Header() {
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="sm:hidden bg-[#0A0E0B] border-b border-[#202A22] px-4 pt-4 pb-6 space-y-3 animate-in slide-in-from-top duration-200">
-          <div className="flex flex-col space-y-2">
+        <div className="sm:hidden fixed inset-x-0 top-[56px] max-h-[calc(100vh-56px)] overflow-y-auto bg-[#080B09]/98 backdrop-blur-xl border-b border-[#202A22] px-5 pt-4 pb-8 space-y-4 shadow-2xl animate-in slide-in-from-top duration-200 z-50">
+          <div className="flex flex-col space-y-1">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="text-base font-medium text-[#F5F7F3] hover:text-[#25C440] py-2 px-3 rounded-lg hover:bg-[#121813] transition-colors"
+                className="text-base font-medium text-[#F5F7F3] hover:text-[#25C440] py-3 px-3.5 rounded-xl hover:bg-[#121813] transition-colors flex items-center justify-between"
               >
-                {link.label}
+                <span>{link.label}</span>
+                <span className="text-[#25C440] text-xs">→</span>
               </Link>
             ))}
           </div>
 
-          <div className="pt-4 border-t border-[#202A22] space-y-3">
+          <div className="pt-4 border-t border-[#202A22] space-y-4">
             <Link
               href="/agendar"
               onClick={() => setMobileMenuOpen(false)}
-              className="w-full flex items-center justify-center gap-2 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-bold py-3 rounded-lg text-center"
+              className="w-full flex items-center justify-center gap-2 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold py-3.5 rounded-xl text-center btn-green-glow text-sm"
             >
               <Calendar className="w-4 h-4" />
               <span>Agendar Horário Agora</span>
             </Link>
 
-            <div className="text-xs text-[#A6AEA8] space-y-1.5 pt-2">
-              <p className="flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-[#25C440]" />
-                Rua Joaquim Nogueira Lopes, 180, Pacajus - CE
+            <div className="text-xs text-[#A6AEA8] space-y-2 pt-1 bg-[#101611] p-3.5 rounded-xl border border-[#202A22]">
+              <p className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-[#25C440] shrink-0" />
+                <span>Rua Joaquim Nogueira Lopes, 180, Pacajus</span>
               </p>
-              <p className="flex items-center gap-1.5">
-                <Phone className="w-3.5 h-3.5 text-[#25C440]" />
-                (85) 99222-7064
+              <p className="flex items-center gap-2">
+                <Phone className="w-4 h-4 text-[#25C440] shrink-0" />
+                <span>(85) 99222-7064</span>
               </p>
             </div>
           </div>

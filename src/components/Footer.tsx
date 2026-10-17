@@ -14,9 +14,9 @@ export function Footer() {
   }, []);
 
   return (
-    <footer className="bg-[#050706] border-t border-[#1C241E] text-[#A6AEA8] pt-16 pb-12">
+    <footer className="bg-[#050706] border-t border-[#1C241E] text-[#A6AEA8] pt-12 sm:pt-16 pb-8 sm:pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-12 mb-8 sm:mb-12">
           {/* Column 1: Brand */}
           <div className="space-y-4">
             <Link href="/" className="inline-block" aria-label="Léo Nunes Barbearia">
