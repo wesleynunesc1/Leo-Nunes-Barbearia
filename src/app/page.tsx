@@ -32,14 +32,14 @@ export default function HomePage() {
   const barbers = getAllBarbers();
 
   return (
-    <div className="space-y-16 sm:space-y-32 pb-16 sm:pb-24 overflow-x-hidden" id="inicio">
+    <div className="pb-16 sm:pb-24 overflow-x-hidden" id="inicio">
       {/* GSAP ScrollTrigger 3D Perspective Controller */}
       <ThreeDScrollTrigger />
 
       {/* =========================================================================
-          HERO SECTION (20% mais compacta, tipografia calibrada e fundo responsivo)
+          HERO SECTION (Diminuída com tamanho desktop ajustado, sem excesso superior)
          ========================================================================= */}
-      <section className="relative min-h-[72vh] sm:min-h-[76vh] lg:min-h-[80vh] flex flex-col justify-between pt-20 sm:pt-24 lg:pt-26 pb-0 overflow-hidden bg-[#080B09]">
+      <section className="relative min-h-[64vh] sm:min-h-[68vh] lg:min-h-[70vh] flex flex-col justify-between pt-16 sm:pt-18 lg:pt-20 pb-0 overflow-hidden bg-[#080B09]">
         {/* Subtle Ambient Mouse Tracking Glow */}
         <PointerAura />
 
@@ -77,18 +77,18 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-t from-[#080B09] via-[#080B09]/70 via-40% to-transparent z-10" />
         </div>
 
-        {/* Main Content Area (Left Column Content + Right Floating Tag) */}
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full my-auto pt-24 sm:pt-28 pb-6 sm:pb-8">
+        {/* Main Content Area (Left Column Content + Right Floating Tag - Reduzido 20% do espaço superior) */}
+        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-8 sm:pt-12 lg:pt-12 pb-4 sm:pb-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
             {/* Left Content (Columns 1-8) */}
-            <div className="lg:col-span-8 space-y-4 sm:space-y-6 text-left">
+            <div className="lg:col-span-8 space-y-3 sm:space-y-3.5 text-left">
               {/* Efeito Text-Stroke Fill Animado com Principais Informações da Página */}
               <div className="flex justify-start">
                 <AnimatedStrokeInfo />
               </div>
 
               {/* Headline nítida com sombra cinematográfica para contraste perfeito sobre a imagem */}
-              <h1 className="font-heading font-black text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-[62px] xl:text-[70px] tracking-tight uppercase leading-[0.98] drop-shadow-[0_2px_14px_rgba(0,0,0,0.85)]">
+              <h1 className="font-heading font-black text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-[58px] xl:text-[66px] tracking-tight uppercase leading-[0.98] drop-shadow-[0_2px_14px_rgba(0,0,0,0.85)]">
                 <span className="text-[#FFFFFF] block">
                   NA LÉO NUNES
                 </span>
@@ -277,14 +277,16 @@ export default function HomePage() {
 
 
       {/* =========================================================================
-          CATÁLOGO DE SERVIÇOS & MÓDULOS (#servicos) - Baseado no Modelo Elementor
+          CATÁLOGO DE SERVIÇOS & MÓDULOS (#servicos) - Conectado diretamente ao carrossel
          ========================================================================= */}
       <ModulesServicesSection />
 
-      {/* =========================================================================
-          EQUIPE DE BARBEIROS (#equipe) - Tema Escuro Oficial
-         ========================================================================= */}
-      <section id="equipe" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-28">
+      {/* Seções seguintes com espaçamento nobre e consistente */}
+      <div className="space-y-16 sm:space-y-28 pt-8 sm:pt-14">
+        {/* =========================================================================
+            EQUIPE DE BARBEIROS (#equipe) - Tema Escuro Oficial
+           ========================================================================= */}
+        <section id="equipe" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-28">
         <ScrollReveal>
           <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-[#25C440] bg-[#121A14] border border-[#25C440]/30 shadow-[0_0_15px_rgba(37,196,64,0.1)] mb-3 sm:mb-4">
@@ -642,6 +644,7 @@ export default function HomePage() {
           </ScrollReveal>
         </div>
       </section>
+      </div>
     </div>
   );
 }

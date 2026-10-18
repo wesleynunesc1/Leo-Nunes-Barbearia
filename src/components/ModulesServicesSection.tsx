@@ -85,7 +85,7 @@ export function ModulesServicesSection() {
   return (
     <section
       id="servicos"
-      className="relative w-full bg-[#080B09] text-[#FFFFFF] py-16 sm:py-28 overflow-hidden scroll-mt-24 border-t border-[#18221B]"
+      className="relative w-full bg-[#080B09] text-[#FFFFFF] pt-3 sm:pt-6 pb-12 sm:pb-20 overflow-hidden scroll-mt-24"
     >
       {/* Background Lighting FX */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-[#25C440]/[0.04] blur-[140px] pointer-events-none rounded-full" />
