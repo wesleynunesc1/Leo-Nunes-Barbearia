@@ -19,6 +19,7 @@ import {
 import { getAllBarbers } from "@/data/barbers";
 import { TeamCarousel } from "@/components/TeamCarousel";
 import { ModulesServicesSection } from "@/components/ModulesServicesSection";
+import { AnimatedStrokeInfo } from "@/components/AnimatedStrokeInfo";
 import {
   ScrollReveal,
   SpotlightCard,
@@ -76,6 +77,11 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
             {/* Left Content (Columns 1-8) */}
             <div className="lg:col-span-8 space-y-4 sm:space-y-6 text-left">
+              {/* Efeito Text-Stroke Fill Animado com Principais Informações da Página */}
+              <div className="flex justify-start">
+                <AnimatedStrokeInfo />
+              </div>
+
               {/* Headline nítida com sombra cinematográfica para contraste perfeito sobre a imagem */}
               <h1 className="font-heading font-black text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-[62px] xl:text-[70px] tracking-tight uppercase leading-[0.98] drop-shadow-[0_2px_14px_rgba(0,0,0,0.85)]">
                 <span className="text-[#FFFFFF] block">
