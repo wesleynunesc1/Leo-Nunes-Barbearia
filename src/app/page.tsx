@@ -19,7 +19,6 @@ import {
 import { getAllBarbers } from "@/data/barbers";
 import { TeamCarousel } from "@/components/TeamCarousel";
 import { ModulesServicesSection } from "@/components/ModulesServicesSection";
-import { AnimatedStrokeInfo } from "@/components/AnimatedStrokeInfo";
 import { VideoShowcase } from "@/components/VideoShowcase";
 import { ThreeDScrollTrigger } from "@/components/ThreeDScrollTrigger";
 import {
@@ -82,9 +81,12 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
             {/* Left Content (Columns 1-8) */}
             <div className="lg:col-span-8 space-y-3 sm:space-y-3.5 text-left">
-              {/* Efeito Text-Stroke Fill Animado com Principais Informações da Página */}
-              <div className="flex justify-start">
-                <AnimatedStrokeInfo />
+              {/* Identificador Superior Limpo */}
+              <div className="flex items-center gap-2.5">
+                <div className="w-6 sm:w-8 h-[2px] bg-[#25C440]" aria-hidden="true" />
+                <span className="text-[11px] sm:text-xs font-mono font-bold uppercase tracking-[0.24em] text-[#25C440]">
+                  BARBEARIA EM PACAJUS
+                </span>
               </div>
 
               {/* Headline nítida com sombra cinematográfica para contraste perfeito sobre a imagem */}
