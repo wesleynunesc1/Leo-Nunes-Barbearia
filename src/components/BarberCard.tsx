@@ -8,9 +8,14 @@ import { SpotlightCard } from "@/components/MotionSystem";
 interface BarberCardProps {
   barber: Barber;
   priority?: boolean;
+  showDescription?: boolean;
 }
 
-export function BarberCard({ barber, priority = false }: BarberCardProps) {
+export function BarberCard({
+  barber,
+  priority = false,
+  showDescription = false,
+}: BarberCardProps) {
   return (
     <SpotlightCard
       className="editorial-card rounded-2xl overflow-hidden flex flex-col group h-full focus-within:ring-2 focus-within:ring-[#25C440]"
@@ -50,10 +55,12 @@ export function BarberCard({ barber, priority = false }: BarberCardProps) {
       </div>
 
       {/* Content */}
-      <div className="p-2.5 sm:p-5 flex-1 flex flex-col justify-between space-y-2.5 sm:space-y-4 bg-[#0F1410]/50">
-        <p className="text-[10px] sm:text-xs text-[#9BA59E] leading-relaxed line-clamp-2">
-          {barber.tagline}
-        </p>
+      <div className="p-2.5 sm:p-4 flex-1 flex flex-col justify-end bg-[#0F1410]/50">
+        {showDescription && (
+          <p className="text-[10px] sm:text-xs text-[#9BA59E] leading-relaxed line-clamp-2 mb-2.5 sm:mb-3">
+            {barber.tagline}
+          </p>
+        )}
 
         <div className="pt-1">
           <Link
