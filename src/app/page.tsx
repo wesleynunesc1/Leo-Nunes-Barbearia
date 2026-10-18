@@ -194,29 +194,31 @@ export default function HomePage() {
       <ModulesServicesSection />
 
       {/* =========================================================================
-          EQUIPE DE BARBEIROS (#equipe) - Responsive Touch Carousel & Desktop Grid
+          EQUIPE DE BARBEIROS (#equipe) - Tema Branco (White Luxury Theme)
          ========================================================================= */}
-      <section id="equipe" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-28">
-        <ScrollReveal>
-          <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-[#25C440] bg-[#121A14] border border-[#25C440]/30 shadow-[0_0_15px_rgba(37,196,64,0.1)] mb-3 sm:mb-4">
-              EQUIPE DE ESPECIALISTAS
-            </span>
-            <h2 className="font-heading text-2xl sm:text-5xl font-extrabold text-[#F5F7F3] tracking-tight leading-[1.1] mb-3 sm:mb-4">
-              Escolha seu{" "}
-              <span className="bg-gradient-to-r from-[#25C440] via-[#5BE376] to-[#FFFFFF] bg-clip-text text-transparent">
-                Barbeiro
+      <section id="equipe" className="w-full bg-[#FFFFFF] text-[#080B09] py-16 sm:py-24 border-y border-[#E6ECE8] scroll-mt-28 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ScrollReveal>
+            <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-[#1B8A31] bg-[#EAF7ED] border border-[#25C440]/30 shadow-sm mb-3 sm:mb-4">
+                EQUIPE DE ESPECIALISTAS
               </span>
-            </h2>
-            <p className="text-xs sm:text-base text-[#9BA59E] leading-relaxed max-w-xl mx-auto">
-              Equipe qualificada com técnica apurada, respeito ao seu tempo e pontualidade rigorosa.
-              Selecione o profissional para visualizar sua agenda e serviços exclusivos.
-            </p>
-          </div>
-        </ScrollReveal>
+              <h2 className="font-heading text-2xl sm:text-5xl font-extrabold text-[#080B09] tracking-tight leading-[1.1] mb-3 sm:mb-4">
+                Escolha seu{" "}
+                <span className="text-[#25C440]">
+                  Barbeiro
+                </span>
+              </h2>
+              <p className="text-xs sm:text-base text-[#57645B] leading-relaxed max-w-xl mx-auto font-medium">
+                Equipe qualificada com técnica apurada, respeito ao seu tempo e pontualidade rigorosa.
+                Selecione o profissional para visualizar sua agenda e serviços exclusivos.
+              </p>
+            </div>
+          </ScrollReveal>
 
-        {/* Team Carousel (2 columns on mobile, 4 on desktop) */}
-        <TeamCarousel barbers={barbers} />
+          {/* Team Carousel (2 columns on mobile with touch elevation, overlapping deck on desktop) */}
+          <TeamCarousel barbers={barbers} />
+        </div>
       </section>
 
       {/* =========================================================================

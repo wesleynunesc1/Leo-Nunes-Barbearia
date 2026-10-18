@@ -423,3 +423,20 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   left: 50px;
   transition: left 0.4s ease-out;
 }
+
+/* Mobile 2-column Touch Hover Effect */
+.team-mobile-card {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.35s ease,
+              border-color 0.35s ease;
+  will-change: transform;
+  touch-action: manipulation;
+}
+
+.team-mobile-card:hover,
+.team-mobile-card:active {
+  transform: translateY(-8px) scale(1.02);
+  border-color: rgba(37, 196, 64, 0.8) !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25), 0 0 20px rgba(37, 196, 64, 0.3) !important;
+  z-index: 10;
+}
