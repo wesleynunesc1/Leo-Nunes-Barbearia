@@ -206,14 +206,14 @@ export function HeroHeadline() {
       {/* Line 1 */}
       <span className="title-line-mask">
         <span className="title-line-inner title-line-delay-1 font-heading text-3xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-[#FFFFFF] leading-[1.1] block">
-          SEU ESTILO.
+          NA LÉO NUNES
         </span>
       </span>
 
       {/* Line 2 with green accent and subtle sweep bar */}
       <span className="title-line-mask relative inline-block">
         <span className="title-line-inner title-line-delay-2 font-heading text-3xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-[#25C440] leading-[1.1] block">
-          NOSSA ASSINATURA.
+          VOCÊ SAI COM VISUAL ALINHADO
         </span>
         <span className="green-sweep-bar" aria-hidden="true" />
       </span>

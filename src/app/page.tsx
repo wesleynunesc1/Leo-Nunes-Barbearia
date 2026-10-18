@@ -79,10 +79,10 @@ export default function HomePage() {
               {/* Headline nítida com sombra cinematográfica para contraste perfeito sobre a imagem */}
               <h1 className="font-heading font-black text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-[62px] xl:text-[70px] tracking-tight uppercase leading-[0.98] drop-shadow-[0_2px_14px_rgba(0,0,0,0.85)]">
                 <span className="text-[#FFFFFF] block">
-                  SEU ESTILO.
+                  NA LÉO NUNES
                 </span>
                 <span className="text-[#25C440] block mt-1 sm:mt-1.5">
-                  NOSSA ASSINATURA.
+                  VOCÊ SAI COM VISUAL ALINHADO
                 </span>
               </h1>
 

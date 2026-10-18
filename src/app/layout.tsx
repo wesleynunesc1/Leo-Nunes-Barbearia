@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     canonical: "https://leonunesbarbearia.com.br/",
   },
   openGraph: {
-    title: "Léo Nunes Barbearia | Seu Estilo. Nossa Assinatura.",
+    title: "Léo Nunes Barbearia | Na Léo Nunes você sai com visual alinhado",
     description:
       "A barbearia referência em Pacajus - CE. Cortes de precisão, barboterapia e atendimento pontual. Agende online seu horário.",
     url: "https://leonunesbarbearia.com.br/",

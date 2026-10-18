@@ -25,6 +25,12 @@ export default function sitemap() {
       changeFrequency: "daily" as const,
       priority: 0.9,
     },
+    {
+      url: `${baseUrl}/contato`,
+      lastModified: buildDate,
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    },
     ...barberRoutes,
   ];
 }

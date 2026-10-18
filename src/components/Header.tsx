@@ -14,6 +14,7 @@ export function Header() {
     { href: "/#equipe", label: "Equipe" },
     { href: "/#experiencia", label: "Experiência" },
     { href: "/#localizacao", label: "Localização" },
+    { href: "/contato", label: "Contato" },
   ];
 
   useEffect(() => {

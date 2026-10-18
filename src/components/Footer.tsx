@@ -92,6 +92,11 @@ export function Footer() {
                   <ArrowRight className="w-3.5 h-3.5 text-[#25C440]" /> Como Chegar
                 </Link>
               </li>
+              <li>
+                <Link href="/contato" className="hover:text-[#25C440] transition-colors inline-flex items-center gap-1.5">
+                  <ArrowRight className="w-3.5 h-3.5 text-[#25C440]" /> Contato & Agendamento
+                </Link>
+              </li>
             </ul>
           </div>
 
