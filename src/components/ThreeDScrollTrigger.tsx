@@ -8,8 +8,8 @@ export function ThreeDScrollTrigger() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // Em mobile (< 768px) ou movimento reduzido, ativa imediatamente sem cálculos pesados de scroll
-    if (window.innerWidth < 768 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    // Se o usuário configurar o SO para movimento reduzido, ativa estático sem animação
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       document.querySelectorAll(".video").forEach((el) => {
         el.classList.add("video-ativoo");
       });

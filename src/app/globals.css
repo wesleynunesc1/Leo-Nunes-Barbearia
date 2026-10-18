@@ -638,16 +638,6 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   }
 }
 
-@media (max-width: 768px) {
-  .zeph-borda::before {
-    display: none !important;
-    animation: none !important;
-  }
-  .zeph-borda {
-    border: 1px solid rgba(37, 196, 64, 0.22) !important;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .zeph-borda::before {
     animation: none;
@@ -659,24 +649,17 @@ h1, h2, h3, h4, h5, h6, .font-heading {
    ========================================================================= */
 .video {
   transform-origin: bottom center;
-  transform: perspective(1000px) rotateX(20deg) !important; /* Inicialmente fechada com perspectiva */
+  transform: perspective(1000px) rotateX(20deg) translateZ(0) !important; /* Inicialmente fechada com perspectiva */
   transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), filter 0.65s ease;
+  backface-visibility: hidden;
   will-change: transform;
 }
 
 .video-ativoo {
   transform-origin: bottom center;
-  transform: perspective(1000px) rotateX(0deg) !important; /* Aberta/alinhada quando entra na viewport */
+  transform: perspective(1000px) rotateX(0deg) translateZ(0) !important; /* Aberta/alinhada quando entra na viewport */
   transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), filter 0.65s ease;
-}
-
-@media (max-width: 768px) {
-  .video,
-  .video-ativoo {
-    transform: none !important;
-    transition: none !important;
-    will-change: auto !important;
-  }
+  backface-visibility: hidden;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -694,7 +677,7 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   display: block;
   width: 100vw;
   height: 100vh;
-  opacity: 0.12;
+  opacity: 0.2;
   background-image: url('/images/dots-pattern.webp');
   overflow: hidden;
   position: fixed;
@@ -702,12 +685,9 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   left: 0;
   pointer-events: none;
   z-index: 50;
-}
-
-@media (max-width: 768px) {
-  .quadrado {
-    display: none !important; /* Desativa totalmente no mobile para 60fps fluido */
-  }
+  mix-blend-mode: plus-lighter;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 /* =========================================================================
    9. HEADER GLASSMORPHISM ON SCROLL
