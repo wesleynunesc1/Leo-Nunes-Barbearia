@@ -92,3 +92,16 @@ declare module 'next/navigation' {
   export function useSearchParams(): any;
   export function notFound(): never;
 }
+
+declare module 'next/server' {
+  export const NextResponse: any;
+  export const NextRequest: any;
+  export type NextMiddleware = any;
+}
+
+declare module 'next/server.js' {
+  export const NextResponse: any;
+  export const NextRequest: any;
+  export type NextMiddleware = any;
+}
+

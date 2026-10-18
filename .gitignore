@@ -43,3 +43,8 @@ next-env.d.ts
 # legacy backup files
 /legacy_backup/
 
+# reference files
+/Páginas de Ref/
+/Home.png
+/Home Mobile.png
+
