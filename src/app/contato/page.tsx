@@ -56,7 +56,7 @@ export default function ContatoPage() {
       {/* =========================================================================
           PRIMEIRA SEÇÃO: CONTATO & AGENDAMENTO
          ========================================================================= */}
-      <section className="relative pt-12 sm:pt-20 pb-20 sm:pb-32 overflow-hidden border-b border-[#1A251D]">
+      <section className="relative pt-24 sm:pt-32 pb-20 sm:pb-32 overflow-hidden border-b border-[#1A251D]">
         {/* Fundo Cinematográfico com Imagem Real e Máscara Gradiente */}
         <div className="absolute inset-0 z-0 pointer-events-none">
           <Image

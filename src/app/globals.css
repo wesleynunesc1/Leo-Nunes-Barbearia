@@ -684,5 +684,18 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   z-index: 50;
   mix-blend-mode: plus-lighter;
 }
+/* =========================================================================
+   9. HEADER GLASSMORPHISM ON SCROLL
+   ========================================================================= */
+.header-glass {
+  background-color: rgba(8, 11, 9, 0.82);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
 
-
+@supports not ((-webkit-backdrop-filter: blur(16px)) or (backdrop-filter: blur(16px))) {
+  .header-glass {
+    background-color: rgba(8, 11, 9, 0.96);
+  }
+}

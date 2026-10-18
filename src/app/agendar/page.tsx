@@ -19,7 +19,7 @@ export default function AgendarBarbeiroPage() {
   const barbers = getAllBarbers();
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8 space-y-6 sm:space-y-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-12 sm:pb-16 space-y-6 sm:space-y-12">
       {/* Breadcrumbs */}
       <Breadcrumbs items={[{ label: "Agendar Horário" }]} />
 

@@ -18,9 +18,19 @@ export function Header() {
   ];
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const isScrolled = window.scrollY > 45;
+          setScrolled((prev) => (prev !== isScrolled ? isScrolled : prev));
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
+
+    handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -38,10 +48,12 @@ export function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-[#080B09]/95 backdrop-blur-md border-b border-[#202A22] py-3 shadow-xl shadow-black/40"
-          : "bg-gradient-to-b from-[#080B09]/90 to-transparent py-4 sm:py-5"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-out ${
+        mobileMenuOpen
+          ? "bg-[#080B09] border-b border-white/[0.08] py-3.5 sm:py-4 shadow-2xl"
+          : scrolled
+          ? "header-glass py-3 sm:py-3.5 shadow-lg shadow-black/40"
+          : "bg-gradient-to-b from-black/50 via-black/15 to-transparent border-b border-transparent py-4 sm:py-5"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -127,7 +139,7 @@ export function Header() {
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="sm:hidden fixed inset-x-0 top-[56px] max-h-[calc(100vh-56px)] overflow-y-auto bg-[#080B09]/98 backdrop-blur-xl border-b border-[#202A22] px-5 pt-4 pb-8 space-y-4 shadow-2xl animate-in slide-in-from-top duration-200 z-50">
+        <div className="sm:hidden absolute inset-x-0 top-full max-h-[calc(100vh-100%)] overflow-y-auto bg-[#080B09] border-b border-white/[0.08] px-5 pt-4 pb-8 space-y-4 shadow-2xl animate-in slide-in-from-top duration-200 z-50">
           <div className="flex flex-col space-y-1">
             {navLinks.map((link) => (
               <Link

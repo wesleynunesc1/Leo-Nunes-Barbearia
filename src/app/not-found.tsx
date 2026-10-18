@@ -4,7 +4,7 @@ import { Scissors, ArrowLeft, Calendar } from "lucide-react";
 
 export default function NotFound() {
   return (
-    <div className="min-h-[70vh] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-16">
+    <div className="min-h-[70vh] flex items-center justify-center px-4 sm:px-6 lg:px-8 pt-28 pb-16">
       <div className="editorial-card rounded-2xl p-8 sm:p-12 max-w-lg w-full text-center space-y-6 border border-[#202A22]">
         <div className="w-16 h-16 rounded-2xl bg-[#142618] border border-[#25C440]/30 flex items-center justify-center text-[#25C440] mx-auto">
           <Scissors className="w-8 h-8" />

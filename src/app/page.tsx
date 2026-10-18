@@ -35,9 +35,9 @@ export default function HomePage() {
       <ThreeDScrollTrigger />
 
       {/* =========================================================================
-          HERO SECTION (Diminuída com tamanho desktop ajustado, sem excesso superior)
+          HERO SECTION (Header transparente no topo, texto reposicionado no mobile)
          ========================================================================= */}
-      <section className="relative min-h-[64vh] sm:min-h-[68vh] lg:min-h-[70vh] flex flex-col justify-between pt-16 sm:pt-18 lg:pt-20 pb-0 overflow-hidden bg-[#080B09]">
+      <section className="relative min-h-[82vh] xs:min-h-[86vh] sm:min-h-[68vh] lg:min-h-[70vh] flex flex-col justify-between pt-20 sm:pt-18 lg:pt-20 pb-0 overflow-hidden bg-[#080B09]">
         {/* Subtle Ambient Mouse Tracking Glow */}
         <PointerAura />
 
@@ -49,7 +49,7 @@ export default function HomePage() {
             fill
             priority
             className="object-cover object-right lg:object-[82%_center] brightness-[0.92] contrast-[1.05]"
-            sizes="100vw"
+            sizes="(min-width: 768px) 100vw, 1px"
           />
           {/* Gradiente escuro à esquerda para legibilidade máxima da headline */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#080B09] via-[#080B09]/75 to-transparent z-10" />
@@ -67,19 +67,19 @@ export default function HomePage() {
             fill
             priority
             className="object-cover object-top brightness-[1.0] contrast-[1.04]"
-            sizes="100vw"
+            sizes="(max-width: 767px) 100vw, 1px"
           />
-          {/* Suave vinheta superior para destacar header */}
-          <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#080B09]/85 via-[#080B09]/25 to-transparent z-10" />
+          {/* Suave vinheta superior para destacar header transparente */}
+          <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[#080B09]/60 via-[#080B09]/15 to-transparent z-10 pointer-events-none" />
           {/* Suave vinheta inferior para acomodar os textos mantendo a foto do corte visível */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#080B09] via-[#080B09]/70 via-40% to-transparent z-10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#080B09] via-[#080B09]/75 via-45% to-transparent z-10 pointer-events-none" />
         </div>
 
-        {/* Main Content Area (Left Column Content + Right Floating Tag - Reduzido 20% do espaço superior) */}
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-8 sm:pt-12 lg:pt-12 pb-4 sm:pb-6">
+        {/* Main Content Area (Left Column Content + Right Floating Tag) */}
+        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-6 sm:pt-12 lg:pt-12 pb-4 sm:pb-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-            {/* Left Content (Columns 1-8) */}
-            <div className="lg:col-span-8 space-y-3 sm:space-y-3.5 text-left">
+            {/* Left Content (Columns 1-8) - Reposicionado 75px mais para baixo no mobile */}
+            <div className="lg:col-span-8 space-y-3 sm:space-y-3.5 text-left pt-16 xs:pt-20 sm:pt-0">
               {/* Identificador Superior Limpo */}
               <div className="flex items-center gap-2.5">
                 <div className="w-6 sm:w-8 h-[2px] bg-[#25C440]" aria-hidden="true" />
