@@ -194,31 +194,29 @@ export default function HomePage() {
       <ModulesServicesSection />
 
       {/* =========================================================================
-          EQUIPE DE BARBEIROS (#equipe) - Tema Branco (White Luxury Theme)
+          EQUIPE DE BARBEIROS (#equipe) - Tema Escuro Oficial
          ========================================================================= */}
-      <section id="equipe" className="w-full bg-[#FFFFFF] text-[#080B09] py-16 sm:py-24 border-y border-[#E6ECE8] scroll-mt-28 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollReveal>
-            <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-[#1B8A31] bg-[#EAF7ED] border border-[#25C440]/30 shadow-sm mb-3 sm:mb-4">
-                EQUIPE DE ESPECIALISTAS
+      <section id="equipe" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-28">
+        <ScrollReveal>
+          <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-[#25C440] bg-[#121A14] border border-[#25C440]/30 shadow-[0_0_15px_rgba(37,196,64,0.1)] mb-3 sm:mb-4">
+              EQUIPE DE ESPECIALISTAS
+            </span>
+            <h2 className="font-heading text-2xl sm:text-5xl font-extrabold text-[#F5F7F3] tracking-tight leading-[1.1] mb-3 sm:mb-4">
+              Escolha seu{" "}
+              <span className="bg-gradient-to-r from-[#25C440] via-[#5BE376] to-[#FFFFFF] bg-clip-text text-transparent">
+                Barbeiro
               </span>
-              <h2 className="font-heading text-2xl sm:text-5xl font-extrabold text-[#080B09] tracking-tight leading-[1.1] mb-3 sm:mb-4">
-                Escolha seu{" "}
-                <span className="text-[#25C440]">
-                  Barbeiro
-                </span>
-              </h2>
-              <p className="text-xs sm:text-base text-[#57645B] leading-relaxed max-w-xl mx-auto font-medium">
-                Equipe qualificada com técnica apurada, respeito ao seu tempo e pontualidade rigorosa.
-                Selecione o profissional para visualizar sua agenda e serviços exclusivos.
-              </p>
-            </div>
-          </ScrollReveal>
+            </h2>
+            <p className="text-xs sm:text-base text-[#9BA59E] leading-relaxed max-w-xl mx-auto font-normal">
+              Equipe qualificada com técnica apurada, respeito ao seu tempo e pontualidade rigorosa.
+              Selecione o profissional para visualizar sua agenda e serviços exclusivos.
+            </p>
+          </div>
+        </ScrollReveal>
 
-          {/* Team Carousel (2 columns on mobile with touch elevation, overlapping deck on desktop) */}
-          <TeamCarousel barbers={barbers} />
-        </div>
+        {/* Team Carousel (2 colunas no mobile com efeito touch, deck sobreposto no desktop) */}
+        <TeamCarousel barbers={barbers} />
       </section>
 
       {/* =========================================================================
@@ -316,115 +314,117 @@ export default function HomePage() {
       </section>
 
       {/* =========================================================================
-          EXPERIÊNCIA & ESPAÇO (#experiencia) - Editorial Asymmetric Composition
+          EXPERIÊNCIA & ESPAÇO (#experiencia) - Tema Branco (White Luxury Theme)
          ========================================================================= */}
-      <section id="experiencia" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-28">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-          {/* Photos Composition with reveal from left */}
-          <ScrollReveal direction="left">
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
-              <div className="space-y-3 sm:space-y-4">
-                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-[#202E24] group">
-                  <Image
-                    src="/images/gallery-1.png"
-                    alt="Atendimento e corte de cabelo na Léo Nunes Barbearia"
-                    fill
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                    sizes="(max-width: 1024px) 50vw, 25vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#080B09]/80 via-transparent to-transparent opacity-60" />
+      <section id="experiencia" className="w-full bg-[#FFFFFF] text-[#080B09] py-16 sm:py-28 border-y border-[#E2E8E4] scroll-mt-28 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+            {/* Photos Composition with reveal from left */}
+            <ScrollReveal direction="left">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-[#E2E8E4] shadow-md group">
+                    <Image
+                      src="/images/gallery-1.png"
+                      alt="Atendimento e corte de cabelo na Léo Nunes Barbearia"
+                      fill
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                      sizes="(max-width: 1024px) 50vw, 25vw"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60" />
+                  </div>
+                  <div className="p-4 rounded-2xl bg-[#F6F8F6] border border-[#E2E8E4] text-center shadow-sm">
+                    <p className="font-heading text-2xl font-black text-[#25C440]">100%</p>
+                    <p className="text-[11px] text-[#57645B] uppercase tracking-wider font-semibold">
+                      Foco na Pontualidade
+                    </p>
+                  </div>
                 </div>
-                <div className="p-4 rounded-2xl bg-gradient-to-b from-[#0F1611] to-[#0A0E0B] border border-[#1D2B20] text-center shadow-sm">
-                  <p className="font-heading text-2xl font-black text-[#25C440]">100%</p>
-                  <p className="text-[11px] text-[#9BA59E] uppercase tracking-wider font-semibold">
-                    Foco na Pontualidade
-                  </p>
+
+                <div className="space-y-3 sm:space-y-4 pt-6 sm:pt-8">
+                  <div className="p-4 rounded-2xl bg-[#F6F8F6] border border-[#E2E8E4] text-center shadow-sm">
+                    <p className="font-heading text-2xl font-black text-[#25C440]">+5.000</p>
+                    <p className="text-[11px] text-[#57645B] uppercase tracking-wider font-semibold">
+                      Clientes Atendidos
+                    </p>
+                  </div>
+                  <div className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-[#E2E8E4] shadow-md group">
+                    <Image
+                      src="/images/gallery-2.png"
+                      alt="Espaço climatizado e confortável da barbearia"
+                      fill
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                      sizes="(max-width: 1024px) 50vw, 25vw"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60" />
+                  </div>
                 </div>
               </div>
+            </ScrollReveal>
 
-              <div className="space-y-3 sm:space-y-4 pt-6 sm:pt-8">
-                <div className="p-4 rounded-2xl bg-gradient-to-b from-[#0F1611] to-[#0A0E0B] border border-[#1D2B20] text-center shadow-sm">
-                  <p className="font-heading text-2xl font-black text-[#25C440]">+5.000</p>
-                  <p className="text-[11px] text-[#9BA59E] uppercase tracking-wider font-semibold">
-                    Clientes Atendidos
-                  </p>
-                </div>
-                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-[#202E24] group">
-                  <Image
-                    src="/images/gallery-2.png"
-                    alt="Espaço climatizado e confortável da barbearia"
-                    fill
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                    sizes="(max-width: 1024px) 50vw, 25vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#080B09]/80 via-transparent to-transparent opacity-60" />
-                </div>
-              </div>
-            </div>
-          </ScrollReveal>
-
-          {/* Narrative with reveal from right */}
-          <ScrollReveal direction="right">
-            <div className="space-y-5 sm:space-y-6">
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-[#25C440] bg-[#121A14] border border-[#25C440]/30 shadow-[0_0_15px_rgba(37,196,64,0.1)] mb-3 sm:mb-4">
-                ESPAÇO & TRADIÇÃO
-              </span>
-
-              <h2 className="font-heading text-2xl sm:text-4xl md:text-5xl font-extrabold text-[#F5F7F3] leading-[1.12] tracking-tight mb-3 sm:mb-4">
-                Mais do que um corte,{" "}
-                <span className="bg-gradient-to-r from-[#25C440] via-[#5BE376] to-[#FFFFFF] bg-clip-text text-transparent">
-                  o seu momento de confiança.
+            {/* Narrative with reveal from right */}
+            <ScrollReveal direction="right">
+              <div className="space-y-5 sm:space-y-6">
+                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-[#1B8A31] bg-[#EAF7ED] border border-[#25C440]/30 shadow-sm mb-3 sm:mb-4">
+                  ESPAÇO & TRADIÇÃO
                 </span>
-              </h2>
 
-              <p className="text-xs sm:text-base text-[#9BA59E] leading-relaxed">
-                Na Léo Nunes Barbearia em Pacajus, aliamos ambiente climatizado, rigor em higiene e biossegurança, e domínio técnico apurado em tesoura e máquina.
-              </p>
+                <h2 className="font-heading text-2xl sm:text-4xl md:text-5xl font-extrabold text-[#080B09] leading-[1.12] tracking-tight mb-3 sm:mb-4">
+                  Mais do que um corte,{" "}
+                  <span className="text-[#25C440]">
+                    o seu momento de confiança.
+                  </span>
+                </h2>
 
-              <div className="space-y-3 pt-1">
-                <div className="flex items-start gap-3 p-3 rounded-xl bg-[#0F1611]/60 border border-[#1D2B20]/60">
-                  <CheckCircle2 className="w-5 h-5 text-[#25C440] shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-bold text-[#F5F7F3]">Respeito rigoroso ao seu tempo</p>
-                    <p className="text-xs text-[#9BA59E]">
-                      Agendamento com hora marcada para você não perder horas aguardando em filas.
-                    </p>
+                <p className="text-xs sm:text-base text-[#57645B] leading-relaxed">
+                  Na Léo Nunes Barbearia em Pacajus, aliamos ambiente climatizado, rigor em higiene e biossegurança, e domínio técnico apurado em tesoura e máquina.
+                </p>
+
+                <div className="space-y-3 pt-1">
+                  <div className="flex items-start gap-3 p-3.5 rounded-xl bg-[#F6F8F6] border border-[#E2E8E4] shadow-sm">
+                    <CheckCircle2 className="w-5 h-5 text-[#25C440] shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-bold text-[#080B09]">Respeito rigoroso ao seu tempo</p>
+                      <p className="text-xs text-[#57645B]">
+                        Agendamento com hora marcada para você não perder horas aguardando em filas.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3.5 rounded-xl bg-[#F6F8F6] border border-[#E2E8E4] shadow-sm">
+                    <CheckCircle2 className="w-5 h-5 text-[#25C440] shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-bold text-[#080B09]">Visagismo personalizado</p>
+                      <p className="text-xs text-[#57645B]">
+                        Análise do seu formato de rosto para indicar o corte e desenho de barba ideais.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3.5 rounded-xl bg-[#F6F8F6] border border-[#E2E8E4] shadow-sm">
+                    <CheckCircle2 className="w-5 h-5 text-[#25C440] shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-bold text-[#080B09]">Ambiente limpo, climatizado e café expresso</p>
+                      <p className="text-xs text-[#57645B]">
+                        100% de lâminas descartáveis, toalhas higienizadas e ferramentas esterilizadas.
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-3 rounded-xl bg-[#0F1611]/60 border border-[#1D2B20]/60">
-                  <CheckCircle2 className="w-5 h-5 text-[#25C440] shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-bold text-[#F5F7F3]">Visagismo personalizado</p>
-                    <p className="text-xs text-[#9BA59E]">
-                      Análise do seu formato de rosto para indicar o corte e desenho de barba ideais.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 p-3 rounded-xl bg-[#0F1611]/60 border border-[#1D2B20]/60">
-                  <CheckCircle2 className="w-5 h-5 text-[#25C440] shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-bold text-[#F5F7F3]">Ambiente limpo, climatizado e café expresso</p>
-                    <p className="text-xs text-[#9BA59E]">
-                      100% de lâminas descartáveis, toalhas higienizadas e ferramentas esterilizadas.
-                    </p>
-                  </div>
+                <div className="pt-2">
+                  <Link
+                    href="/agendar"
+                    className="btn-shimmer w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-sm px-8 py-4 rounded-xl shadow-[0_0_20px_rgba(37,196,64,0.3)] transition-all"
+                  >
+                    <Calendar className="w-4 h-4 stroke-[2.2]" />
+                    <span>Agendar com um Barbeiro</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
                 </div>
               </div>
-
-              <div className="pt-2">
-                <Link
-                  href="/agendar"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-bold text-sm px-7 py-3.5 rounded-xl shadow-[0_0_20px_rgba(37,196,64,0.3)] transition-all"
-                >
-                  <Calendar className="w-4 h-4 stroke-[2.2]" />
-                  <span>Agendar com um Barbeiro</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-            </div>
-          </ScrollReveal>
+            </ScrollReveal>
+          </div>
         </div>
       </section>
 
