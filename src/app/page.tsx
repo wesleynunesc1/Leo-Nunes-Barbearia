@@ -138,55 +138,132 @@ export default function HomePage() {
         </div>
 
         {/* =====================================================================
-            3-COLUMN FEATURE STRIP (Compacta e responsiva)
+            INFINITE CONTINUOUS MARQUEE TICKER (Carrossel Contínuo de Destaques)
            ===================================================================== */}
-        <div className="relative z-20 w-full border-t border-[#1D2720]/90 bg-[#080B09]/90 backdrop-blur-md">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-0 divide-y md:divide-y-0 md:divide-x divide-[#1D2720]/80">
-              {/* Feature 1 */}
-              <div className="flex items-center gap-3.5 py-1 md:py-0 md:pr-6">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#121A14] flex items-center justify-center text-[#25C440] shrink-0 border border-[#25C440]/20">
-                  <Clock className="w-5 h-5 stroke-[1.8]" />
-                </div>
-                <div>
-                  <p className="font-heading font-bold text-xs sm:text-sm md:text-base text-[#FFFFFF] leading-tight">
-                    Atendimento com hora marcada
-                  </p>
-                  <p className="text-[11px] sm:text-xs text-[#8E9891] mt-0.5 font-light">
-                    Seu tempo é valioso.
-                  </p>
-                </div>
-              </div>
+        <div className="relative z-20 w-full border-t border-[#1D2720]/90 bg-[#080B09]/95 backdrop-blur-md py-3 overflow-hidden">
+          <div className="marquee-container">
+            <div className="marquee-track">
+              {/* Set 1 */}
+              {[
+                {
+                  icon: Clock,
+                  title: "Atendimento com hora marcada",
+                  subtitle: "Seu tempo é valioso",
+                },
+                {
+                  icon: Users,
+                  title: "4 barbeiros especialistas",
+                  subtitle: "Experiência e técnica",
+                },
+                {
+                  icon: Scissors,
+                  title: "Produtos profissionais",
+                  subtitle: "Resultado superior",
+                },
+                {
+                  icon: CheckCircle2,
+                  title: "Visagismo exclusivo",
+                  subtitle: "Alinhado ao seu rosto",
+                },
+                {
+                  icon: Flame,
+                  title: "Barboterapia completa",
+                  subtitle: "Toalha quente & relaxamento",
+                },
+                {
+                  icon: MapPin,
+                  title: "Pacajus — Ceará",
+                  subtitle: "Referência desde 2015",
+                },
+                {
+                  icon: ShieldCheck,
+                  title: "100% Lâminas descartáveis",
+                  subtitle: "Biossegurança total",
+                },
+                {
+                  icon: Calendar,
+                  title: "Agendamento online 24h",
+                  subtitle: "Sem filas de espera",
+                },
+              ].map((item, idx) => {
+                const IconComp = item.icon;
+                return (
+                  <div key={`m1-${idx}`} className="marquee-item group cursor-default">
+                    <div className="w-8 h-8 rounded-lg bg-[#142016] text-[#25C440] border border-[#25C440]/30 flex items-center justify-center shrink-0 group-hover:bg-[#25C440] group-hover:text-[#080B09] transition-colors">
+                      <IconComp className="w-4 h-4 stroke-[2]" />
+                    </div>
+                    <div className="text-left">
+                      <p className="font-heading font-bold text-xs sm:text-sm text-[#FFFFFF] group-hover:text-[#25C440] transition-colors leading-tight">
+                        {item.title}
+                      </p>
+                      <p className="text-[10px] sm:text-[11px] text-[#8E9B91] font-light leading-tight mt-0.5">
+                        {item.subtitle}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
 
-              {/* Feature 2 */}
-              <div className="flex items-center gap-3.5 py-1 md:py-0 md:px-6">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#121A14] flex items-center justify-center text-[#25C440] shrink-0 border border-[#25C440]/20">
-                  <Users className="w-5 h-5 stroke-[1.8]" />
-                </div>
-                <div>
-                  <p className="font-heading font-bold text-xs sm:text-sm md:text-base text-[#FFFFFF] leading-tight">
-                    4 barbeiros especialistas
-                  </p>
-                  <p className="text-[11px] sm:text-xs text-[#8E9891] mt-0.5 font-light">
-                    Experiência e técnica.
-                  </p>
-                </div>
-              </div>
-
-              {/* Feature 3 */}
-              <div className="flex items-center gap-3.5 py-1 md:py-0 md:pl-6">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#121A14] flex items-center justify-center text-[#25C440] shrink-0 border border-[#25C440]/20">
-                  <Scissors className="w-5 h-5 stroke-[1.8]" />
-                </div>
-                <div>
-                  <p className="font-heading font-bold text-xs sm:text-sm md:text-base text-[#FFFFFF] leading-tight">
-                    Produtos profissionais
-                  </p>
-                  <p className="text-[11px] sm:text-xs text-[#8E9891] mt-0.5 font-light">
-                    Resultado superior.
-                  </p>
-                </div>
-              </div>
+              {/* Set 2 (Duplicado para loop infinito sem emenda) */}
+              {[
+                {
+                  icon: Clock,
+                  title: "Atendimento com hora marcada",
+                  subtitle: "Seu tempo é valioso",
+                },
+                {
+                  icon: Users,
+                  title: "4 barbeiros especialistas",
+                  subtitle: "Experiência e técnica",
+                },
+                {
+                  icon: Scissors,
+                  title: "Produtos profissionais",
+                  subtitle: "Resultado superior",
+                },
+                {
+                  icon: CheckCircle2,
+                  title: "Visagismo exclusivo",
+                  subtitle: "Alinhado ao seu rosto",
+                },
+                {
+                  icon: Flame,
+                  title: "Barboterapia completa",
+                  subtitle: "Toalha quente & relaxamento",
+                },
+                {
+                  icon: MapPin,
+                  title: "Pacajus — Ceará",
+                  subtitle: "Referência desde 2015",
+                },
+                {
+                  icon: ShieldCheck,
+                  title: "100% Lâminas descartáveis",
+                  subtitle: "Biossegurança total",
+                },
+                {
+                  icon: Calendar,
+                  title: "Agendamento online 24h",
+                  subtitle: "Sem filas de espera",
+                },
+              ].map((item, idx) => {
+                const IconComp = item.icon;
+                return (
+                  <div key={`m2-${idx}`} className="marquee-item group cursor-default" aria-hidden="true">
+                    <div className="w-8 h-8 rounded-lg bg-[#142016] text-[#25C440] border border-[#25C440]/30 flex items-center justify-center shrink-0 group-hover:bg-[#25C440] group-hover:text-[#080B09] transition-colors">
+                      <IconComp className="w-4 h-4 stroke-[2]" />
+                    </div>
+                    <div className="text-left">
+                      <p className="font-heading font-bold text-xs sm:text-sm text-[#FFFFFF] group-hover:text-[#25C440] transition-colors leading-tight">
+                        {item.title}
+                      </p>
+                      <p className="text-[10px] sm:text-[11px] text-[#8E9B91] font-light leading-tight mt-0.5">
+                        {item.subtitle}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

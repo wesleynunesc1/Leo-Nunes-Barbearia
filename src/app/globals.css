@@ -493,3 +493,68 @@ h1, h2, h3, h4, h5, h6, .font-heading {
     width: 0%;
   }
 }
+
+/* =========================================================================
+   5. CARROSSEL INFINITO DE DESTAQUES (Continuous Marquee Ticker)
+   ========================================================================= */
+.marquee-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 12px 0;
+  mask-image: linear-gradient(to right, transparent, black 3%, black 97%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 3%, black 97%, transparent);
+}
+
+.marquee-track {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 16px;
+  width: max-content;
+  animation: carrossel 38s linear infinite;
+  will-change: transform;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+.marquee-item {
+  border-radius: 12px;
+  border: 1.5px solid rgba(37, 196, 64, 0.22);
+  background: #0E1611;
+  padding: 9px 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  white-space: nowrap;
+  transition: 0.4s ease all;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.marquee-item:hover {
+  background: #17261B;
+  border-color: rgba(37, 196, 64, 0.55);
+  box-shadow: 0 6px 20px rgba(37, 196, 64, 0.2);
+  transform: translateY(-2px);
+  transition: 0.4s ease all;
+}
+
+@keyframes carrossel {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@-webkit-keyframes carrossel {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
