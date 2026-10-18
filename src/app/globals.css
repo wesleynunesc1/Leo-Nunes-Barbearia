@@ -260,5 +260,91 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   }
 }
 
+/* =========================================================================
+   EFEITOS INTERATIVOS ESPECIAIS (Baseados nos modelos do usuário)
+   ========================================================================= */
 
+/* 1. Botão com Faixa de Brilho Deslizante (Inspirado no modelo botao mvm) */
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.35s ease,
+              box-shadow 0.35s ease;
+}
 
+.btn-shimmer::before {
+  content: "";
+  height: 100%;
+  width: 90px;
+  position: absolute;
+  top: 0;
+  left: -100px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 100%
+  );
+  transform: skewX(-25deg);
+  pointer-events: none;
+  animation: btnSweep 3.2s ease-in-out infinite;
+  z-index: 2;
+}
+
+@keyframes btnSweep {
+  0% {
+    left: -100px;
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.7;
+  }
+  45% {
+    left: 130%;
+    opacity: 0;
+  }
+  100% {
+    left: 130%;
+    opacity: 0;
+  }
+}
+
+.btn-shimmer:hover {
+  filter: brightness(1.12);
+  transform: scale(1.02);
+}
+
+.btn-shimmer:active {
+  transform: scale(0.97);
+}
+
+/* 2. Efeito Foco & Desfoque de Vizinhos (Card Focus & Siblings Blur) */
+@media (min-width: 768px) {
+  .focus-cards-group {
+    transition: all 0.5s ease;
+  }
+
+  .focus-cards-group:hover .focus-card {
+    filter: blur(2px);
+    transform: scale(0.985);
+    opacity: 0.65;
+  }
+
+  .focus-card {
+    transform: scale(1);
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                filter 0.45s ease,
+                opacity 0.45s ease,
+                box-shadow 0.45s ease,
+                border-color 0.45s ease !important;
+  }
+
+  .focus-card:hover {
+    transform: scale(1.025) !important;
+    filter: blur(0px) !important;
+    opacity: 1 !important;
+    box-shadow: 0 10px 45px rgba(37, 196, 64, 0.22) !important;
+    border-color: rgba(37, 196, 64, 0.65) !important;
+  }
+}

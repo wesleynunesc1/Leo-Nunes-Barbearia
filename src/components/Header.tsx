@@ -8,6 +8,38 @@ import { Menu, X, Calendar, MapPin, Phone } from "lucide-react";
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [activeItem, setActiveItem] = useState(0);
+  const [pillProps, setPillProps] = useState({ left: 0, width: 0, opacity: 0 });
+
+  const navRef = React.useRef<HTMLElement>(null);
+  const linksRef = React.useRef<(HTMLSpanElement | null)[]>([]);
+
+  const navLinks = [
+    { href: "/#inicio", label: "Início" },
+    { href: "/#servicos", label: "Serviços" },
+    { href: "/#equipe", label: "Equipe" },
+    { href: "/#experiencia", label: "Experiência" },
+    { href: "/#localizacao", label: "Localização" },
+  ];
+
+  const moveHighlight = (index: number) => {
+    const el = linksRef.current[index];
+    const nav = navRef.current;
+    if (el && nav) {
+      const elRect = el.getBoundingClientRect();
+      const navRect = nav.getBoundingClientRect();
+      setPillProps({
+        left: elRect.left - navRect.left,
+        width: elRect.width,
+        opacity: 1,
+      });
+    }
+  };
+
+  useEffect(() => {
+    const t = setTimeout(() => moveHighlight(activeItem), 100);
+    return () => clearTimeout(t);
+  }, [activeItem]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,20 +60,12 @@ export function Header() {
     };
   }, [mobileMenuOpen]);
 
-  const navLinks = [
-    { href: "/#inicio", label: "Início" },
-    { href: "/#servicos", label: "Serviços" },
-    { href: "/#equipe", label: "Equipe" },
-    { href: "/#experiencia", label: "Experiência" },
-    { href: "/#localizacao", label: "Localização" },
-  ];
-
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
           ? "bg-[#080B09]/95 backdrop-blur-md border-b border-[#202A22] py-3 shadow-xl shadow-black/40"
-          : "bg-gradient-to-b from-[#080B09]/90 to-transparent py-5"
+          : "bg-gradient-to-b from-[#080B09]/90 to-transparent py-4 sm:py-5"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -70,31 +94,53 @@ export function Header() {
             </div>
           </div>
 
-          {/* Desktop Navigation with Active Indicator */}
-          <nav className="hidden lg:flex items-center gap-8" aria-label="Navegação Principal">
+          {/* Desktop Navigation with Sliding Magnetic Pill Highlight */}
+          <nav
+            ref={navRef}
+            onMouseLeave={() => moveHighlight(activeItem)}
+            className="hidden lg:flex items-center relative rounded-full p-1 bg-white/[0.04] border border-white/[0.08] backdrop-blur-md"
+            aria-label="Navegação Principal"
+          >
+            {/* Sliding Highlight Pill */}
+            <span
+              className="pointer-events-none absolute h-[32px] rounded-full bg-white/[0.12] border border-white/[0.15] shadow-[0_0_15px_rgba(37,196,64,0.15)] transition-all duration-300 ease-out z-0"
+              style={{
+                transform: `translateX(${pillProps.left}px)`,
+                width: `${pillProps.width}px`,
+                opacity: pillProps.opacity,
+              }}
+            />
+
             {navLinks.map((link, index) => {
-              const isFirst = index === 0;
+              const isActive = activeItem === index;
               return (
-                <Link
+                <span
                   key={link.href}
-                  href={link.href}
-                  className={`text-sm font-medium transition-colors relative py-1.5 ${
-                    isFirst
-                      ? "text-[#FFFFFF] font-semibold after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-[#25C440] after:rounded-full"
-                      : "text-[#A6AEA8] hover:text-[#FFFFFF] after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-[#25C440] hover:after:w-full after:transition-all after:duration-300"
-                  }`}
+                  ref={(el: HTMLSpanElement | null) => {
+                    linksRef.current[index] = el;
+                  }}
+                  className="inline-block relative z-10"
                 >
-                  {link.label}
-                </Link>
+                  <Link
+                    href={link.href}
+                    onMouseEnter={() => moveHighlight(index)}
+                    onClick={() => setActiveItem(index)}
+                    className={`text-xs font-semibold px-4 py-1.5 rounded-full transition-colors inline-block ${
+                      isActive ? "text-[#FFFFFF]" : "text-[#A6AEA8] hover:text-[#FFFFFF]"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                </span>
               );
             })}
           </nav>
 
-          {/* Desktop CTA */}
+          {/* Desktop CTA with Shimmer Beam */}
           <div className="hidden sm:flex items-center gap-4">
             <Link
               href="/agendar"
-              className="inline-flex items-center gap-2 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-sm px-5 py-2.5 rounded-xl shadow-[0_0_20px_rgba(37,196,64,0.35)] transition-all duration-300 hover:scale-[1.02] active:scale-95"
+              className="btn-shimmer inline-flex items-center gap-2 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-sm px-5 py-2.5 rounded-xl shadow-[0_0_20px_rgba(37,196,64,0.35)] transition-all duration-300 hover:scale-[1.02] active:scale-95"
               id="header-cta-agendar"
             >
               <Calendar className="w-4 h-4 shrink-0" />

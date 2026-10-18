@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { PageTitleChanger } from "@/components/PageTitleChanger";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://leonunesbarbearia.com.br"),
@@ -123,6 +124,7 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-[#080B09] text-[#F5F7F3] antialiased flex flex-col min-h-screen">
+        <PageTitleChanger />
         <Header />
         <main className="flex-1 pt-20">{children}</main>
         <Footer />

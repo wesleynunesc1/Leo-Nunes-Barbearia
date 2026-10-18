@@ -128,15 +128,15 @@ export function ModulesServicesSection() {
         </ScrollReveal>
 
         {/* =========================================================================
-            CONTAINER: Grid de Serviços (Largura: 1220px)
+            CONTAINER: Grid de Serviços (Largura: 1220px) com Efeito Foco Interativo
            ========================================================================= */}
         <div className="max-w-[1220px] mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 focus-cards-group">
             {SERVICE_MODULES.map((module, idx) => {
               const IconComp = module.icon;
               return (
                 <ScrollReveal key={module.id} delay={idx * 80}>
-                  <div className="group relative h-full flex flex-col justify-between p-6 sm:p-7 rounded-2xl bg-gradient-to-b from-[#0F1611]/90 to-[#0A0E0B]/95 border border-[#1D2B20] hover:border-[#25C440]/60 transition-all duration-300 hover:shadow-[0_10px_35px_rgba(37,196,64,0.12)] hover:-translate-y-1">
+                  <div className="focus-card group relative h-full flex flex-col justify-between p-6 sm:p-7 rounded-2xl bg-gradient-to-b from-[#0F1611]/90 to-[#0A0E0B]/95 border border-[#1D2B20] hover:border-[#25C440]/60 transition-all duration-300 hover:shadow-[0_10px_35px_rgba(37,196,64,0.12)]">
                     {/* Glowing Top Edge Accent on hover */}
                     <div className="absolute inset-x-6 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#25C440]/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
@@ -212,7 +212,7 @@ export function ModulesServicesSection() {
 
               <Link
                 href="/agendar"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-sm px-7 py-3.5 rounded-xl shadow-[0_0_20px_rgba(37,196,64,0.35)] hover:shadow-[0_0_30px_rgba(37,196,64,0.5)] transition-all duration-300 shrink-0 group active:scale-95"
+                className="btn-shimmer w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-sm px-7 py-3.5 rounded-xl shadow-[0_0_20px_rgba(37,196,64,0.35)] hover:shadow-[0_0_30px_rgba(37,196,64,0.5)] transition-all duration-300 shrink-0 group active:scale-95"
               >
                 <Calendar className="w-4 h-4 stroke-[2.2]" />
                 <span>Escolher Barbeiro</span>

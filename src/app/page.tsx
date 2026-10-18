@@ -98,7 +98,7 @@ export default function HomePage() {
                 <Link
                   href="/agendar"
                   id="hero-cta-agendar"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-sm sm:text-base px-7 py-3.5 sm:py-4 rounded-xl shadow-[0_0_25px_rgba(37,196,64,0.35)] hover:shadow-[0_0_35px_rgba(37,196,64,0.5)] transition-all duration-300 transform active:scale-95 group"
+                  className="btn-shimmer w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-sm sm:text-base px-7 py-3.5 sm:py-4 rounded-xl shadow-[0_0_25px_rgba(37,196,64,0.35)] hover:shadow-[0_0_35px_rgba(37,196,64,0.5)] transition-all duration-300 transform active:scale-95 group"
                 >
                   <Calendar className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 stroke-[2.2]" />
                   <span>Agendar meu horário</span>
@@ -304,7 +304,7 @@ export default function HomePage() {
           <div className="text-center pt-10 sm:pt-14">
             <Link
               href="/agendar"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-sm sm:text-base px-8 py-4 rounded-xl shadow-[0_0_20px_rgba(37,196,64,0.35)] hover:shadow-[0_0_30px_rgba(37,196,64,0.5)] transition-all duration-300 transform active:scale-95"
+              className="btn-shimmer w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-sm sm:text-base px-8 py-4 rounded-xl shadow-[0_0_20px_rgba(37,196,64,0.35)] hover:shadow-[0_0_30px_rgba(37,196,64,0.5)] transition-all duration-300 transform active:scale-95"
             >
               <Calendar className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 stroke-[2.2]" />
               <span>Iniciar Meu Agendamento Agora</span>
