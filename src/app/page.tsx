@@ -405,16 +405,19 @@ export default function HomePage() {
       </section>
 
       {/* =========================================================================
-          EXPERIÊNCIA & ESPAÇO (#experiencia) - Tema Branco (White Luxury Theme)
+          EXPERIÊNCIA & ESPAÇO (#experiencia) - Tema Escuro Oficial (Dark Luxury Theme)
          ========================================================================= */}
-      <section id="experiencia" className="w-full bg-[#FFFFFF] text-[#080B09] py-16 sm:py-28 border-y border-[#E2E8E4] scroll-mt-28 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="experiencia" className="w-full bg-[#080B09] text-[#FFFFFF] py-16 sm:py-28 border-y border-[#18241B] scroll-mt-28 relative overflow-hidden">
+        {/* Subtle Ambient Glow */}
+        <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[500px] h-[350px] bg-[#25C440]/[0.03] blur-[140px] pointer-events-none rounded-full" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
             {/* Photos Composition with reveal from left + Efeito 3D (.video) */}
             <ScrollReveal direction="left">
               <div className="video grid grid-cols-2 gap-3 sm:gap-4">
                 <div className="space-y-3 sm:space-y-4">
-                  <div className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-[#E2E8E4] shadow-md group">
+                  <div className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-[#202E23] shadow-md group">
                     <Image
                       src="/images/gallery-1.png"
                       alt="Atendimento e corte de cabelo na Léo Nunes Barbearia"
@@ -422,24 +425,24 @@ export default function HomePage() {
                       className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                       sizes="(max-width: 1024px) 50vw, 25vw"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-70" />
                   </div>
-                  <div className="p-4 rounded-2xl bg-[#F6F8F6] border border-[#E2E8E4] text-center shadow-sm">
+                  <div className="p-4 rounded-2xl bg-[#0E1510] border border-[#202E23] text-center shadow-sm">
                     <p className="font-heading text-2xl font-black text-[#25C440]">100%</p>
-                    <p className="text-[11px] text-[#57645B] uppercase tracking-wider font-semibold">
+                    <p className="text-[11px] text-[#8E9B91] uppercase tracking-wider font-semibold">
                       Foco na Pontualidade
                     </p>
                   </div>
                 </div>
 
                 <div className="space-y-3 sm:space-y-4 pt-6 sm:pt-8">
-                  <div className="p-4 rounded-2xl bg-[#F6F8F6] border border-[#E2E8E4] text-center shadow-sm">
+                  <div className="p-4 rounded-2xl bg-[#0E1510] border border-[#202E23] text-center shadow-sm">
                     <p className="font-heading text-2xl font-black text-[#25C440]">+5.000</p>
-                    <p className="text-[11px] text-[#57645B] uppercase tracking-wider font-semibold">
+                    <p className="text-[11px] text-[#8E9B91] uppercase tracking-wider font-semibold">
                       Clientes Atendidos
                     </p>
                   </div>
-                  <div className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-[#E2E8E4] shadow-md group">
+                  <div className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-[#202E23] shadow-md group">
                     <Image
                       src="/images/gallery-2.png"
                       alt="Espaço climatizado e confortável da barbearia"
@@ -447,7 +450,7 @@ export default function HomePage() {
                       className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                       sizes="(max-width: 1024px) 50vw, 25vw"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-70" />
                   </div>
                 </div>
               </div>
@@ -456,47 +459,47 @@ export default function HomePage() {
             {/* Narrative with reveal from right */}
             <ScrollReveal direction="right">
               <div className="space-y-5 sm:space-y-6">
-                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-[#1B8A31] bg-[#EAF7ED] border border-[#25C440]/30 shadow-sm mb-3 sm:mb-4">
+                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-[#25C440] bg-[#121A14] border border-[#25C440]/30 shadow-[0_0_15px_rgba(37,196,64,0.1)] mb-3 sm:mb-4">
                   ESPAÇO & TRADIÇÃO
                 </span>
 
-                <h2 className="font-heading text-2xl sm:text-4xl md:text-5xl font-extrabold text-[#080B09] leading-[1.12] tracking-tight mb-3 sm:mb-4">
+                <h2 className="font-heading text-2xl sm:text-4xl md:text-5xl font-extrabold text-[#FFFFFF] leading-[1.12] tracking-tight mb-3 sm:mb-4">
                   Mais do que um corte,{" "}
                   <span className="text-[#25C440]">
                     o seu momento de confiança.
                   </span>
                 </h2>
 
-                <p className="text-xs sm:text-base text-[#57645B] leading-relaxed">
+                <p className="text-xs sm:text-base text-[#9EA9A1] leading-relaxed">
                   Na Léo Nunes Barbearia em Pacajus, aliamos ambiente climatizado, rigor em higiene e biossegurança, e domínio técnico apurado em tesoura e máquina.
                 </p>
 
                 <div className="space-y-3 pt-1">
-                  <div className="flex items-start gap-3 p-3.5 rounded-xl bg-[#F6F8F6] border border-[#E2E8E4] shadow-sm">
+                  <div className="flex items-start gap-3 p-3.5 rounded-xl bg-[#0E1510] border border-[#202E23] shadow-sm">
                     <CheckCircle2 className="w-5 h-5 text-[#25C440] shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-sm font-bold text-[#080B09]">Respeito rigoroso ao seu tempo</p>
-                      <p className="text-xs text-[#57645B]">
+                      <p className="text-sm font-bold text-[#FFFFFF]">Respeito rigoroso ao seu tempo</p>
+                      <p className="text-xs text-[#8E9B91]">
                         Agendamento com hora marcada para você não perder horas aguardando em filas.
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3 p-3.5 rounded-xl bg-[#F6F8F6] border border-[#E2E8E4] shadow-sm">
+                  <div className="flex items-start gap-3 p-3.5 rounded-xl bg-[#0E1510] border border-[#202E23] shadow-sm">
                     <CheckCircle2 className="w-5 h-5 text-[#25C440] shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-sm font-bold text-[#080B09]">Visagismo personalizado</p>
-                      <p className="text-xs text-[#57645B]">
+                      <p className="text-sm font-bold text-[#FFFFFF]">Visagismo personalizado</p>
+                      <p className="text-xs text-[#8E9B91]">
                         Análise do seu formato de rosto para indicar o corte e desenho de barba ideais.
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3 p-3.5 rounded-xl bg-[#F6F8F6] border border-[#E2E8E4] shadow-sm">
+                  <div className="flex items-start gap-3 p-3.5 rounded-xl bg-[#0E1510] border border-[#202E23] shadow-sm">
                     <CheckCircle2 className="w-5 h-5 text-[#25C440] shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-sm font-bold text-[#080B09]">Ambiente limpo, climatizado e café expresso</p>
-                      <p className="text-xs text-[#57645B]">
+                      <p className="text-sm font-bold text-[#FFFFFF]">Ambiente limpo, climatizado e café expresso</p>
+                      <p className="text-xs text-[#8E9B91]">
                         100% de lâminas descartáveis, toalhas higienizadas e ferramentas esterilizadas.
                       </p>
                     </div>
