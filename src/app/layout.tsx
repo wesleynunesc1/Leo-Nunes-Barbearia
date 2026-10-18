@@ -11,18 +11,23 @@ export const metadata: Metadata = {
     template: "%s | Léo Nunes Barbearia",
   },
   description:
-    "Barbearia de alto padrão em Pacajus - CE. Cortes modernos, barbas desenhadas, visagismo e atendimento pontual. Agende online seu horário com nossa equipe de barbeiros.",
+    "A barbearia referência em Pacajus - CE. Cortes masculinos de alta precisão, barboterapia, visagismo e atendimento pontual. Agende online seu horário com barbeiros especialistas.",
   keywords: [
     "Barbearia Pacajus",
+    "Barbearia em Pacajus",
+    "Melhor barbearia de Pacajus",
     "Léo Nunes Barbearia",
-    "Corte de cabelo Pacajus",
+    "Corte de cabelo masculino Pacajus",
+    "Corte degradê fade Pacajus",
     "Barbeiro Pacajus",
     "Barboterapia Pacajus CE",
-    "Agendamento barbearia",
+    "Agendamento barbearia Pacajus",
     "Léo Nunes",
     "Aleffer Nunes",
     "Hélio Victor",
     "Guilherme Oliveira",
+    "Salão masculino Pacajus",
+    "Barbearia Ceará",
   ],
   authors: [{ name: "Léo Nunes Barbearia" }],
   creator: "Léo Nunes Barbearia",
@@ -37,15 +42,21 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Léo Nunes Barbearia | Seu Estilo. Nossa Assinatura.",
     description:
-      "Na Léo Nunes Barbearia você encontra cortes de precisão, barbas alinhadas e ambiente moderno em Pacajus - CE. Agende seu horário online.",
+      "A barbearia referência em Pacajus - CE. Cortes de precisão, barboterapia e atendimento pontual. Agende online seu horário.",
     url: "https://leonunesbarbearia.com.br/",
     siteName: "Léo Nunes Barbearia",
     images: [
       {
         url: "/images/hero-bg.png",
-        width: 1080,
-        height: 1080,
+        width: 1200,
+        height: 630,
         alt: "Léo Nunes Barbearia - Pacajus CE",
+      },
+      {
+        url: "/images/logo.png",
+        width: 512,
+        height: 512,
+        alt: "Logo Léo Nunes Barbearia",
       },
     ],
     locale: "pt_BR",
@@ -58,8 +69,13 @@ export const metadata: Metadata = {
     images: ["/images/hero-bg.png"],
   },
   icons: {
-    icon: "/images/logo.png",
-    apple: "/images/logo.png",
+    icon: [
+      { url: "/images/logo.png", type: "image/png" },
+      { url: "/favicon.png", type: "image/png" },
+    ],
+    apple: [
+      { url: "/images/logo.png", sizes: "180x180", type: "image/png" },
+    ],
   },
 };
 
@@ -77,6 +93,7 @@ export default function RootLayout({
     url: "https://leonunesbarbearia.com.br",
     telephone: "+5585992227064",
     priceRange: "$$",
+    description: "Barbearia referência em Pacajus - CE. Cortes masculinos de alta precisão, degradê, visagismo e barboterapia.",
     address: {
       "@type": "PostalAddress",
       streetAddress: "Rua Joaquim Nogueira Lopes, 180",
@@ -112,6 +129,9 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className="scroll-smooth">
       <head>
+        <link rel="icon" type="image/png" href="/images/logo.png" />
+        <link rel="shortcut icon" type="image/png" href="/images/logo.png" />
+        <link rel="apple-touch-icon" href="/images/logo.png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link

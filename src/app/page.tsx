@@ -15,7 +15,6 @@ import {
   Flame,
   ExternalLink,
   Users,
-  Star,
 } from "lucide-react";
 import { getAllBarbers } from "@/data/barbers";
 import { TeamCarousel } from "@/components/TeamCarousel";
@@ -427,43 +426,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* =========================================================================
-          FAIXA DE CONFIANÇA & AVALIAÇÕES (Google Reviews)
-         ========================================================================= */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <ScrollReveal>
-          <div className="rounded-2xl p-6 sm:p-8 bg-gradient-to-r from-[#0F1712] via-[#121D16] to-[#0F1712] border border-[#233327] flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-[#25C440]/15 border border-[#25C440]/40 flex items-center justify-center text-[#25C440] shrink-0">
-                <Star className="w-6 h-6 fill-[#25C440]" />
-              </div>
-              <div>
-                <div className="flex items-center gap-1.5">
-                  <span className="font-heading font-black text-xl text-[#FFFFFF]">4.9</span>
-                  <div className="flex text-[#25C440]">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 fill-[#25C440]" />
-                    ))}
-                  </div>
-                  <span className="text-xs text-[#8E9B91] font-mono ml-1">(+300 avaliações no Google)</span>
-                </div>
-                <p className="text-xs text-[#C2CDC5] mt-0.5">
-                  A barbearia mais bem avaliada de Pacajus por excelência no atendimento e pontualidade.
-                </p>
-              </div>
-            </div>
 
-            <div className="flex items-center gap-3 shrink-0">
-              <span className="text-xs font-mono text-[#25C440] bg-[#25C440]/10 border border-[#25C440]/30 px-3 py-1.5 rounded-lg">
-                100% PONTUALIDADE
-              </span>
-              <span className="text-xs font-mono text-[#8E9B91] bg-[#141E16] border border-[#202E24] px-3 py-1.5 rounded-lg">
-                BIOSSEGURANÇA TOTAL
-              </span>
-            </div>
-          </div>
-        </ScrollReveal>
-      </section>
 
       {/* =========================================================================
           LOCALIZAÇÃO & CONTATO (#localizacao)
