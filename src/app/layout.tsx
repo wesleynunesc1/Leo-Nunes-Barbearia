@@ -144,6 +144,8 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-[#080B09] text-[#F5F7F3] antialiased flex flex-col min-h-screen">
+        {/* Camada Fixa de Ruído / Dots Pattern */}
+        <div className="quadrado" aria-hidden="true" />
         <PageTitleChanger />
         <Header />
         <main className="flex-1 pt-20">{children}</main>
