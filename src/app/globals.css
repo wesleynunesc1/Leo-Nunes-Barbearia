@@ -642,3 +642,28 @@ h1, h2, h3, h4, h5, h6, .font-heading {
     animation: none;
   }
 }
+
+/* =========================================================================
+   7. EFEITO 3D PERSPECTIVA ON SCROLL (GSAP ScrollTrigger .video)
+   ========================================================================= */
+.video {
+  transform-origin: bottom center;
+  transform: perspective(1000px) rotateX(20deg) !important; /* Inicialmente fechada com perspectiva */
+  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), filter 0.65s ease;
+  will-change: transform;
+}
+
+.video-ativoo {
+  transform-origin: bottom center;
+  transform: perspective(1000px) rotateX(0deg) !important; /* Aberta/alinhada quando entra na viewport */
+  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), filter 0.65s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .video,
+  .video-ativoo {
+    transform: none !important;
+    transition: none !important;
+  }
+}
+

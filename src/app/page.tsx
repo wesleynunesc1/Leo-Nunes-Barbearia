@@ -20,6 +20,8 @@ import { getAllBarbers } from "@/data/barbers";
 import { TeamCarousel } from "@/components/TeamCarousel";
 import { ModulesServicesSection } from "@/components/ModulesServicesSection";
 import { AnimatedStrokeInfo } from "@/components/AnimatedStrokeInfo";
+import { VideoShowcase } from "@/components/VideoShowcase";
+import { ThreeDScrollTrigger } from "@/components/ThreeDScrollTrigger";
 import {
   ScrollReveal,
   SpotlightCard,
@@ -31,6 +33,9 @@ export default function HomePage() {
 
   return (
     <div className="space-y-16 sm:space-y-32 pb-16 sm:pb-24 overflow-x-hidden" id="inicio">
+      {/* GSAP ScrollTrigger 3D Perspective Controller */}
+      <ThreeDScrollTrigger />
+
       {/* =========================================================================
           HERO SECTION (20% mais compacta, tipografia calibrada e fundo responsivo)
          ========================================================================= */}
@@ -338,7 +343,7 @@ export default function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-8 relative z-10">
               {/* Step 1 */}
               <ScrollReveal delay={100}>
-                <div className="zeph-borda h-full rounded-2xl p-6 sm:p-8 bg-gradient-to-b from-[#0F1611]/95 to-[#0A0E0B]/98 border border-[#1D2B20]/60 hover:shadow-[0_10px_30px_rgba(37,196,64,0.15)] transition-all duration-300 relative space-y-3.5 sm:space-y-4 group">
+                <div className="zeph-borda video h-full rounded-2xl p-6 sm:p-8 bg-gradient-to-b from-[#0F1611]/95 to-[#0A0E0B]/98 border border-[#1D2B20]/60 hover:shadow-[0_10px_30px_rgba(37,196,64,0.15)] transition-all duration-300 relative space-y-3.5 sm:space-y-4 group">
                   <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-xl bg-[#25C440] text-[#080B09] font-black text-lg sm:text-xl flex items-center justify-center font-heading shadow-[0_0_20px_rgba(37,196,64,0.35)] group-hover:scale-105 transition-transform">
                     1
                   </div>
@@ -353,7 +358,7 @@ export default function HomePage() {
 
               {/* Step 2 */}
               <ScrollReveal delay={200}>
-                <div className="zeph-borda h-full rounded-2xl p-6 sm:p-8 bg-gradient-to-b from-[#0F1611]/95 to-[#0A0E0B]/98 border border-[#1D2B20]/60 hover:shadow-[0_10px_30px_rgba(37,196,64,0.15)] transition-all duration-300 relative space-y-3.5 sm:space-y-4 group">
+                <div className="zeph-borda video h-full rounded-2xl p-6 sm:p-8 bg-gradient-to-b from-[#0F1611]/95 to-[#0A0E0B]/98 border border-[#1D2B20]/60 hover:shadow-[0_10px_30px_rgba(37,196,64,0.15)] transition-all duration-300 relative space-y-3.5 sm:space-y-4 group">
                   <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-xl bg-[#142017] border border-[#25C440]/50 text-[#25C440] font-black text-lg sm:text-xl flex items-center justify-center font-heading shadow-[0_0_15px_rgba(37,196,64,0.15)] group-hover:bg-[#25C440] group-hover:text-[#080B09] transition-all">
                     2
                   </div>
@@ -368,7 +373,7 @@ export default function HomePage() {
 
               {/* Step 3 */}
               <ScrollReveal delay={300}>
-                <div className="zeph-borda h-full rounded-2xl p-6 sm:p-8 bg-gradient-to-b from-[#0F1611]/95 to-[#0A0E0B]/98 border border-[#1D2B20]/60 hover:shadow-[0_10px_30px_rgba(37,196,64,0.15)] transition-all duration-300 relative space-y-3.5 sm:space-y-4 group">
+                <div className="zeph-borda video h-full rounded-2xl p-6 sm:p-8 bg-gradient-to-b from-[#0F1611]/95 to-[#0A0E0B]/98 border border-[#1D2B20]/60 hover:shadow-[0_10px_30px_rgba(37,196,64,0.15)] transition-all duration-300 relative space-y-3.5 sm:space-y-4 group">
                   <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-xl bg-[#142017] border border-[#25C440]/50 text-[#25C440] font-black text-lg sm:text-xl flex items-center justify-center font-heading shadow-[0_0_15px_rgba(37,196,64,0.15)] group-hover:bg-[#25C440] group-hover:text-[#080B09] transition-all">
                     3
                   </div>
@@ -397,14 +402,19 @@ export default function HomePage() {
       </section>
 
       {/* =========================================================================
+          SHOWCASE DE VÍDEO INSTITUCIONAL 3D (#tour-video)
+         ========================================================================= */}
+      <VideoShowcase />
+
+      {/* =========================================================================
           EXPERIÊNCIA & ESPAÇO (#experiencia) - Tema Branco (White Luxury Theme)
          ========================================================================= */}
       <section id="experiencia" className="w-full bg-[#FFFFFF] text-[#080B09] py-16 sm:py-28 border-y border-[#E2E8E4] scroll-mt-28 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-            {/* Photos Composition with reveal from left */}
+            {/* Photos Composition with reveal from left + Efeito 3D (.video) */}
             <ScrollReveal direction="left">
-              <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              <div className="video grid grid-cols-2 gap-3 sm:gap-4">
                 <div className="space-y-3 sm:space-y-4">
                   <div className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-[#E2E8E4] shadow-md group">
                     <Image
@@ -614,9 +624,9 @@ export default function HomePage() {
             </SpotlightCard>
           </ScrollReveal>
 
-          {/* Map iframe */}
+          {/* Map iframe com Efeito 3D (.video) */}
           <ScrollReveal direction="right" className="lg:col-span-2 h-full">
-            <div className="rounded-2xl overflow-hidden border border-[#202E24] h-[280px] sm:h-[350px] lg:h-full min-h-[280px] relative bg-[#101611] shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+            <div className="video rounded-2xl overflow-hidden border border-[#202E24] h-[280px] sm:h-[350px] lg:h-full min-h-[280px] relative bg-[#101611] shadow-[0_0_30px_rgba(0,0,0,0.5)]">
               <iframe
                 src="https://www.google.com/maps?q=Rua+Joaquim+Nogueira+Lopes,+180,+Pacajus+-+CE&output=embed"
                 width="100%"

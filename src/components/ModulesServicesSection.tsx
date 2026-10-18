@@ -136,7 +136,7 @@ export function ModulesServicesSection() {
               const IconComp = module.icon;
               return (
                 <ScrollReveal key={module.id} delay={idx * 80}>
-                  <div className="focus-card zeph-borda group relative h-full flex flex-col justify-between p-6 sm:p-7 rounded-2xl bg-gradient-to-b from-[#0F1611]/95 to-[#0A0E0B]/98 border border-[#1D2B20]/60 hover:shadow-[0_10px_35px_rgba(37,196,64,0.15)] transition-all duration-300">
+                  <div className="focus-card zeph-borda video group relative h-full flex flex-col justify-between p-6 sm:p-7 rounded-2xl bg-gradient-to-b from-[#0F1611]/95 to-[#0A0E0B]/98 border border-[#1D2B20]/60 hover:shadow-[0_10px_35px_rgba(37,196,64,0.15)] transition-all duration-300">
                     {/* Glowing Top Edge Accent on hover */}
                     <div className="absolute inset-x-6 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#25C440]/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
@@ -194,7 +194,7 @@ export function ModulesServicesSection() {
 
           {/* Real-time Schedule Callout Box */}
           <ScrollReveal delay={250}>
-            <div className="mt-8 sm:mt-12 zeph-borda rounded-2xl p-6 sm:p-8 bg-[#0D1510] border border-[#203124]/60 flex flex-col sm:flex-row items-center justify-between gap-6 relative overflow-hidden">
+            <div className="mt-8 sm:mt-12 zeph-borda video rounded-2xl p-6 sm:p-8 bg-[#0D1510] border border-[#203124]/60 flex flex-col sm:flex-row items-center justify-between gap-6 relative overflow-hidden">
               <div className="absolute -right-20 -top-20 w-48 h-48 bg-[#25C440]/10 blur-[80px] pointer-events-none rounded-full" />
 
               <div className="space-y-1.5 text-center sm:text-left relative z-10">
