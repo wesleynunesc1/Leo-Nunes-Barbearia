@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Scissors, CalendarCheck } from "lucide-react";
+import { ArrowRight, CalendarCheck } from "lucide-react";
 import { Barber } from "@/data/barbers";
 import { SpotlightCard } from "@/components/MotionSystem";
 
@@ -35,13 +35,7 @@ export function BarberCard({
         {/* Gradient Overlay for bottom text legibility */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#080A08] via-[#080A08]/15 to-transparent opacity-85" />
 
-        {/* Badge: Services Count */}
-        <div className="absolute top-2 right-2 sm:top-3.5 sm:right-3.5 z-20">
-          <span className="inline-flex items-center gap-1 px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-xs font-semibold bg-[#080A08]/90 backdrop-blur-md text-[#25C440] border border-[#25C440]/30 shadow-md">
-            <Scissors className="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" />
-            <span>{barber.services.length} <span className="hidden sm:inline">serviços</span><span className="sm:hidden">serv.</span></span>
-          </span>
-        </div>
+
 
         {/* Name on image bottom */}
         <div className="absolute bottom-2 left-2 right-2 sm:bottom-3.5 sm:left-3.5 sm:right-3.5 z-20">

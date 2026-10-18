@@ -348,3 +348,78 @@ h1, h2, h3, h4, h5, h6, .font-heading {
     border-color: rgba(37, 196, 64, 0.65) !important;
   }
 }
+
+/* =========================================================================
+   3. Efeito Baralho de Cards Sobrepostos (Team Deck Fan-Out Effect)
+   ========================================================================= */
+.team-deck-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 35px 20px 25px 20px;
+  position: relative;
+  overflow: visible;
+}
+
+@media (max-width: 639px) {
+  .team-deck-container {
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-left: 24px;
+    padding-right: 24px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .team-deck-container::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.team-deck-card {
+  display: flex;
+  flex-direction: column;
+  height: 380px;
+  width: 250px;
+  min-width: 250px;
+  background-color: #0F1410;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: -1rem 0 1.25rem rgba(8, 8, 8, 0.55);
+  transition: transform 0.4s ease-out, left 0.4s ease-out, box-shadow 0.4s ease-out, border-color 0.4s ease-out;
+  position: relative;
+  left: 0px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+@media (min-width: 640px) {
+  .team-deck-card {
+    height: 420px;
+    width: 270px;
+    min-width: 270px;
+  }
+}
+
+.team-deck-card:not(:first-child) {
+  margin-left: -50px;
+}
+
+@media (max-width: 639px) {
+  .team-deck-card:not(:first-child) {
+    margin-left: -35px;
+  }
+}
+
+.team-deck-card:hover {
+  transform: translateY(-20px);
+  border-color: rgba(37, 196, 64, 0.6);
+  box-shadow: -1rem 0 2rem rgba(8, 8, 8, 0.8), 0 10px 40px rgba(37, 196, 64, 0.28);
+  z-index: 30;
+  transition: transform 0.4s ease-out, left 0.4s ease-out, box-shadow 0.4s ease-out;
+}
+
+.team-deck-card:hover ~ .team-deck-card {
+  position: relative;
+  left: 50px;
+  transition: left 0.4s ease-out;
+}

@@ -10,7 +10,7 @@ import {
   Phone,
   ShieldCheck,
   Award,
-  Sparkles,
+  Scissors,
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -76,7 +76,7 @@ export default function ContatoPage() {
           {/* Header da Seção: Identificação + Headline + Descrição */}
           <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16 space-y-4 sm:space-y-5">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-bold tracking-[0.22em] uppercase text-[#25C440] bg-[#0E1711] border border-[#25C440]/30 shadow-[0_0_20px_rgba(37,196,64,0.15)]">
-              <Sparkles className="w-3.5 h-3.5 text-[#25C440]" />
+              <Scissors className="w-3.5 h-3.5 text-[#25C440]" />
               <span>CONTATO & AGENDAMENTO</span>
             </div>
 
