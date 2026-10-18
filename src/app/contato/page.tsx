@@ -177,7 +177,7 @@ export default function ContatoPage() {
                   href={ACTION_LINKS.androidApp}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group relative rounded-2xl bg-[#0F1711] hover:bg-[#142017] border border-[#233326] hover:border-[#25C440]/60 p-4 sm:p-5 transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_8px_25px_rgba(0,0,0,0.5)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#25C440]"
+                  className="group relative zeph-borda rounded-2xl bg-[#0F1711] hover:bg-[#142017] border border-[#233326]/60 hover:border-[#25C440]/60 p-4 sm:p-5 transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_8px_25px_rgba(0,0,0,0.5)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#25C440]"
                   id="btn-contato-app-android"
                 >
                   <div className="flex items-center justify-between gap-3">
@@ -210,7 +210,7 @@ export default function ContatoPage() {
                   href={ACTION_LINKS.iphoneApp}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group relative rounded-2xl bg-[#0F1711] hover:bg-[#142017] border border-[#233326] hover:border-[#25C440]/60 p-4 sm:p-5 transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_8px_25px_rgba(0,0,0,0.5)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#25C440]"
+                  className="group relative zeph-borda rounded-2xl bg-[#0F1711] hover:bg-[#142017] border border-[#233326]/60 hover:border-[#25C440]/60 p-4 sm:p-5 transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_8px_25px_rgba(0,0,0,0.5)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#25C440]"
                   id="btn-contato-app-iphone"
                 >
                   <div className="flex items-center justify-between gap-3">
@@ -249,7 +249,7 @@ export default function ContatoPage() {
             </div>
 
             {/* Coluna Visual e Informativa (Colunas 8 a 12) */}
-            <div className="lg:col-span-5 flex flex-col justify-between rounded-2xl bg-[#0D140F] border border-[#202E23] p-6 sm:p-8 space-y-6 relative overflow-hidden">
+            <div className="lg:col-span-5 zeph-borda flex flex-col justify-between rounded-2xl bg-[#0D140F] border border-[#202E23]/60 p-6 sm:p-8 space-y-6 relative overflow-hidden">
               <div className="space-y-4">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-mono uppercase text-[#25C440] bg-[#142016] border border-[#25C440]/25">
                   <span className="w-2 h-2 rounded-full bg-[#25C440] animate-pulse" />

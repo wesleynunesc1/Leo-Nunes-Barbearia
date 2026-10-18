@@ -20,7 +20,7 @@ export function TeamCarousel({ barbers }: TeamCarouselProps) {
         {barbers.map((barber, index) => (
           <div
             key={`mobile-${barber.id}`}
-            className="team-mobile-card rounded-2xl overflow-hidden bg-[#0D120E] border border-[#202E23] flex flex-col group relative shadow-md"
+            className="team-mobile-card zeph-borda rounded-2xl overflow-hidden bg-[#0D120E] border border-[#202E23]/60 flex flex-col group relative shadow-md"
             id={`team-mobile-${barber.slug}`}
           >
             {/* Foto do Barbeiro */}
@@ -70,7 +70,7 @@ export function TeamCarousel({ barbers }: TeamCarouselProps) {
         {barbers.map((barber, index) => (
           <div
             key={`desktop-${barber.id}`}
-            className="team-deck-card group"
+            className="team-deck-card zeph-borda group"
             id={`team-deck-${barber.slug}`}
           >
             {/* Foto Oficial do Barbeiro */}

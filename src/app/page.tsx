@@ -338,7 +338,7 @@ export default function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-8 relative z-10">
               {/* Step 1 */}
               <ScrollReveal delay={100}>
-                <div className="h-full rounded-2xl p-6 sm:p-8 bg-gradient-to-b from-[#0F1611]/90 to-[#0A0E0B]/95 border border-[#1D2B20] hover:border-[#25C440]/50 hover:shadow-[0_10px_30px_rgba(37,196,64,0.12)] transition-all duration-300 relative space-y-3.5 sm:space-y-4 group">
+                <div className="zeph-borda h-full rounded-2xl p-6 sm:p-8 bg-gradient-to-b from-[#0F1611]/95 to-[#0A0E0B]/98 border border-[#1D2B20]/60 hover:shadow-[0_10px_30px_rgba(37,196,64,0.15)] transition-all duration-300 relative space-y-3.5 sm:space-y-4 group">
                   <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-xl bg-[#25C440] text-[#080B09] font-black text-lg sm:text-xl flex items-center justify-center font-heading shadow-[0_0_20px_rgba(37,196,64,0.35)] group-hover:scale-105 transition-transform">
                     1
                   </div>
@@ -353,7 +353,7 @@ export default function HomePage() {
 
               {/* Step 2 */}
               <ScrollReveal delay={200}>
-                <div className="h-full rounded-2xl p-6 sm:p-8 bg-gradient-to-b from-[#0F1611]/90 to-[#0A0E0B]/95 border border-[#1D2B20] hover:border-[#25C440]/50 hover:shadow-[0_10px_30px_rgba(37,196,64,0.12)] transition-all duration-300 relative space-y-3.5 sm:space-y-4 group">
+                <div className="zeph-borda h-full rounded-2xl p-6 sm:p-8 bg-gradient-to-b from-[#0F1611]/95 to-[#0A0E0B]/98 border border-[#1D2B20]/60 hover:shadow-[0_10px_30px_rgba(37,196,64,0.15)] transition-all duration-300 relative space-y-3.5 sm:space-y-4 group">
                   <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-xl bg-[#142017] border border-[#25C440]/50 text-[#25C440] font-black text-lg sm:text-xl flex items-center justify-center font-heading shadow-[0_0_15px_rgba(37,196,64,0.15)] group-hover:bg-[#25C440] group-hover:text-[#080B09] transition-all">
                     2
                   </div>
@@ -368,7 +368,7 @@ export default function HomePage() {
 
               {/* Step 3 */}
               <ScrollReveal delay={300}>
-                <div className="h-full rounded-2xl p-6 sm:p-8 bg-gradient-to-b from-[#0F1611]/90 to-[#0A0E0B]/95 border border-[#1D2B20] hover:border-[#25C440]/50 hover:shadow-[0_10px_30px_rgba(37,196,64,0.12)] transition-all duration-300 relative space-y-3.5 sm:space-y-4 group">
+                <div className="zeph-borda h-full rounded-2xl p-6 sm:p-8 bg-gradient-to-b from-[#0F1611]/95 to-[#0A0E0B]/98 border border-[#1D2B20]/60 hover:shadow-[0_10px_30px_rgba(37,196,64,0.15)] transition-all duration-300 relative space-y-3.5 sm:space-y-4 group">
                   <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-xl bg-[#142017] border border-[#25C440]/50 text-[#25C440] font-black text-lg sm:text-xl flex items-center justify-center font-heading shadow-[0_0_15px_rgba(37,196,64,0.15)] group-hover:bg-[#25C440] group-hover:text-[#080B09] transition-all">
                     3
                   </div>

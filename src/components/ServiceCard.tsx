@@ -33,7 +33,7 @@ export function ServiceCard({ service, barberName }: ServiceCardProps) {
 
   return (
     <SpotlightCard
-      className="editorial-card rounded-xl sm:rounded-2xl p-4 sm:p-6 flex flex-col justify-between h-full group"
+      className="editorial-card zeph-borda rounded-xl sm:rounded-2xl p-4 sm:p-6 flex flex-col justify-between h-full group"
       id={`service-card-${service.id}`}
     >
       <div className="space-y-3">

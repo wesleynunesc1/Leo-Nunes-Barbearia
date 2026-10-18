@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/* Houdini CSS Property para interpolação contínua e suave do ângulo de rotação */
+@property --zeph-borda-angulo {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
 :root {
   --font-montserrat: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-inter: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -556,5 +563,82 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   }
   to {
     transform: translateX(-50%);
+  }
+}
+
+/* =========================================================================
+   6. BORDA ANIMADA ILUMINADA CONTÍNUA (Zeph Continuous Conic Glow Border)
+   ========================================================================= */
+.zeph-borda {
+  --cor-borda: #25C440;
+  --cor-brilho: #8EFDA3;
+  --espessura: 1.5px;
+  --cantos: inherit;
+  --velocidade: 7s;
+  --fundo-card: transparent;
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--cantos);
+}
+
+.zeph-borda,
+.zeph-borda * {
+  box-sizing: border-box;
+}
+
+.zeph-borda::before {
+  content: '';
+  box-sizing: border-box;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: var(--espessura);
+  background: conic-gradient(
+    from var(--zeph-borda-angulo),
+    color-mix(in srgb, var(--cor-borda) 6%, transparent) 0deg 200deg,
+    color-mix(in srgb, var(--cor-borda) 10%, transparent) 250deg,
+    color-mix(in srgb, var(--cor-borda) 22%, transparent) 285deg,
+    color-mix(in srgb, var(--cor-brilho) 55%, transparent) 315deg,
+    color-mix(in srgb, var(--cor-brilho) 95%, transparent) 335deg,
+    color-mix(in srgb, var(--cor-brilho) 55%, transparent) 350deg,
+    color-mix(in srgb, var(--cor-borda) 18%, transparent) 358deg,
+    color-mix(in srgb, var(--cor-borda) 6%, transparent) 360deg
+  );
+  /* A máscara recorta o centro e deixa somente a borda visível */
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: zeph-borda-girar var(--velocidade) linear infinite;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Variação de fase para cards múltiplos adjacentes */
+.zeph-borda:nth-of-type(2n)::before,
+.focus-cards-group > div:nth-child(2n) .zeph-borda::before {
+  animation-delay: -2.3s;
+}
+
+.zeph-borda:nth-of-type(3n)::before,
+.focus-cards-group > div:nth-child(3n) .zeph-borda::before {
+  animation-delay: -4.6s;
+}
+
+@keyframes zeph-borda-girar {
+  to {
+    --zeph-borda-angulo: 360deg;
+  }
+}
+
+@-webkit-keyframes zeph-borda-girar {
+  to {
+    --zeph-borda-angulo: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zeph-borda::before {
+    animation: none;
   }
 }
