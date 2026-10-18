@@ -240,6 +240,7 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 .reveal-active {
   opacity: 1 !important;
   transform: translate(0, 0) scale(1) !important;
+  will-change: auto !important;
 }
 
 /* Reduced Motion Respect */
@@ -637,6 +638,16 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   }
 }
 
+@media (max-width: 768px) {
+  .zeph-borda::before {
+    display: none !important;
+    animation: none !important;
+  }
+  .zeph-borda {
+    border: 1px solid rgba(37, 196, 64, 0.22) !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .zeph-borda::before {
     animation: none;
@@ -659,6 +670,15 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), filter 0.65s ease;
 }
 
+@media (max-width: 768px) {
+  .video,
+  .video-ativoo {
+    transform: none !important;
+    transition: none !important;
+    will-change: auto !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .video,
   .video-ativoo {
@@ -674,7 +694,7 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   display: block;
   width: 100vw;
   height: 100vh;
-  opacity: 0.2;
+  opacity: 0.12;
   background-image: url('/images/dots-pattern.webp');
   overflow: hidden;
   position: fixed;
@@ -682,7 +702,12 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   left: 0;
   pointer-events: none;
   z-index: 50;
-  mix-blend-mode: plus-lighter;
+}
+
+@media (max-width: 768px) {
+  .quadrado {
+    display: none !important; /* Desativa totalmente no mobile para 60fps fluido */
+  }
 }
 /* =========================================================================
    9. HEADER GLASSMORPHISM ON SCROLL

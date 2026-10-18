@@ -138,45 +138,50 @@ export function SpotlightCard({
  * PointerAura: Subtle authorial luminous aura in the Hero fold tracking mouse with smooth interpolation
  */
 export function PointerAura() {
-  const [pos, setPos] = useState({ x: -200, y: -200 });
-  const [target, setTarget] = useState({ x: -200, y: -200 });
+  const auraRef = useRef<HTMLDivElement>(null);
   const [isClientDesktop, setIsClientDesktop] = useState(false);
-  const animFrameRef = useRef<number | null>(null);
 
   useEffect(() => {
-    // Only enable on desktop with fine pointer
+    if (typeof window === "undefined") return;
     const isFinePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
     const isReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    if (!isFinePointer || isReduced) return;
+    if (!isFinePointer || isReduced || window.innerWidth < 1024) return;
     setIsClientDesktop(true);
 
+    let currentX = -200;
+    let currentY = -200;
+    let targetX = -200;
+    let targetY = -200;
+    let rafId: number | null = null;
+    let isRunning = true;
+
     const handleMouseMove = (e: MouseEvent) => {
-      setTarget({ x: e.clientX, y: e.clientY });
+      targetX = e.clientX;
+      targetY = e.clientY;
     };
 
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
 
-    // Smooth lerp loop
     const loop = () => {
-      setPos((prev) => {
-        const dx = target.x - prev.x;
-        const dy = target.y - prev.y;
-        return {
-          x: prev.x + dx * 0.08,
-          y: prev.y + dy * 0.08,
-        };
-      });
-      animFrameRef.current = requestAnimationFrame(loop);
+      if (!isRunning) return;
+      currentX += (targetX - currentX) * 0.08;
+      currentY += (targetY - currentY) * 0.08;
+
+      if (auraRef.current) {
+        auraRef.current.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) translate(-50%, -50%)`;
+      }
+      rafId = requestAnimationFrame(loop);
     };
 
-    animFrameRef.current = requestAnimationFrame(loop);
+    rafId = requestAnimationFrame(loop);
 
     return () => {
+      isRunning = false;
       window.removeEventListener("mousemove", handleMouseMove);
-      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+      if (rafId) cancelAnimationFrame(rafId);
     };
-  }, [target.x, target.y]);
+  }, []);
 
   if (!isClientDesktop) return null;
 
@@ -186,10 +191,12 @@ export function PointerAura() {
       aria-hidden="true"
     >
       <div
-        className="absolute w-[450px] h-[450px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-60 blur-3xl transition-opacity duration-700 pointer-events-none"
+        ref={auraRef}
+        className="absolute w-[450px] h-[450px] rounded-full opacity-60 blur-3xl pointer-events-none will-change-transform"
         style={{
-          left: `${pos.x}px`,
-          top: `${pos.y}px`,
+          left: 0,
+          top: 0,
+          transform: "translate3d(-200px, -200px, 0) translate(-50%, -50%)",
           background: "radial-gradient(circle, rgba(37, 196, 64, 0.07) 0%, rgba(37, 196, 64, 0.015) 50%, transparent 75%)",
         }}
       />

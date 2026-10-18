@@ -24,7 +24,7 @@ export const BARBERS: Barber[] = [
     name: "Léo Nunes",
     role: "Fundador & Master Barber",
     tagline: "Especialista em visagismo, cortes de precisão e acabamentos de alta definição.",
-    photo: "/images/barbers/leo-nunes.jpeg",
+    photo: "/images/barbers/leo-nunes.webp",
     legacyPage: "https://leonunesbarbearia.com.br/leonunesagenda/",
     services: [
       {
@@ -105,7 +105,7 @@ export const BARBERS: Barber[] = [
     name: "Aleffer Nunes",
     role: "Barber Professional",
     tagline: "Técnica apurada, degradês limpos e atendimento atencioso aos mínimos detalhes.",
-    photo: "/images/barbers/aleffer-nunes.jpeg",
+    photo: "/images/barbers/aleffer-nunes.webp",
     legacyPage: "https://leonunesbarbearia.com.br/aleffernunesagenda/",
     services: [
       {
@@ -172,7 +172,7 @@ export const BARBERS: Barber[] = [
     name: "Hélio Victor",
     role: "Barber Professional",
     tagline: "Criatividade, consistência e domínio de técnicas modernas de corte e barboterapia.",
-    photo: "/images/barbers/helio-victor.jpeg",
+    photo: "/images/barbers/helio-victor.webp",
     legacyPage: "https://leonunesbarbearia.com.br/heliovictoragenda/",
     services: [
       {
@@ -253,7 +253,7 @@ export const BARBERS: Barber[] = [
     name: "Guilherme Oliveira",
     role: "Barber Professional",
     tagline: "Dedicação, técnica contemporânea e agilidade sem abrir mão do conforto.",
-    photo: "/images/barbers/guilherme-oliveira.jpeg",
+    photo: "/images/barbers/guilherme-oliveira.webp",
     legacyPage: "https://leonunesbarbearia.com.br/guilhermeagenda/",
     services: [
       {

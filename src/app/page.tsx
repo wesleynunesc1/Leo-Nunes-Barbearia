@@ -44,7 +44,7 @@ export default function HomePage() {
         {/* Desktop Background (md e superiores) */}
         <div className="hidden md:block absolute inset-0 z-0 select-none pointer-events-none">
           <Image
-            src="/images/home-desktop.png"
+            src="/images/home-desktop.webp"
             alt="Atendimento premium na Léo Nunes Barbearia"
             fill
             priority
@@ -62,7 +62,7 @@ export default function HomePage() {
         {/* Mobile Background (abaixo de md - Fundo com claridade natural e nitidez fotográfica) */}
         <div className="block md:hidden absolute inset-0 z-0 select-none pointer-events-none">
           <Image
-            src="/images/home-mobile.png"
+            src="/images/home-mobile.webp"
             alt="Atendimento premium na Léo Nunes Barbearia"
             fill
             priority
@@ -419,7 +419,7 @@ export default function HomePage() {
                 <div className="space-y-3 sm:space-y-4">
                   <div className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-[#202E23] shadow-md group">
                     <Image
-                      src="/images/gallery-1.png"
+                      src="/images/gallery-1.webp"
                       alt="Atendimento e corte de cabelo na Léo Nunes Barbearia"
                       fill
                       className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
@@ -444,7 +444,7 @@ export default function HomePage() {
                   </div>
                   <div className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-[#202E23] shadow-md group">
                     <Image
-                      src="/images/gallery-2.png"
+                      src="/images/gallery-2.webp"
                       alt="Espaço climatizado e confortável da barbearia"
                       fill
                       className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"

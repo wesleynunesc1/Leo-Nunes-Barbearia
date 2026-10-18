@@ -60,7 +60,7 @@ export default function ContatoPage() {
         {/* Fundo Cinematográfico com Imagem Real e Máscara Gradiente */}
         <div className="absolute inset-0 z-0 pointer-events-none">
           <Image
-            src="/images/gallery-2.png"
+            src="/images/gallery-2.webp"
             alt="Ambiente da Léo Nunes Barbearia"
             fill
             priority
