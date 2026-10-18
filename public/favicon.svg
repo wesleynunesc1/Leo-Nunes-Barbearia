@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Background Badge in Brand Dark Theme -->
+  <rect width="64" height="64" rx="14" fill="#080B09" />
+  <rect x="1.5" y="1.5" width="61" height="61" rx="12.5" stroke="#25C440" stroke-width="2.5" stroke-opacity="0.8" />
+  
+  <!-- Barber Scissors in Electric Brand Green -->
+  <g transform="translate(10, 10) scale(1.833)" stroke="#25C440" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <circle cx="6" cy="6" r="3" fill="#25C440" fill-opacity="0.25" />
+    <circle cx="6" cy="18" r="3" fill="#25C440" fill-opacity="0.25" />
+    <line x1="20" y1="4" x2="8.12" y2="15.88" />
+    <line x1="14.47" y1="14.48" x2="20" y2="20" />
+    <line x1="8.12" y1="8.12" x2="12" y2="12" />
+  </g>
+</svg>
