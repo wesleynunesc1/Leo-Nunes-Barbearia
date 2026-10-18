@@ -56,28 +56,29 @@ export default function HomePage() {
           <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#080B09] via-[#080B09]/60 to-transparent z-10" />
         </div>
 
-        {/* Mobile Background (abaixo de md) */}
+        {/* Mobile Background (abaixo de md - Fundo com claridade natural e nitidez fotográfica) */}
         <div className="block md:hidden absolute inset-0 z-0 select-none pointer-events-none">
           <Image
             src="/images/home-mobile.png"
             alt="Atendimento premium na Léo Nunes Barbearia"
             fill
             priority
-            className="object-cover object-top brightness-[0.92] contrast-[1.05]"
+            className="object-cover object-top brightness-[1.0] contrast-[1.04]"
             sizes="100vw"
           />
-          {/* Gradiente escuro no mobile para garantir contraste e nitidez total dos textos */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#080B09]/60 via-[#080B09]/75 to-[#080B09] z-10" />
-          <div className="absolute inset-x-0 bottom-0 h-28 bg-[#080B09] z-10" />
+          {/* Suave vinheta superior para destacar header */}
+          <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#080B09]/85 via-[#080B09]/25 to-transparent z-10" />
+          {/* Suave vinheta inferior para acomodar os textos mantendo a foto do corte visível */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#080B09] via-[#080B09]/70 via-40% to-transparent z-10" />
         </div>
 
         {/* Main Content Area (Left Column Content + Right Floating Tag) */}
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full my-auto py-5 sm:py-8">
+        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full my-auto pt-24 sm:pt-28 pb-6 sm:pb-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
             {/* Left Content (Columns 1-8) */}
-            <div className="lg:col-span-8 space-y-4 sm:space-y-5 text-left">
-              {/* Headline calibrada e reduzida */}
-              <h1 className="font-heading font-black text-3xl sm:text-5xl md:text-6xl lg:text-[62px] xl:text-[70px] tracking-tight uppercase leading-[0.96]">
+            <div className="lg:col-span-8 space-y-4 sm:space-y-6 text-left">
+              {/* Headline nítida com sombra cinematográfica para contraste perfeito sobre a imagem */}
+              <h1 className="font-heading font-black text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-[62px] xl:text-[70px] tracking-tight uppercase leading-[0.98] drop-shadow-[0_2px_14px_rgba(0,0,0,0.85)]">
                 <span className="text-[#FFFFFF] block">
                   SEU ESTILO.
                 </span>
@@ -86,31 +87,31 @@ export default function HomePage() {
                 </span>
               </h1>
 
-              {/* Subtitle Paragraph calibrado */}
-              <p className="text-xs sm:text-base text-[#C9D2CB] max-w-lg leading-relaxed font-normal">
+              {/* Subtitle Paragraph calibrado com contraste elevado */}
+              <p className="text-xs sm:text-base text-[#D4DDD6] max-w-lg leading-relaxed font-normal drop-shadow-[0_1px_8px_rgba(0,0,0,0.95)]">
                 Cortes contemporâneos, barbas desenhadas com precisão cirúrgica e atendimento de alto padrão, em Pacajus.
               </p>
 
-              {/* Action Buttons Row */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-3.5 pt-1">
-                {/* Primary CTA (Bright Green Pill) */}
+              {/* Action Buttons Row - 100% responsivo para toque no mobile */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-1">
+                {/* Primary CTA */}
                 <Link
                   href="/agendar"
                   id="hero-cta-agendar"
-                  className="inline-flex items-center justify-center gap-2.5 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-xs sm:text-sm px-6 sm:px-7 py-3 sm:py-3.5 rounded-xl shadow-[0_0_20px_rgba(37,196,64,0.35)] hover:shadow-[0_0_30px_rgba(37,196,64,0.5)] transition-all duration-300 transform active:scale-95 group"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-sm sm:text-base px-7 py-3.5 sm:py-4 rounded-xl shadow-[0_0_25px_rgba(37,196,64,0.35)] hover:shadow-[0_0_35px_rgba(37,196,64,0.5)] transition-all duration-300 transform active:scale-95 group"
                 >
-                  <Calendar className="w-4 h-4 shrink-0 stroke-[2.2]" />
+                  <Calendar className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 stroke-[2.2]" />
                   <span>Agendar meu horário</span>
-                  <ChevronRight className="w-4 h-4 shrink-0 stroke-[2.5] transition-transform duration-300 group-hover:translate-x-0.5" />
+                  <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 stroke-[2.5] transition-transform duration-300 group-hover:translate-x-0.5" />
                 </Link>
 
-                {/* Secondary CTA (Dark Glass) */}
+                {/* Secondary CTA */}
                 <a
                   href="#servicos"
-                  className="inline-flex items-center justify-center gap-2 bg-[#0E1510]/85 hover:bg-[#152018] text-[#F5F7F3] font-semibold text-xs sm:text-sm px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl border border-[#253328] hover:border-[#25C440]/50 transition-all duration-300 group"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#0E1510]/90 hover:bg-[#152018] text-[#F5F7F3] font-semibold text-sm sm:text-base px-6 py-3.5 sm:py-4 rounded-xl border border-[#253328] hover:border-[#25C440]/50 transition-all duration-300 group backdrop-blur-sm"
                 >
                   <span>Conhecer serviços</span>
-                  <ChevronRight className="w-3.5 h-3.5 shrink-0 text-[#9BA59E] group-hover:text-[#FFFFFF] group-hover:translate-x-0.5 transition-all" />
+                  <ChevronRight className="w-4 h-4 shrink-0 text-[#9BA59E] group-hover:text-[#FFFFFF] group-hover:translate-x-0.5 transition-all" />
                 </a>
               </div>
             </div>
@@ -134,13 +135,13 @@ export default function HomePage() {
         {/* =====================================================================
             3-COLUMN FEATURE STRIP (Compacta e responsiva)
            ===================================================================== */}
-        <div className="relative z-20 w-full border-t border-[#1D2720]/90 bg-[#080B09]/85 backdrop-blur-md">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 sm:py-4.5">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-0">
+        <div className="relative z-20 w-full border-t border-[#1D2720]/90 bg-[#080B09]/90 backdrop-blur-md">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-0 divide-y md:divide-y-0 md:divide-x divide-[#1D2720]/80">
               {/* Feature 1 */}
-              <div className="flex items-center gap-3.5 md:pr-6">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-[#25C440] shrink-0">
-                  <Clock className="w-6 h-6 sm:w-7 sm:h-7 stroke-[1.6]" />
+              <div className="flex items-center gap-3.5 py-1 md:py-0 md:pr-6">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#121A14] flex items-center justify-center text-[#25C440] shrink-0 border border-[#25C440]/20">
+                  <Clock className="w-5 h-5 stroke-[1.8]" />
                 </div>
                 <div>
                   <p className="font-heading font-bold text-xs sm:text-sm md:text-base text-[#FFFFFF] leading-tight">
@@ -153,9 +154,9 @@ export default function HomePage() {
               </div>
 
               {/* Feature 2 */}
-              <div className="flex items-center gap-3.5 md:px-6 md:border-x md:border-[#1D2720]/80">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-[#25C440] shrink-0">
-                  <Users className="w-6 h-6 sm:w-7 sm:h-7 stroke-[1.6]" />
+              <div className="flex items-center gap-3.5 py-1 md:py-0 md:px-6">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#121A14] flex items-center justify-center text-[#25C440] shrink-0 border border-[#25C440]/20">
+                  <Users className="w-5 h-5 stroke-[1.8]" />
                 </div>
                 <div>
                   <p className="font-heading font-bold text-xs sm:text-sm md:text-base text-[#FFFFFF] leading-tight">
@@ -168,9 +169,9 @@ export default function HomePage() {
               </div>
 
               {/* Feature 3 */}
-              <div className="flex items-center gap-3.5 md:pl-6">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-[#25C440] shrink-0">
-                  <Scissors className="w-6 h-6 sm:w-7 sm:h-7 stroke-[1.6]" />
+              <div className="flex items-center gap-3.5 py-1 md:py-0 md:pl-6">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#121A14] flex items-center justify-center text-[#25C440] shrink-0 border border-[#25C440]/20">
+                  <Scissors className="w-5 h-5 stroke-[1.8]" />
                 </div>
                 <div>
                   <p className="font-heading font-bold text-xs sm:text-sm md:text-base text-[#FFFFFF] leading-tight">
@@ -198,17 +199,17 @@ export default function HomePage() {
          ========================================================================= */}
       <section id="equipe" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-28">
         <ScrollReveal>
-          <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16 space-y-3 sm:space-y-4">
-            <span className="text-xs font-bold tracking-widest uppercase text-[#25C440] bg-[#121A14] px-4 py-1.5 rounded-full border border-[#25C440]/30 shadow-[0_0_15px_rgba(37,196,64,0.1)]">
-              MESTRES DA NAVALHA & VISAGISMO
+          <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-[#25C440] bg-[#121A14] border border-[#25C440]/30 shadow-[0_0_15px_rgba(37,196,64,0.1)] mb-3 sm:mb-4">
+              EQUIPE DE ESPECIALISTAS
             </span>
-            <h2 className="font-heading text-2xl sm:text-5xl font-extrabold text-[#F5F7F3] tracking-tight">
+            <h2 className="font-heading text-2xl sm:text-5xl font-extrabold text-[#F5F7F3] tracking-tight leading-[1.1] mb-3 sm:mb-4">
               Escolha seu{" "}
               <span className="bg-gradient-to-r from-[#25C440] via-[#5BE376] to-[#FFFFFF] bg-clip-text text-transparent">
                 Barbeiro
               </span>
             </h2>
-            <p className="text-sm sm:text-base text-[#9BA59E] leading-relaxed">
+            <p className="text-xs sm:text-base text-[#9BA59E] leading-relaxed max-w-xl mx-auto">
               Equipe qualificada com técnica apurada, respeito ao seu tempo e pontualidade rigorosa.
               Selecione o profissional para visualizar sua agenda e serviços exclusivos.
             </p>
@@ -228,17 +229,17 @@ export default function HomePage() {
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
-            <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-16 space-y-2.5 sm:space-y-3">
-              <span className="text-xs font-bold tracking-widest uppercase text-[#25C440] bg-[#121A14] px-4 py-1.5 rounded-full border border-[#25C440]/30 shadow-sm">
-                SEM FILAS & SEM ESPERA
+            <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-[#25C440] bg-[#121A14] border border-[#25C440]/30 shadow-[0_0_15px_rgba(37,196,64,0.1)] mb-3 sm:mb-4">
+                PASSO A PASSO
               </span>
-              <h2 className="font-heading text-2xl sm:text-4xl font-extrabold text-[#FFFFFF] tracking-tight">
+              <h2 className="font-heading text-2xl sm:text-4xl font-extrabold text-[#FFFFFF] tracking-tight leading-[1.1] mb-3 sm:mb-4">
                 Como Funciona o{" "}
                 <span className="bg-gradient-to-r from-[#25C440] via-[#5BE376] to-[#FFFFFF] bg-clip-text text-transparent">
                   Agendamento
                 </span>
               </h2>
-              <p className="text-xs sm:text-sm text-[#9BA59E] max-w-lg mx-auto">
+              <p className="text-xs sm:text-sm text-[#9BA59E] max-w-md mx-auto">
                 Processo direto, transparente e sem necessidade de downloads de aplicativos ou cadastros complicados.
               </p>
             </div>
@@ -364,18 +365,18 @@ export default function HomePage() {
           {/* Narrative with reveal from right */}
           <ScrollReveal direction="right">
             <div className="space-y-5 sm:space-y-6">
-              <span className="text-xs font-bold tracking-widest uppercase text-[#25C440] bg-[#121A14] px-4 py-1.5 rounded-full border border-[#25C440]/30 shadow-[0_0_15px_rgba(37,196,64,0.1)]">
-                ESPAÇO & TÉCNICA
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-[#25C440] bg-[#121A14] border border-[#25C440]/30 shadow-[0_0_15px_rgba(37,196,64,0.1)] mb-3 sm:mb-4">
+                ESPAÇO & TRADIÇÃO
               </span>
 
-              <h2 className="font-heading text-2xl sm:text-4xl md:text-5xl font-extrabold text-[#F5F7F3] leading-tight tracking-tight">
+              <h2 className="font-heading text-2xl sm:text-4xl md:text-5xl font-extrabold text-[#F5F7F3] leading-[1.12] tracking-tight mb-3 sm:mb-4">
                 Mais do que um corte,{" "}
                 <span className="bg-gradient-to-r from-[#25C440] via-[#5BE376] to-[#FFFFFF] bg-clip-text text-transparent">
                   o seu momento de confiança.
                 </span>
               </h2>
 
-              <p className="text-sm sm:text-base text-[#9BA59E] leading-relaxed">
+              <p className="text-xs sm:text-base text-[#9BA59E] leading-relaxed">
                 Na Léo Nunes Barbearia em Pacajus, aliamos ambiente climatizado, rigor em higiene e biossegurança, e domínio técnico apurado em tesoura e máquina.
               </p>
 
@@ -469,17 +470,17 @@ export default function HomePage() {
          ========================================================================= */}
       <section id="localizacao" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-28">
         <ScrollReveal>
-          <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16 space-y-3 sm:space-y-4">
-            <span className="text-xs font-bold tracking-widest uppercase text-[#25C440] bg-[#121A14] px-4 py-1.5 rounded-full border border-[#25C440]/30 shadow-[0_0_15px_rgba(37,196,64,0.1)]">
-              FÁCIL ACESSO
+          <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-[#25C440] bg-[#121A14] border border-[#25C440]/30 shadow-[0_0_15px_rgba(37,196,64,0.1)] mb-3 sm:mb-4">
+              ONDE ESTAMOS
             </span>
-            <h2 className="font-heading text-2xl sm:text-5xl font-extrabold text-[#F5F7F3] tracking-tight">
+            <h2 className="font-heading text-2xl sm:text-5xl font-extrabold text-[#F5F7F3] tracking-tight leading-[1.1] mb-3 sm:mb-4">
               Nossa{" "}
               <span className="bg-gradient-to-r from-[#25C440] via-[#5BE376] to-[#FFFFFF] bg-clip-text text-transparent">
                 Localização
               </span>
             </h2>
-            <p className="text-sm sm:text-base text-[#9BA59E]">
+            <p className="text-xs sm:text-base text-[#9BA59E] max-w-md mx-auto">
               Localizada no centro de Pacajus, em ponto estratégico e com facilidade para estacionar.
             </p>
           </div>

@@ -5,10 +5,10 @@ import Link from "next/link";
 import {
   Scissors,
   Flame,
-  CheckCircle2,
-  Sparkles,
+  Crown,
+  Eye,
   Droplets,
-  Palette,
+  Brush,
   ChevronRight,
   Calendar,
   Clock,
@@ -50,7 +50,7 @@ const SERVICE_MODULES: ServiceModule[] = [
       "A assinatura mais requisitada da barbearia. Uma experiência completa de alinhamento facial integral que renova sua presença em uma única sessão.",
     highlights: ["Harmonização completa", "Mais procurado da casa", "Padrão de excelência"],
     badge: "Mais Escolhido",
-    icon: CheckCircle2,
+    icon: Crown,
   },
   {
     id: "sobrancelhas",
@@ -59,7 +59,7 @@ const SERVICE_MODULES: ServiceModule[] = [
       "Alinhamento cirúrgico dos fios na navalha ou pinça, respeitando o arco natural e a estrutura óssea do seu olhar sem perder a identidade masculina.",
     highlights: ["Design limpo e natural", "Simetria anatômica", "Expressão marcante"],
     badge: "Acabamento Fino",
-    icon: Sparkles,
+    icon: Eye,
   },
   {
     id: "tratamentos",
@@ -77,7 +77,7 @@ const SERVICE_MODULES: ServiceModule[] = [
       "Descoloração técnica segura para platinados uniformes, reflexos, luzes e matização com reconstrução capilar integrada para preservar a estrutura do fio.",
     highlights: ["Platinado global", "Reflexos & luzes", "Tratamento pós-química"],
     badge: "Técnica Avançada",
-    icon: Palette,
+    icon: Brush,
   },
 ];
 
@@ -85,9 +85,9 @@ export function ModulesServicesSection() {
   return (
     <section
       id="servicos"
-      className="relative w-full bg-[#080B09] text-[#FFFFFF] py-20 sm:py-28 overflow-hidden scroll-mt-24 border-t border-[#18221B]"
+      className="relative w-full bg-[#080B09] text-[#FFFFFF] py-16 sm:py-28 overflow-hidden scroll-mt-24 border-t border-[#18221B]"
     >
-      {/* Elementor Background Lighting FX */}
+      {/* Background Lighting FX */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-[#25C440]/[0.04] blur-[140px] pointer-events-none rounded-full" />
       <div className="absolute -bottom-24 right-0 w-[500px] h-[400px] bg-[#25C440]/[0.03] blur-[120px] pointer-events-none rounded-full" />
 
@@ -103,12 +103,17 @@ export function ModulesServicesSection() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* =========================================================================
-            HEADER DO MODELO ELEMENTOR (Container 21857751 adaptado para Barbearia)
+            HEADER DE SERVIÇOS (Espaçamento nobre e respeitável)
            ========================================================================= */}
         <ScrollReveal>
-          <div className="flex flex-col items-center text-center space-y-3 sm:space-y-4 max-w-4xl mx-auto mb-10 sm:mb-14">
+          <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+            {/* Tag nobre acima da seção */}
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-[#25C440] bg-[#121A14] border border-[#25C440]/30 shadow-[0_0_15px_rgba(37,196,64,0.1)] mb-3 sm:mb-4">
+              SERVIÇOS DE ELITE
+            </span>
+
             {/* Headline com txt-degrade */}
-            <h2 className="font-heading font-black text-3xl sm:text-5xl md:text-6xl tracking-tight text-[#FFFFFF] leading-[1.05] max-w-3xl">
+            <h2 className="font-heading font-black text-3xl sm:text-5xl md:text-6xl tracking-tight text-[#FFFFFF] leading-[1.08] max-w-3xl mb-3 sm:mb-4">
               O que você vai{" "}
               <span className="bg-gradient-to-r from-[#25C440] via-[#5BE376] to-[#FFFFFF] bg-clip-text text-transparent">
                 vivenciar
@@ -116,8 +121,8 @@ export function ModulesServicesSection() {
             </h2>
 
             {/* Subtitle Helvetica / Inter */}
-            <p className="text-sm sm:text-lg text-[#FFFFFF]/70 max-w-[580px] font-normal leading-relaxed mx-auto">
-              Atendimento estruturado do clássico ao contemporâneo com visagismo anatômico e produtos profissionais de elite.
+            <p className="text-xs sm:text-base text-[#9BA59E] max-w-[580px] font-normal leading-relaxed mx-auto">
+              Atendimento estruturado do clássico ao contemporâneo com visagismo anatômico e produtos profissionais de alta performance.
             </p>
           </div>
         </ScrollReveal>
