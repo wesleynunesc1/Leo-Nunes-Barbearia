@@ -689,6 +689,12 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   transform: translateZ(0);
   backface-visibility: hidden;
 }
+
+@media (max-width: 768px) {
+  .quadrado {
+    display: none !important;
+  }
+}
 /* =========================================================================
    9. HEADER GLASSMORPHISM ON SCROLL
    ========================================================================= */
