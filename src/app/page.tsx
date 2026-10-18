@@ -19,7 +19,6 @@ import {
 import { getAllBarbers } from "@/data/barbers";
 import { TeamCarousel } from "@/components/TeamCarousel";
 import { ModulesServicesSection } from "@/components/ModulesServicesSection";
-import { VideoShowcase } from "@/components/VideoShowcase";
 import { ThreeDScrollTrigger } from "@/components/ThreeDScrollTrigger";
 import {
   ScrollReveal,
@@ -404,11 +403,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* =========================================================================
-          SHOWCASE DE VÍDEO INSTITUCIONAL 3D (#tour-video)
-         ========================================================================= */}
-      <VideoShowcase />
 
       {/* =========================================================================
           EXPERIÊNCIA & ESPAÇO (#experiencia) - Tema Branco (White Luxury Theme)
