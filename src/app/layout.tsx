@@ -4,66 +4,72 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PageTitleChanger } from "@/components/PageTitleChanger";
 import { Providers } from "@/components/Providers";
+import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
+import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
+
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
+  "https://barbeariawesley-iota.vercel.app";
 
 export const viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#080A08",
+  themeColor: "#000000",
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://leonunesbarbearia.com.br"),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "Léo Nunes Barbearia | Cortes, Barbas e Estilo em Pacajus - CE",
-    template: "%s | Léo Nunes Barbearia",
+    default: "Leo Nunes Barbearia | Barbearia em Pacajus - CE",
+    template: "%s | Leo Nunes Barbearia",
   },
   description:
-    "A barbearia referência em Pacajus - CE. Cortes masculinos de alta precisão, barboterapia, visagismo e atendimento pontual. Agende online seu horário com barbeiros especialistas.",
+    "Na Leo Nunes Barbearia, em Pacajus, você encontra cortes modernos, atendimento de qualidade e praticidade para agendar seu horário online.",
   keywords: [
+    "Leo Nunes Barbearia",
     "Barbearia Pacajus",
     "Barbearia em Pacajus",
     "Melhor barbearia de Pacajus",
-    "Léo Nunes Barbearia",
     "Corte de cabelo masculino Pacajus",
     "Corte degradê fade Pacajus",
     "Barbeiro Pacajus",
     "Barboterapia Pacajus CE",
     "Agendamento barbearia Pacajus",
-    "Léo Nunes",
+    "Leo Nunes",
     "Aleffer Nunes",
     "Hélio Victor",
     "Guilherme Oliveira",
     "Salão masculino Pacajus",
     "Barbearia Ceará",
   ],
-  authors: [{ name: "Léo Nunes Barbearia" }],
-  creator: "Léo Nunes Barbearia",
-  publisher: "Léo Nunes Barbearia",
+  authors: [{ name: "Leo Nunes Barbearia" }],
+  creator: "Leo Nunes Barbearia",
+  publisher: "Leo Nunes Barbearia",
   robots: {
     index: true,
     follow: true,
   },
   alternates: {
-    canonical: "https://leonunesbarbearia.com.br/",
+    canonical: SITE_URL,
   },
   openGraph: {
-    title: "Léo Nunes Barbearia | Na Léo Nunes você sai com visual alinhado",
+    title: "Leo Nunes Barbearia | Barbearia em Pacajus - CE",
     description:
-      "A barbearia referência em Pacajus - CE. Cortes de precisão, barboterapia e atendimento pontual. Agende online seu horário.",
-    url: "https://leonunesbarbearia.com.br/",
-    siteName: "Léo Nunes Barbearia",
+      "Na Leo Nunes Barbearia, em Pacajus, você encontra cortes modernos, atendimento de qualidade e praticidade para agendar seu horário online.",
+    url: SITE_URL,
+    siteName: "Leo Nunes Barbearia",
     images: [
       {
         url: "/images/hero-bg.png",
         width: 1200,
         height: 630,
-        alt: "Léo Nunes Barbearia - Pacajus CE",
+        alt: "Leo Nunes Barbearia - Pacajus CE",
       },
       {
         url: "/images/logo.png",
         width: 512,
         height: 512,
-        alt: "Logo Léo Nunes Barbearia",
+        alt: "Logo Leo Nunes Barbearia",
       },
     ],
     locale: "pt_BR",
@@ -71,17 +77,19 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Léo Nunes Barbearia | Pacajus - CE",
-    description: "Cortes modernos, barbas alinhadas e agendamento prático online.",
+    title: "Leo Nunes Barbearia | Barbearia em Pacajus - CE",
+    description:
+      "Na Leo Nunes Barbearia, em Pacajus, você encontra cortes modernos, atendimento de qualidade e praticidade para agendar seu horário online.",
     images: ["/images/hero-bg.png"],
   },
   icons: {
     icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico" },
       { url: "/favicon.png", type: "image/png" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
     ],
     apple: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
     ],
   },
 };
@@ -94,13 +102,15 @@ export default function RootLayout({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BarberShop",
-    name: "Léo Nunes Barbearia",
-    image: "https://leonunesbarbearia.com.br/images/hero-bg.png",
-    logo: "https://leonunesbarbearia.com.br/images/logo.png",
-    url: "https://leonunesbarbearia.com.br",
+    name: "Leo Nunes Barbearia",
+    alternateName: "Leo Nunes Barbearia Pacajus",
+    description:
+      "Na Leo Nunes Barbearia, em Pacajus, você encontra cortes modernos, atendimento de qualidade e praticidade para agendar seu horário online.",
+    image: `${SITE_URL}/images/hero-bg.png`,
+    logo: `${SITE_URL}/images/logo.png`,
+    url: SITE_URL,
     telephone: "+5585992227064",
     priceRange: "$$",
-    description: "Barbearia referência em Pacajus - CE. Cortes masculinos de alta precisão, degradê, visagismo e barboterapia.",
     address: {
       "@type": "PostalAddress",
       streetAddress: "Rua Joaquim Nogueira Lopes, 180",
@@ -128,19 +138,43 @@ export default function RootLayout({
         closes: "18:00",
       },
     ],
-    sameAs: [
-      "https://instagram.com/leonunesbarbearia",
-    ],
+    sameAs: ["https://instagram.com/leonunesbarbearia"],
+    potentialAction: {
+      "@type": "ReserveAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${SITE_URL}/agendar`,
+        inLanguage: "pt-BR",
+        actionPlatform: [
+          "http://schema.org/DesktopWebPlatform",
+          "http://schema.org/MobileWebPlatform",
+        ],
+      },
+      result: {
+        "@type": "Reservation",
+        name: "Agendamento de Serviços de Barbearia",
+      },
+    },
   };
 
   return (
     <html lang="pt-BR" className="scroll-smooth">
       <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <link rel="alternate icon" href="/favicon.png" />
-        <link rel="apple-touch-icon" href="/favicon.svg" />
+        <link rel="alternate icon" href="/favicon.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="Leo Nunes Barbearia" />
+        <meta name="theme-color" content="#000000" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
         <link
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap"
           rel="stylesheet"
@@ -154,10 +188,12 @@ export default function RootLayout({
         {/* Camada Fixa de Ruído / Dots Pattern (Apenas Desktop) */}
         <div className="quadrado hidden md:block" aria-hidden="true" />
         <Providers>
+          <ServiceWorkerRegister />
           <PageTitleChanger />
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
+          <PWAInstallPrompt />
         </Providers>
       </body>
     </html>

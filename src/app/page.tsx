@@ -48,7 +48,7 @@ export default async function HomePage() {
         <div className="hidden md:block absolute inset-0 z-0 select-none pointer-events-none">
           <Image
             src="/images/hero-barbearia-desktop.webp"
-            alt="Atendimento premium na Léo Nunes Barbearia"
+            alt="Atendimento premium na Leo Nunes Barbearia"
             fill
             priority
             className="object-cover object-right lg:object-[82%_center] brightness-[0.92] contrast-[1.05]"
@@ -66,7 +66,7 @@ export default async function HomePage() {
         <div className="block md:hidden absolute inset-0 z-0 select-none pointer-events-none">
           <Image
             src="/images/hero-barbearia-mobile.webp"
-            alt="Atendimento premium na Léo Nunes Barbearia"
+            alt="Atendimento premium na Leo Nunes Barbearia"
             fill
             priority
             className="object-cover object-[center_28%] brightness-[0.98] contrast-[1.05]"
@@ -411,7 +411,7 @@ export default async function HomePage() {
                   <div className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-[#202E23] shadow-md group">
                     <Image
                       src="/images/gallery-1.webp"
-                      alt="Atendimento e corte de cabelo na Léo Nunes Barbearia"
+                      alt="Atendimento e corte de cabelo na Leo Nunes Barbearia"
                       fill
                       className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                       sizes="(max-width: 1024px) 50vw, 25vw"
@@ -462,7 +462,7 @@ export default async function HomePage() {
                 </h2>
 
                 <p className="text-xs sm:text-base text-[#9EA9A1] leading-relaxed">
-                  Na Léo Nunes Barbearia em Pacajus, aliamos ambiente climatizado, rigor em higiene e biossegurança, e domínio técnico apurado em tesoura e máquina.
+                  Na Leo Nunes Barbearia em Pacajus, aliamos ambiente climatizado, rigor em higiene e biossegurança, e domínio técnico apurado em tesoura e máquina.
                 </p>
 
                 <div className="space-y-3 pt-1">
@@ -626,7 +626,7 @@ export default async function HomePage() {
                 allowFullScreen={false}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                title="Mapa de Localização da Léo Nunes Barbearia"
+                title="Mapa de Localização da Leo Nunes Barbearia"
                 className="w-full h-full"
               />
             </div>

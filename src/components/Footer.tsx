@@ -19,11 +19,11 @@ export function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-12 mb-8 sm:mb-12">
           {/* Column 1: Brand */}
           <div className="space-y-4">
-            <Link href="/" className="inline-block" aria-label="Léo Nunes Barbearia">
+            <Link href="/" className="inline-block" aria-label="Leo Nunes Barbearia">
               <div className="relative h-12 w-44">
                 <Image
                   src="/images/logo.png"
-                  alt="Léo Nunes Barbearia"
+                  alt="Leo Nunes Barbearia"
                   fill
                   className="object-contain object-left"
                   sizes="176px"
@@ -40,7 +40,7 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-lg bg-[#101611] border border-[#202A22] flex items-center justify-center text-[#F5F7F3] hover:text-[#25C440] hover:border-[#25C440]/50 transition-colors"
-                aria-label="Instagram da Léo Nunes Barbearia"
+                aria-label="Instagram da Leo Nunes Barbearia"
               >
                 <InstagramIcon className="w-5 h-5" />
               </a>
@@ -49,7 +49,7 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-lg bg-[#101611] border border-[#202A22] flex items-center justify-center text-[#F5F7F3] hover:text-[#25C440] hover:border-[#25C440]/50 transition-colors"
-                aria-label="WhatsApp da Léo Nunes Barbearia"
+                aria-label="WhatsApp da Leo Nunes Barbearia"
               >
                 <Phone className="w-5 h-5" />
               </a>
@@ -177,7 +177,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="pt-8 mt-8 border-t border-[#1C241E] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#6F7B72]">
           <p>
-            © {currentYear} Léo Nunes Barbearia. Todos os direitos reservados.
+            © {currentYear} Leo Nunes Barbearia. Todos os direitos reservados.
           </p>
           <p className="flex items-center gap-1 text-[11px]">
             Desenvolvido com excelência editorial e agendamento oficial integrado.

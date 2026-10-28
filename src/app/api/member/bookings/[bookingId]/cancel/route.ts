@@ -175,6 +175,19 @@ export async function POST(
       console.warn("[CANCEL POST-CHECK UNCONFIRMED]", updatedBooking?.status);
     }
 
+    // Disparo assíncrono de Web Push Notification
+    try {
+      const { sendPushNotification } = await import("@/lib/pushNotifications");
+      sendPushNotification(
+        { memberId: member.id },
+        {
+          title: "Leo Nunes Barbearia ✂️",
+          body: "Seu horário foi cancelado com sucesso no Wix Bookings.",
+          url: "/minha-conta/agendamentos",
+        }
+      ).catch((e) => console.error("[PUSH CANCEL ERROR]", e));
+    } catch {}
+
     return NextResponse.json({
       success: true,
       bookingId,

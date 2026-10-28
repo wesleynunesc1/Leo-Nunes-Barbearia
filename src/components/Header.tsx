@@ -67,12 +67,12 @@ export function Header() {
             <Link
               href="/"
               className="flex items-center group focus:outline-none focus:ring-2 focus:ring-[#25C440] rounded-lg p-1"
-              aria-label="Léo Nunes Barbearia - Página Inicial"
+              aria-label="Leo Nunes Barbearia - Página Inicial"
             >
               <div className="relative h-10 w-36 sm:h-12 sm:w-44 transition-transform duration-300 group-hover:scale-[1.02]">
                 <Image
                   src="/images/logo.png"
-                  alt="Léo Nunes Barbearia"
+                  alt="Leo Nunes Barbearia"
                   fill
                   priority
                   className="object-contain object-left"

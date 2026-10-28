@@ -23,6 +23,7 @@ import {
 import { useAuth } from "@/context/AuthContext";
 import { useBooking } from "@/context/BookingContext";
 import { MemberBookingItem } from "@/lib/wixAuth";
+import { PushNotificationManager } from "@/components/PushNotificationManager";
 
 export default function MinhaContaPage() {
   const router = useRouter();
@@ -342,6 +343,9 @@ export default function MinhaContaPage() {
             </div>
           )}
         </div>
+
+        {/* Gerenciamento de Notificações Push PWA */}
+        <PushNotificationManager />
 
         {/* Histórico Recente */}
         {pastBookings.length > 0 && (

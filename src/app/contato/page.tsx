@@ -16,24 +16,24 @@ import { BookingTriggerButton } from "@/components/BookingTriggerButton";
 import { getDynamicInstitutional } from "@/lib/wixDynamicSync";
 
 export const metadata: Metadata = {
-  title: "Contato & Agendamento | Léo Nunes Barbearia - Pacajus CE",
+  title: "Contato & Localização",
   description:
-    "Tudo o que você precisa em um só lugar. Baixe nossos apps oficiais para Android e iPhone, agende seu horário online ou fale diretamente com a equipe da Léo Nunes Barbearia.",
+    "Entre em contato com a Leo Nunes Barbearia em Pacajus - CE. Veja nossa localização, horários de funcionamento, aplicativo oficial e agende online.",
   alternates: {
-    canonical: "https://leonunesbarbearia.com.br/contato",
+    canonical: "/contato",
   },
   openGraph: {
-    title: "Contato & Agendamento | Léo Nunes Barbearia",
+    title: "Contato & Localização | Leo Nunes Barbearia",
     description:
       "Agende seu horário online, baixe o aplicativo para Android e iPhone ou fale com nossa equipe em Pacajus - CE.",
-    url: "https://leonunesbarbearia.com.br/contato",
-    siteName: "Léo Nunes Barbearia",
+    url: "/contato",
+    siteName: "Leo Nunes Barbearia",
     images: [
       {
         url: "/images/gallery-2.png",
         width: 1200,
         height: 630,
-        alt: "Léo Nunes Barbearia - Contato e Agendamento",
+        alt: "Leo Nunes Barbearia - Contato e Localização",
       },
     ],
     locale: "pt_BR",

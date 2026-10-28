@@ -50,6 +50,7 @@ next-env.d.ts
 /Páginas de Ref/
 /Home.png
 /Home Mobile.png
-# local runtime locks
+# local runtime locks & subscriptions
 .bookings_lock.json
+.push_subscriptions.json
 /scratch/

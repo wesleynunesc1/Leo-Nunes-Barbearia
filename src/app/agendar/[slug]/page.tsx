@@ -30,13 +30,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   return {
-    title: `Agendar com ${barber.name} | Serviços & Horários`,
-    description: `Confira os serviços de ${barber.name} na Léo Nunes Barbearia em Pacajus - CE. Cortes, barbas e tratamentos com agendamento online.`,
+    title: `Agendar com ${barber.name}`,
+    description: `Confira os serviços de ${barber.name} na Leo Nunes Barbearia em Pacajus - CE. Cortes, barbas e tratamentos com agendamento online.`,
     alternates: {
-      canonical: `https://leonunesbarbearia.com.br/agendar/${barber.slug}`,
+      canonical: `/agendar/${barber.slug}`,
     },
     openGraph: {
-      title: `Agendar com ${barber.name} | Léo Nunes Barbearia`,
+      title: `Agendar com ${barber.name} | Leo Nunes Barbearia`,
       description: barber.tagline,
       images: [
         {

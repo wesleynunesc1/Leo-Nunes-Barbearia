@@ -289,6 +289,19 @@ export async function POST(
       hour12: false,
     }).format(startDateObj);
 
+    // Disparo assíncrono de Web Push Notification de reagendamento
+    try {
+      const { sendPushNotification } = await import("@/lib/pushNotifications");
+      sendPushNotification(
+        { memberId: member.id },
+        {
+          title: "Leo Nunes Barbearia ✂️",
+          body: `Seu horário foi reagendado com sucesso para ${newDate} às ${newTime}!`,
+          url: "/minha-conta/agendamentos",
+        }
+      ).catch((e) => console.error("[PUSH RESCHEDULE ERROR]", e));
+    } catch {}
+
     return NextResponse.json({
       success: true,
       bookingId,

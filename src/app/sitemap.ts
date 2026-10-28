@@ -1,9 +1,12 @@
 import { getAllBarbers } from "@/data/barbers";
 
 export default function sitemap() {
-  const baseUrl = "https://leonunesbarbearia.com.br";
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
+    "https://barbeariawesley-iota.vercel.app";
+
   const barbers = getAllBarbers();
-  const buildDate = "2026-10-17";
+  const buildDate = new Date().toISOString().split("T")[0];
 
   const barberRoutes = barbers.map((b) => ({
     url: `${baseUrl}/agendar/${b.slug}`,

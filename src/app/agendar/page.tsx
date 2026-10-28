@@ -8,11 +8,11 @@ import { ShieldCheck, Calendar, ArrowRight, HelpCircle } from "lucide-react";
 import { BookingTriggerButton } from "@/components/BookingTriggerButton";
 
 export const metadata: Metadata = {
-  title: "Escolha seu Barbeiro | Agendamento Online",
+  title: "Agendar Horário",
   description:
-    "Selecione o profissional de sua preferência na Léo Nunes Barbearia: Léo Nunes, Aleffer Nunes, Hélio Victor ou Guilherme Oliveira.",
+    "Selecione o profissional de sua preferência na Leo Nunes Barbearia em Pacajus - CE: Leo Nunes, Aleffer Nunes, Hélio Victor ou Guilherme Oliveira.",
   alternates: {
-    canonical: "https://leonunesbarbearia.com.br/agendar",
+    canonical: "/agendar",
   },
 };
 

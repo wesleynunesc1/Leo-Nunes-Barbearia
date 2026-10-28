@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
 
     // Identificação segura de membro autenticado (se houver sessão ativa no backend)
     let authenticatedMemberContactId: string | undefined = undefined;
+    let authenticatedMemberId: string | undefined = undefined;
     const authCookie = request.cookies.get(AUTH_COOKIE_NAME)?.value;
     if (authCookie) {
       try {
@@ -40,6 +41,9 @@ export async function POST(request: NextRequest) {
         const member = await getCurrentMemberProfile(tokens);
         if (member?.contactId) {
           authenticatedMemberContactId = member.contactId;
+        }
+        if (member?.id) {
+          authenticatedMemberId = member.id;
         }
       } catch {
         // Ignora silenciosamente para visitantes
@@ -736,6 +740,19 @@ export async function POST(request: NextRequest) {
       bookingId,
       responsePayload: confirmedResponse,
     });
+
+    // Disparo assíncrono de Web Push Notification oficial
+    try {
+      const { sendPushNotification } = await import("@/lib/pushNotifications");
+      sendPushNotification(
+        { memberId: authenticatedMemberId },
+        {
+          title: "Leo Nunes Barbearia ✂️",
+          body: `Seu horário foi confirmado! ${serviceName} com ${barber.name} no dia ${date} às ${time}.`,
+          url: "/minha-conta/agendamentos",
+        }
+      ).catch((e) => console.error("[PUSH BOOKING CONFIRM ERROR]", e));
+    } catch {}
 
     await releaseBookingLocks(lockKeysToRelease);
     return NextResponse.json(confirmedResponse);
