@@ -12,7 +12,16 @@ const MONTH_NAMES = [
 const WEEK_DAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
 export function Step3Date() {
-  const { selectedBarber, selectedService, selectedDate, selectDate, goToStep } = useBooking();
+  const {
+    selectedBarber,
+    selectedService,
+    selectedServices,
+    totalPrice,
+    totalDurationMinutes,
+    selectedDate,
+    selectDate,
+    goToStep,
+  } = useBooking();
 
   // Data atual no fuso de Fortaleza (UTC-3)
   const now = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Fortaleza" }));
@@ -24,7 +33,7 @@ export function Step3Date() {
   const [currentMonth, setCurrentMonth] = useState(todayMonth);
   const [currentYear, setCurrentYear] = useState(todayYear);
 
-  if (!selectedBarber || !selectedService) {
+  if (!selectedBarber || (selectedServices.length === 0 && !selectedService)) {
     return (
       <div className="text-center py-12">
         <p className="text-sm text-[#A6AEA8]">Por favor, escolha o barbeiro e o serviço primeiro.</p>
@@ -68,20 +77,26 @@ export function Step3Date() {
 
   return (
     <div className="space-y-5">
-      {/* Resumo do Barbeiro e Serviço */}
+      {/* Resumo do Barbeiro e Serviço(s) */}
       <div className="flex items-center justify-between p-3 rounded-xl bg-[#0D1510] border border-[#1C2A1E]">
         <div className="space-y-0.5">
           <span className="text-[10px] font-mono uppercase tracking-wider text-[#25C440] font-bold block">
-            Serviço & Barbeiro
+            {selectedServices.length > 1 ? `${selectedServices.length} Serviços Selecionados` : "Serviço & Barbeiro"}
           </span>
           <p className="font-heading text-xs sm:text-sm font-bold text-[#FFFFFF]">
-            {selectedService.name} <span className="text-[#8E9B91]">com</span> {selectedBarber.name}
+            {selectedServices.length > 1
+              ? selectedServices.map((s) => s.name).join(" + ")
+              : selectedService?.name}{" "}
+            <span className="text-[#8E9B91]">com</span> {selectedBarber.name}
           </p>
+          <span className="text-[11px] text-[#A6AEA8] block">
+            Duração total: <strong className="text-[#25C440]">{totalDurationMinutes} min</strong> • Total: <strong className="text-[#25C440]">R$ {totalPrice.toFixed(2).replace(".", ",")}</strong>
+          </span>
         </div>
         <button
           type="button"
           onClick={() => goToStep(2)}
-          className="text-xs font-semibold text-[#A6AEA8] hover:text-[#25C440] border border-[#243327] hover:border-[#25C440]/40 px-3 py-1.5 rounded-lg transition-colors"
+          className="text-xs font-semibold text-[#A6AEA8] hover:text-[#25C440] border border-[#243327] hover:border-[#25C440]/40 px-3 py-1.5 rounded-lg transition-colors shrink-0"
         >
           Trocar
         </button>

@@ -5,6 +5,16 @@ export interface BookingCustomer {
   notes?: string;
 }
 
+export interface SelectedServiceItem {
+  id: string;
+  wixServiceId?: string;
+  name: string;
+  price: number;
+  durationMinutes: number;
+  category?: string;
+  formattedPrice?: string;
+}
+
 export interface BookingPayload {
   barberId: string;
   barberSlug: string;
@@ -13,10 +23,24 @@ export interface BookingPayload {
   serviceName: string;
   servicePrice?: number;
   serviceDuration?: number;
+  services?: SelectedServiceItem[]; // Lista de múltiplos serviços selecionados
+  totalPrice?: number;
+  totalDuration?: number;
   date: string; // YYYY-MM-DD
   time: string; // HH:mm
+  endTime?: string; // HH:mm
   customer: BookingCustomer;
   idempotencyKey?: string;
+  slotMetadata?: any;
+}
+
+export interface NestedTimeSlot {
+  serviceId: string;
+  scheduleId?: string;
+  localStartDate: string;
+  localEndDate: string;
+  resourceId?: string;
+  resourceName?: string;
 }
 
 export interface TimeSlot {
@@ -24,15 +48,21 @@ export interface TimeSlot {
   available: boolean;
   period: "morning" | "afternoon";
   reason?: string;
+  endTime?: string;
+  durationMinutes?: number;
+  nestedTimeSlots?: NestedTimeSlot[];
 }
 
 export interface BookingSlotResponse {
   date: string;
   barberId: string;
   serviceId: string;
+  serviceIds?: string[];
   slots: TimeSlot[];
   wixIntegrationPending: boolean;
   timezone: string;
+  totalDuration?: number;
+  isMultiService?: boolean;
 }
 
 export type BookingResponseStatus =
@@ -61,6 +91,12 @@ export interface BookingCreateResponse {
   status: BookingResponseStatus;
   errorCode?: BookingErrorCode;
   bookingId?: string;
+  multiServiceBookingId?: string;
+  bookingIds?: string[];
+  services?: SelectedServiceItem[];
+  totalDuration?: number | string;
+  totalPrice?: number | string;
+  endTime?: string;
   message: string;
   directWixUrl?: string;
   checkoutUrl?: string;
@@ -68,3 +104,4 @@ export interface BookingCreateResponse {
   dryRun?: boolean;
   details?: Record<string, unknown>;
 }
+

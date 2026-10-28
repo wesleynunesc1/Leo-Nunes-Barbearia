@@ -75,6 +75,7 @@ export interface MemberBookingItem {
   paymentStatus?: string;
   isUpcoming: boolean;
   locationName?: string;
+  multiServiceBookingId?: string;
 }
 
 /**
@@ -316,6 +317,12 @@ export async function getMemberBookings(contactId: string): Promise<{
         paymentStatus: b.paymentStatus || undefined,
         isUpcoming,
         locationName: b.bookedEntity?.slot?.location?.name || undefined,
+        multiServiceBookingId:
+          b.multiServiceBookingInfo?._id ||
+          b.multiServiceBookingInfo?.multiServiceBookingId ||
+          b.multiServiceBookingId ||
+          b.multiServiceBooking?.id ||
+          undefined,
       });
     }
 

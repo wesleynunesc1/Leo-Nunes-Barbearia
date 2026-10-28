@@ -122,4 +122,12 @@ declare module 'next/cache' {
   export function revalidatePath(path: string, type?: 'layout' | 'page'): void;
 }
 
+declare module 'next/dist/lib/metadata/types/metadata-interface.js' {
+  export type Metadata = any;
+  export type ResolvingMetadata = any;
+  export type Viewport = any;
+  export type ResolvingViewport = any;
+}
+
+
 

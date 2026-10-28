@@ -6,28 +6,54 @@ import { useBooking } from "@/context/BookingContext";
 import { TimeSlot, BookingSlotResponse } from "@/types/booking";
 
 export function Step4Time() {
-  const { selectedBarber, selectedService, selectedDate, selectedTime, selectTime, goToStep } = useBooking();
+  const {
+    selectedBarber,
+    selectedService,
+    selectedServices,
+    totalPrice,
+    totalDurationMinutes,
+    selectedDate,
+    selectedTime,
+    selectTime,
+    goToStep,
+  } = useBooking();
+
   const [slots, setSlots] = useState<TimeSlot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const requestSeqRef = React.useRef(0);
 
   useEffect(() => {
     if (!selectedBarber || !selectedDate) return;
 
-    let isMounted = true;
+    const currentSeq = ++requestSeqRef.current;
+    const abortController = new AbortController();
+
     setIsLoading(true);
     setError(null);
 
     const fetchSlots = async () => {
       try {
-        const svcId = selectedService?.wixServiceId || selectedService?.id;
-        const url = `/api/bookings/slots?date=${selectedDate}&barberId=${selectedBarber.id}${
-          svcId ? `&serviceId=${svcId}` : ""
-        }`;
-        const res = await fetch(url, { cache: "no-store" });
+        let url = `/api/bookings/slots?date=${selectedDate}&barberId=${selectedBarber.id}`;
+        if (selectedServices.length > 1) {
+          const ids = selectedServices.map((s) => s.wixServiceId || s.id).join(",");
+          url += `&serviceIds=${ids}`;
+        } else {
+          const svcId = selectedService?.wixServiceId || selectedService?.id;
+          if (svcId) url += `&serviceId=${svcId}`;
+        }
+
+        const res = await fetch(url, {
+          cache: "no-store",
+          signal: abortController.signal,
+        });
+
+        // Se uma requisição mais recente já foi iniciada, descarta esta resposta
+        if (currentSeq !== requestSeqRef.current) return;
+
         const data: BookingSlotResponse & { error?: string; closed?: boolean; closedReason?: string } = await res.json();
 
-        if (!isMounted) return;
+        if (currentSeq !== requestSeqRef.current) return;
 
         if (!res.ok || data.error) {
           setError(data.error || "Não foi possível carregar os horários para esta data.");
@@ -38,24 +64,30 @@ export function Step4Time() {
         } else {
           setSlots(data.slots || []);
         }
-      } catch (err) {
-        if (isMounted) {
+      } catch (err: any) {
+        if (err.name === "AbortError") {
+          // Requisição cancelada por nova seleção do usuário — não atualiza estado com erro
+          return;
+        }
+        if (currentSeq === requestSeqRef.current) {
           console.error("[FETCH SLOTS ERROR]", err);
           setError("Erro de conexão ao buscar horários. Tente novamente.");
         }
       } finally {
-        if (isMounted) setIsLoading(false);
+        if (currentSeq === requestSeqRef.current) {
+          setIsLoading(false);
+        }
       }
     };
 
     fetchSlots();
 
     return () => {
-      isMounted = false;
+      abortController.abort();
     };
-  }, [selectedBarber, selectedService, selectedDate]);
+  }, [selectedBarber, selectedService, selectedServices, selectedDate]);
 
-  if (!selectedBarber || !selectedService || !selectedDate) {
+  if (!selectedBarber || (selectedServices.length === 0 && !selectedService) || !selectedDate) {
     return (
       <div className="text-center py-12">
         <p className="text-sm text-[#A6AEA8]">Data ou profissional não definidos.</p>
@@ -89,16 +121,19 @@ export function Step4Time() {
       <div className="flex items-center justify-between p-3 rounded-xl bg-[#0D1510] border border-[#1C2A1E]">
         <div className="space-y-0.5">
           <span className="text-[10px] font-mono uppercase tracking-wider text-[#25C440] font-bold block">
-            Dia Selecionado
+            Dia & Serviços Selecionados
           </span>
           <p className="font-heading text-xs sm:text-sm font-bold text-[#FFFFFF] capitalize">
-            {formattedDate}
+            {formattedDate} • <span className="text-[#25C440]">{totalDurationMinutes} min</span>
           </p>
+          <span className="text-[11px] text-[#8E9B91] block truncate max-w-[280px]">
+            {selectedServices.map((s) => s.name).join(" + ")}
+          </span>
         </div>
         <button
           type="button"
           onClick={() => goToStep(3)}
-          className="text-xs font-semibold text-[#A6AEA8] hover:text-[#25C440] border border-[#243327] hover:border-[#25C440]/40 px-3 py-1.5 rounded-lg transition-colors"
+          className="text-xs font-semibold text-[#A6AEA8] hover:text-[#25C440] border border-[#243327] hover:border-[#25C440]/40 px-3 py-1.5 rounded-lg transition-colors shrink-0"
         >
           Trocar Dia
         </button>
@@ -113,7 +148,9 @@ export function Step4Time() {
           ESCOLHA O HORÁRIO
         </h2>
         <p className="text-xs text-[#9BA59E]">
-          Horários disponíveis em tempo real para {selectedService.name} com {selectedBarber.name}.
+          {selectedServices.length > 1
+            ? `Horários com disponibilidade consecutiva de ${totalDurationMinutes} minutos para todos os serviços com ${selectedBarber.name}.`
+            : `Horários disponíveis em tempo real para ${selectedService?.name} com ${selectedBarber.name}.`}
         </p>
       </div>
 
@@ -121,7 +158,7 @@ export function Step4Time() {
       {isLoading && (
         <div className="flex flex-col items-center justify-center py-16 space-y-3 bg-[#0B100C] rounded-2xl border border-[#1C291E]">
           <Loader2 className="w-8 h-8 text-[#25C440] animate-spin" />
-          <p className="text-xs text-[#A6AEA8]">Consultando agenda oficial...</p>
+          <p className="text-xs text-[#A6AEA8]">Consultando disponibilidade oficial no Wix...</p>
         </div>
       )}
 
@@ -145,7 +182,7 @@ export function Step4Time() {
         <div className="text-center py-12 p-6 bg-[#0B100C] rounded-2xl border border-[#1C291E] space-y-3">
           <Clock className="w-8 h-8 text-[#A6AEA8] mx-auto" />
           <p className="text-xs sm:text-sm text-[#A6AEA8]">
-            Não há horários disponíveis para esta data.
+            Não há horários com disponibilidade contínua para esta data.
           </p>
           <button
             type="button"
@@ -173,7 +210,7 @@ export function Step4Time() {
                 <Sun className="w-4 h-4" />
                 <span>Manhã (08h às 12h)</span>
               </div>
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                 {morningSlots.map((slot) => {
                   const isSelected = selectedTime === slot.time;
                   return (
@@ -182,16 +219,32 @@ export function Step4Time() {
                       type="button"
                       disabled={!slot.available}
                       title={slot.reason || undefined}
-                      onClick={() => selectTime(slot.time)}
-                      className={`py-2.5 sm:py-3 px-2 rounded-xl text-xs sm:text-sm font-heading font-extrabold transition-all ${
+                      onClick={() => selectTime(slot.time, slot)}
+                      className={`p-2.5 rounded-xl text-left transition-all ${
                         isSelected
-                          ? "bg-[#25C440] text-[#080B09] shadow-lg shadow-[#25C440]/30 scale-[1.03] ring-2 ring-[#FFFFFF]"
+                          ? "bg-[#25C440] text-[#080B09] shadow-lg shadow-[#25C440]/30 scale-[1.02] ring-2 ring-[#FFFFFF]"
                           : !slot.available
-                          ? "bg-[#0C120E]/40 text-[#3A473E] border border-[#162118] cursor-not-allowed line-through opacity-40"
+                          ? "bg-[#0C120E]/40 text-[#3A473E] border border-[#162118] cursor-not-allowed opacity-40"
                           : "bg-[#101712] text-[#FFFFFF] hover:bg-[#1C2A1F] hover:text-[#25C440] border border-[#1E2C20] hover:border-[#25C440]/40"
                       }`}
                     >
-                      {slot.time}
+                      <div className="flex items-center justify-between">
+                        <span className="font-heading font-extrabold text-sm sm:text-base">
+                          {slot.time}
+                        </span>
+                        {slot.endTime && (
+                          <span className={`text-[10px] font-mono font-semibold ${
+                            isSelected ? "text-[#080B09]/80" : "text-[#7E8B81]"
+                          }`}>
+                            até {slot.endTime}
+                          </span>
+                        )}
+                      </div>
+                      <span className={`text-[10px] font-mono block mt-0.5 ${
+                        isSelected ? "text-[#080B09]/90 font-bold" : "text-[#25C440]"
+                      }`}>
+                        {slot.durationMinutes || totalDurationMinutes} min
+                      </span>
                     </button>
                   );
                 })}
@@ -206,7 +259,7 @@ export function Step4Time() {
                 <Sunset className="w-4 h-4" />
                 <span>Tarde (13h às 19h)</span>
               </div>
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                 {afternoonSlots.map((slot) => {
                   const isSelected = selectedTime === slot.time;
                   return (
@@ -215,16 +268,32 @@ export function Step4Time() {
                       type="button"
                       disabled={!slot.available}
                       title={slot.reason || undefined}
-                      onClick={() => selectTime(slot.time)}
-                      className={`py-2.5 sm:py-3 px-2 rounded-xl text-xs sm:text-sm font-heading font-extrabold transition-all ${
+                      onClick={() => selectTime(slot.time, slot)}
+                      className={`p-2.5 rounded-xl text-left transition-all ${
                         isSelected
-                          ? "bg-[#25C440] text-[#080B09] shadow-lg shadow-[#25C440]/30 scale-[1.03] ring-2 ring-[#FFFFFF]"
+                          ? "bg-[#25C440] text-[#080B09] shadow-lg shadow-[#25C440]/30 scale-[1.02] ring-2 ring-[#FFFFFF]"
                           : !slot.available
-                          ? "bg-[#0C120E]/40 text-[#3A473E] border border-[#162118] cursor-not-allowed line-through opacity-40"
+                          ? "bg-[#0C120E]/40 text-[#3A473E] border border-[#162118] cursor-not-allowed opacity-40"
                           : "bg-[#101712] text-[#FFFFFF] hover:bg-[#1C2A1F] hover:text-[#25C440] border border-[#1E2C20] hover:border-[#25C440]/40"
                       }`}
                     >
-                      {slot.time}
+                      <div className="flex items-center justify-between">
+                        <span className="font-heading font-extrabold text-sm sm:text-base">
+                          {slot.time}
+                        </span>
+                        {slot.endTime && (
+                          <span className={`text-[10px] font-mono font-semibold ${
+                            isSelected ? "text-[#080B09]/80" : "text-[#7E8B81]"
+                          }`}>
+                            até {slot.endTime}
+                          </span>
+                        )}
+                      </div>
+                      <span className={`text-[10px] font-mono block mt-0.5 ${
+                        isSelected ? "text-[#080B09]/90 font-bold" : "text-[#25C440]"
+                      }`}>
+                        {slot.durationMinutes || totalDurationMinutes} min
+                      </span>
                     </button>
                   );
                 })}

@@ -20,6 +20,7 @@ import {
   ShieldCheck,
   Info,
   Settings,
+  Layers,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useBooking } from "@/context/BookingContext";
@@ -265,6 +266,12 @@ export default function MeusAgendamentosPage() {
                   <div className="space-y-2.5">
                     <div className="flex flex-wrap items-center gap-2">
                       {renderStatusBadge(item.status)}
+                      {item.multiServiceBookingId && (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-[#25C440]/15 text-[#25C440] border border-[#25C440]/30">
+                          <Layers className="w-3 h-3" />
+                          Pacote Agrupado
+                        </span>
+                      )}
                       {item.formattedPrice && (
                         <span className="text-xs font-bold text-white bg-white/5 px-2.5 py-0.5 rounded-full border border-white/10">
                           {item.formattedPrice}

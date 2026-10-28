@@ -16,6 +16,7 @@ import {
   Mail,
   FileText,
   Lock,
+  Layers,
 } from "lucide-react";
 import { useBooking } from "@/context/BookingContext";
 import { useAuth } from "@/context/AuthContext";
@@ -25,6 +26,10 @@ export function Step5Confirm() {
   const {
     selectedBarber,
     selectedService,
+    selectedServices,
+    totalPrice,
+    totalDurationMinutes,
+    selectedSlotMetadata,
     selectedDate,
     selectedTime,
     customer,
@@ -50,7 +55,7 @@ export function Step5Confirm() {
     }
   }, [member]);
 
-  if (!selectedBarber || !selectedService || !selectedDate || !selectedTime) {
+  if (!selectedBarber || (selectedServices.length === 0 && !selectedService) || !selectedDate || !selectedTime) {
     return (
       <div className="text-center py-12">
         <p className="text-sm text-[#A6AEA8]">Dados incompletos para a confirmação.</p>
@@ -73,6 +78,9 @@ export function Step5Confirm() {
     day: "numeric",
     month: "long",
   });
+
+  const isMulti = selectedServices.length > 1;
+  const estimatedEndTime = selectedSlotMetadata?.endTime || "";
 
   // Máscara de telefone/WhatsApp: (XX) XXXXX-XXXX
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -130,7 +138,7 @@ export function Step5Confirm() {
 
         <div className="space-y-2">
           <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#25C440]">
-            Reserva Oficial Wix Confirmada
+            {isMulti ? "Pacote de Serviços Confirmado no Wix" : "Reserva Oficial Wix Confirmada"}
           </span>
           <h2 className="font-heading text-2xl sm:text-3xl font-black text-[#FFFFFF]">
             AGENDAMENTO CONFIRMADO!
@@ -152,28 +160,49 @@ export function Step5Confirm() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <div>
-              <span className="text-[#6F7B72] block">Serviço:</span>
-              <span className="font-bold text-[#FFFFFF]">{selectedService.name}</span>
-            </div>
-            <div>
-              <span className="text-[#6F7B72] block">Valor:</span>
-              <span className="font-bold text-[#25C440]">{selectedService.formattedPrice}</span>
-            </div>
+          {/* Lista de Serviços */}
+          <div className="space-y-1.5 py-1 border-b border-white/[0.06]">
+            <span className="text-[10px] font-mono uppercase text-[#6F7B72] font-bold block">
+              {isMulti ? `Serviços Agendados (${selectedServices.length})` : "Serviço"}
+            </span>
+            {selectedServices.map((svc) => (
+              <div key={svc.id} className="flex items-center justify-between text-xs">
+                <span className="font-bold text-[#FFFFFF]">{svc.name}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] text-[#A6AEA8]">{svc.durationMinutes} min</span>
+                  <span className="font-bold text-[#25C440]">{svc.formattedPrice}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 text-xs pt-1">
             <div>
               <span className="text-[#6F7B72] block">Data:</span>
               <span className="font-bold text-[#FFFFFF] capitalize">{formattedDate}</span>
             </div>
             <div>
               <span className="text-[#6F7B72] block">Horário:</span>
-              <span className="font-bold text-[#FFFFFF]">{selectedTime}</span>
+              <span className="font-bold text-[#FFFFFF]">
+                {selectedTime} {estimatedEndTime ? `às ${estimatedEndTime}` : ""}
+              </span>
+            </div>
+            <div>
+              <span className="text-[#6F7B72] block">Duração Total:</span>
+              <span className="font-bold text-[#25C440]">{totalDurationMinutes} minutos</span>
+            </div>
+            <div>
+              <span className="text-[#6F7B72] block">Valor Total:</span>
+              <span className="font-bold text-[#25C440]">R$ {totalPrice.toFixed(2).replace(".", ",")}</span>
             </div>
           </div>
 
-          {bookingResult.bookingId && (
+          {(bookingResult.multiServiceBookingId || bookingResult.bookingId) && (
             <div className="pt-2 border-t border-white/[0.06] text-[10px] font-mono text-[#6F7B72]">
-              Código da Reserva: <span className="text-[#A6AEA8]">{bookingResult.bookingId}</span>
+              Código da Reserva:{" "}
+              <span className="text-[#A6AEA8]">
+                {bookingResult.multiServiceBookingId || bookingResult.bookingId}
+              </span>
             </div>
           )}
         </div>
@@ -199,8 +228,7 @@ export function Step5Confirm() {
   }
 
   // =========================================================================
-  // TELA DE RESERVA PENDENTE DE APROVAÇÃO (POLÍTICA DO BARBEIRO NO WIX)
-  // "Não considere toda reserva criada como automaticamente CONFIRMED."
+  // TELA DE RESERVA PENDENTE DE APROVAÇÃO
   // =========================================================================
   if (bookingResult && bookingResult.success && bookingResult.status === "PENDING") {
     return (
@@ -214,10 +242,10 @@ export function Step5Confirm() {
             Reserva Registrada no Wix
           </span>
           <h2 className="font-heading text-2xl sm:text-3xl font-black text-[#FFFFFF]">
-            AGUARDANDO APROVAÇÃO
+            SOLICITAÇÃO RECEBIDA
           </h2>
           <p className="text-xs sm:text-sm text-[#A6AEA8] max-w-md mx-auto">
-            {bookingResult.message || `Sua solicitação foi registrada e aguarda confirmação de ${selectedBarber.name}.`}
+            {bookingResult.message || "Solicitação recebida. Aguardando confirmação da barbearia."}
           </p>
         </div>
 
@@ -233,15 +261,16 @@ export function Step5Confirm() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <div>
-              <span className="text-[#6F7B72] block">Serviço:</span>
-              <span className="font-bold text-[#FFFFFF]">{selectedService.name}</span>
-            </div>
-            <div>
-              <span className="text-[#6F7B72] block">Valor:</span>
-              <span className="font-bold text-[#E6C650]">{selectedService.formattedPrice}</span>
-            </div>
+          <div className="space-y-1.5 py-1 border-b border-white/[0.06]">
+            {selectedServices.map((svc) => (
+              <div key={svc.id} className="flex items-center justify-between text-xs">
+                <span className="font-bold text-[#FFFFFF]">{svc.name}</span>
+                <span className="text-[#E6C650]">{svc.formattedPrice}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 text-xs pt-1">
             <div>
               <span className="text-[#6F7B72] block">Data:</span>
               <span className="font-bold text-[#FFFFFF] capitalize">{formattedDate}</span>
@@ -249,6 +278,14 @@ export function Step5Confirm() {
             <div>
               <span className="text-[#6F7B72] block">Horário:</span>
               <span className="font-bold text-[#FFFFFF]">{selectedTime}</span>
+            </div>
+            <div>
+              <span className="text-[#6F7B72] block">Valor Total:</span>
+              <span className="font-bold text-[#E6C650]">R$ {totalPrice.toFixed(2).replace(".", ",")}</span>
+            </div>
+            <div>
+              <span className="text-[#6F7B72] block">Duração Total:</span>
+              <span className="font-bold text-[#FFFFFF]">{totalDurationMinutes} min</span>
             </div>
           </div>
 
@@ -280,8 +317,7 @@ export function Step5Confirm() {
   }
 
   // =========================================================================
-  // TELA DE VALIDAÇÃO CONCLUÍDA / CHECKOUT SEGURO (MODO TESTE DA ETAPA 3)
-  // "Não habilite a confirmação de reservas reais ainda. Não alterar reservas existentes."
+  // TELA DE VALIDAÇÃO DRY-RUN / CHECKOUT SEGURO
   // =========================================================================
   if (
     bookingResult &&
@@ -298,10 +334,10 @@ export function Step5Confirm() {
             </div>
             <div className="space-y-1">
               <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#18281C] text-[10px] font-mono font-bold uppercase tracking-wider text-[#25C440] border border-[#25C440]/40">
-                <span>Conexão Wix Bookings V2 Ativa</span>
+                <span>{isMulti ? "Wix Multi-Service V2 Conectado" : "Conexão Wix Bookings V2 Ativa"}</span>
               </div>
               <h3 className="font-heading text-base sm:text-lg font-black text-[#FFFFFF]">
-                Disponibilidade & Dados Validados!
+                Disponibilidade Conjunta & Dados Validados!
               </h3>
               <p className="text-xs text-[#A6AEA8] leading-relaxed">
                 {bookingResult.message}
@@ -314,18 +350,30 @@ export function Step5Confirm() {
             <span className="text-[10px] font-mono uppercase text-[#25C440] font-bold block">
               Resumo da Simulação de Agendamento:
             </span>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+            <div className="space-y-1 py-1 border-b border-white/[0.06]">
+              {selectedServices.map((s) => (
+                <div key={s.id} className="flex items-center justify-between text-xs">
+                  <span className="font-bold text-[#FFFFFF]">{s.name}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] text-[#A6AEA8]">{s.durationMinutes} min</span>
+                    <span className="font-bold text-[#25C440]">{s.formattedPrice}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs pt-1">
               <div>
                 <span className="text-[#6F7B72] block text-[10px]">Barbeiro</span>
                 <span className="font-bold text-[#FFFFFF]">{selectedBarber.name}</span>
               </div>
               <div>
-                <span className="text-[#6F7B72] block text-[10px]">Serviço</span>
-                <span className="font-bold text-[#FFFFFF]">{selectedService.name}</span>
-              </div>
-              <div>
                 <span className="text-[#6F7B72] block text-[10px]">Data & Horário</span>
                 <span className="font-bold text-[#25C440] capitalize">{formattedDate} às {selectedTime}</span>
+              </div>
+              <div>
+                <span className="text-[#6F7B72] block text-[10px]">Duração & Valor</span>
+                <span className="font-bold text-[#FFFFFF]">{totalDurationMinutes} min • R$ {totalPrice.toFixed(2).replace(".", ",")}</span>
               </div>
               <div>
                 <span className="text-[#6F7B72] block text-[10px]">Cliente</span>
@@ -335,7 +383,7 @@ export function Step5Confirm() {
           </div>
 
           <div className="p-3 rounded-xl bg-[#0F1611] border border-[#233526] text-[11px] text-[#8EA093] leading-relaxed">
-            🛡️ <strong className="text-white">Segurança Garantida:</strong> A conexão de leitura e a grade de horários foram testadas com sucesso com a API oficial do Wix. Nenhuma reserva real ou de teste foi gerada na sua agenda para manter a integridade do seu calendário oficial.
+            🛡️ <strong className="text-white">Segurança Garantida:</strong> A disponibilidade contínua de todas as sessões foi verificada diretamente na API oficial do Wix Bookings. Nenhuma reserva real foi gerada sem sua autorização explícita.
           </div>
 
           {/* Ações */}
@@ -375,88 +423,6 @@ export function Step5Confirm() {
   }
 
   // =========================================================================
-  // TELA DE INTEGRAÇÃO WIX PENDENTE (REGRA CRÍTICA DO PROMPT)
-  // "Se ainda faltar configurar o Wix, implementar as etapas visuais e apresentar um estado de integração pendente.
-  // Não simular disponibilidade real como se estivesse confirmada.
-  // Nunca mostrar 'Agendamento Confirmado' sem confirmação oficial do Wix."
-  // =========================================================================
-  if (bookingResult && bookingResult.status === "WIX_CREDENTIALS_PENDING") {
-    return (
-      <div className="py-4 sm:py-6 space-y-5 animate-in zoom-in-95 duration-300">
-        <div className="p-4 sm:p-5 rounded-2xl bg-[#131A14] border border-[#25C440]/40 space-y-4">
-          <div className="flex items-start gap-3.5">
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#1D3220] border border-[#25C440]/50 flex items-center justify-center text-[#25C440] shrink-0">
-              <CalendarCheck className="w-5 h-5" />
-            </div>
-            <div className="space-y-1">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#18281C] text-[10px] font-mono font-bold uppercase tracking-wider text-[#25C440] border border-[#25C440]/30">
-                <span>Integração Wix Bookings V2</span>
-              </div>
-              <h3 className="font-heading text-base sm:text-lg font-black text-[#FFFFFF]">
-                Fluxo Local Preparado & Conexão Wix Pronta
-              </h3>
-              <p className="text-xs text-[#A6AEA8] leading-relaxed">
-                Todas as 5 etapas visuais de agendamento foram validadas com sucesso. Para gravação direta e autônoma na agenda Wix sem intervenção, configure as credenciais no arquivo <code className="text-[#25C440] bg-[#0A0E0B] px-1 py-0.5 rounded">.env.local</code>.
-              </p>
-            </div>
-          </div>
-
-          {/* Dados selecionados pelo cliente */}
-          <div className="p-3.5 rounded-xl bg-[#0B100C] border border-[#1A251D] space-y-2">
-            <span className="text-[10px] font-mono uppercase text-[#25C440] font-bold block">
-              Dados da Escolha do Cliente:
-            </span>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-              <div>
-                <span className="text-[#6F7B72] block text-[10px]">Barbeiro</span>
-                <span className="font-bold text-[#FFFFFF]">{selectedBarber.name}</span>
-              </div>
-              <div>
-                <span className="text-[#6F7B72] block text-[10px]">Serviço</span>
-                <span className="font-bold text-[#FFFFFF]">{selectedService.name}</span>
-              </div>
-              <div>
-                <span className="text-[#6F7B72] block text-[10px]">Data & Horário</span>
-                <span className="font-bold text-[#25C440] capitalize">{formattedDate} às {selectedTime}</span>
-              </div>
-              <div>
-                <span className="text-[#6F7B72] block text-[10px]">Cliente</span>
-                <span className="font-bold text-[#FFFFFF] truncate block">{customer.name}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Ação Oficial de Fallback Seguro */}
-          <div className="pt-2 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-[11px] text-[#8E9B91] text-center sm:text-left">
-              Finalize no calendário oficial de {selectedBarber.name} mantendo a segurança:
-            </p>
-            <a
-              href={bookingResult.directWixUrl || selectedService.bookingUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-black text-xs sm:text-sm px-6 py-3 rounded-xl shadow-lg shadow-[#25C440]/30 transition-all shrink-0"
-            >
-              <span>Finalizar no Wix Oficial</span>
-              <ExternalLink className="w-4 h-4" />
-            </a>
-          </div>
-        </div>
-
-        <div className="flex justify-center">
-          <button
-            type="button"
-            onClick={resetBooking}
-            className="text-xs text-[#A6AEA8] hover:text-[#FFFFFF] underline"
-          >
-            Fazer outra simulação de agendamento
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // =========================================================================
   // FORMULÁRIO DE CONFIRMAÇÃO (ETAPA 5)
   // =========================================================================
   return (
@@ -470,7 +436,7 @@ export function Step5Confirm() {
           CONFIRMAR AGENDAMENTO
         </h2>
         <p className="text-xs text-[#9BA59E]">
-          Revise os detalhes e preencha seus dados para finalizar a reserva.
+          Revise os detalhes dos serviços selecionados e preencha seus dados para finalizar a reserva.
         </p>
       </div>
 
@@ -534,20 +500,44 @@ export function Step5Confirm() {
           </div>
 
           <div className="text-right">
-            <span className="text-[10px] text-[#6F7B72] block">Valor</span>
+            <span className="text-[10px] text-[#6F7B72] block">Valor Total</span>
             <span className="font-heading text-base sm:text-lg font-black text-[#25C440]">
-              {selectedService.formattedPrice}
+              R$ {totalPrice.toFixed(2).replace(".", ",")}
             </span>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1 text-xs">
-          <div className="p-2.5 rounded-xl bg-[#101712] border border-[#1A251D]">
-            <span className="text-[#6F7B72] block text-[10px]">Serviço</span>
-            <span className="font-bold text-[#FFFFFF] leading-snug">{selectedService.name}</span>
-            <span className="text-[10px] text-[#25C440] block mt-0.5">({selectedService.durationMinutes} min)</span>
+        {/* Breakdown de Serviços */}
+        <div className="space-y-2 py-1 border-b border-white/[0.06]">
+          <span className="text-[10px] font-mono uppercase tracking-wider text-[#6F7B72] font-bold block">
+            {isMulti ? `Serviços Selecionados (${selectedServices.length})` : "Serviço Selecionado"}
+          </span>
+          <div className="space-y-1.5">
+            {selectedServices.map((service, idx) => (
+              <div
+                key={service.id || idx}
+                className="flex items-center justify-between p-2 rounded-lg bg-[#101712] border border-[#1A251D] text-xs"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="w-5 h-5 rounded-md bg-[#16251A] text-[#25C440] flex items-center justify-center text-[10px] font-bold">
+                    {idx + 1}
+                  </span>
+                  <span className="font-bold text-[#FFFFFF]">{service.name}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-[#A6AEA8] text-[11px] flex items-center gap-1">
+                    <Clock className="w-3 h-3 text-[#25C440]" />
+                    {service.durationMinutes} min
+                  </span>
+                  <span className="font-black text-[#25C440]">{service.formattedPrice}</span>
+                </div>
+              </div>
+            ))}
           </div>
+        </div>
 
+        {/* Dados de Horário e Duração */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1 text-xs">
           <div className="p-2.5 rounded-xl bg-[#101712] border border-[#1A251D]">
             <span className="text-[#6F7B72] block text-[10px]">Data</span>
             <span className="font-bold text-[#FFFFFF] capitalize leading-snug">{formattedDate}</span>
@@ -556,7 +546,17 @@ export function Step5Confirm() {
           <div className="p-2.5 rounded-xl bg-[#101712] border border-[#1A251D]">
             <span className="text-[#6F7B72] block text-[10px]">Horário</span>
             <span className="font-bold text-[#25C440] text-sm leading-snug">{selectedTime}</span>
-            <span className="text-[10px] text-[#6F7B72] block mt-0.5">Horário de Pacajus</span>
+            {estimatedEndTime && (
+              <span className="text-[10px] text-[#A6AEA8] block mt-0.5">
+                Término estimado: {estimatedEndTime}
+              </span>
+            )}
+          </div>
+
+          <div className="p-2.5 rounded-xl bg-[#101712] border border-[#1A251D]">
+            <span className="text-[#6F7B72] block text-[10px]">Duração Total</span>
+            <span className="font-bold text-[#FFFFFF] text-sm leading-snug">{totalDurationMinutes} min</span>
+            <span className="text-[10px] text-[#25C440] block mt-0.5">Sessão contínua oficial</span>
           </div>
         </div>
       </div>

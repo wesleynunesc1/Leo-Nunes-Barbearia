@@ -4,6 +4,7 @@ import {
   resources,
   staffMembers,
   availabilityTimeSlots,
+  multiServiceAvailabilityTimeSlots,
   bookings,
   extendedBookings,
 } from "@wix/bookings";
@@ -24,6 +25,7 @@ export function getWixClient() {
       resources,
       staffMembers,
       availabilityTimeSlots,
+      multiServiceAvailabilityTimeSlots,
       bookings,
       extendedBookings,
       members,

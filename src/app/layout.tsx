@@ -3,6 +3,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PageTitleChanger } from "@/components/PageTitleChanger";
+import { Providers } from "@/components/Providers";
 
 export const viewport = {
   width: "device-width",
@@ -84,8 +85,6 @@ export const metadata: Metadata = {
     ],
   },
 };
-
-import { Providers } from "@/components/Providers";
 
 export default function RootLayout({
   children,

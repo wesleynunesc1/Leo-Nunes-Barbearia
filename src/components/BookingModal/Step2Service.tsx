@@ -2,15 +2,25 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { Scissors, Clock, Check, CalendarCheck, CheckCircle2, Shield, Droplets, Layers } from "lucide-react";
+import { Scissors, Clock, Check, CalendarCheck, CheckCircle2, Shield, Droplets, Layers, Plus, Trash2, ArrowRight } from "lucide-react";
 import { useBooking } from "@/context/BookingContext";
 import { BarberService } from "@/data/barbers";
 
 export function Step2Service() {
-  const { selectedBarber, selectedService, selectService, goToStep } = useBooking();
+  const {
+    selectedBarber,
+    selectedServices,
+    toggleService,
+    clearServices,
+    totalPrice,
+    totalDurationMinutes,
+    goToStep,
+  } = useBooking();
+
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [liveServices, setLiveServices] = useState<BarberService[]>(selectedBarber?.services || []);
   const [isLoadingLive, setIsLoadingLive] = useState(false);
+  const [limitNotice, setLimitNotice] = useState(false);
 
   React.useEffect(() => {
     if (!selectedBarber) return;
@@ -86,8 +96,18 @@ export function Step2Service() {
       ? services
       : services.filter((s) => s.category === selectedCategory);
 
+  const handleServiceClick = (service: BarberService) => {
+    const isAlreadySelected = selectedServices.some((s) => s.id === service.id);
+    if (!isAlreadySelected && selectedServices.length >= 5) {
+      setLimitNotice(true);
+      setTimeout(() => setLimitNotice(false), 3000);
+      return;
+    }
+    toggleService(service);
+  };
+
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 pb-20 sm:pb-16">
       {/* Resumo do Barbeiro Selecionado */}
       <div className="flex items-center justify-between p-3 sm:p-4 rounded-xl bg-[#0D1510] border border-[#1C2A1E]">
         <div className="flex items-center gap-3">
@@ -120,17 +140,31 @@ export function Step2Service() {
       </div>
 
       <div className="space-y-1 text-center sm:text-left">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#142618] border border-[#25C440]/30 text-[11px] font-bold uppercase tracking-wider text-[#25C440]">
-          <CalendarCheck className="w-3.5 h-3.5" />
-          <span>Etapa 2 de 5</span>
+        <div className="flex items-center justify-center sm:justify-start gap-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#142618] border border-[#25C440]/30 text-[11px] font-bold uppercase tracking-wider text-[#25C440]">
+            <CalendarCheck className="w-3.5 h-3.5" />
+            <span>Etapa 2 de 5</span>
+          </div>
+
+          <span className="px-2.5 py-0.5 rounded-full bg-[#1A261D] text-[#A6AEA8] text-[10px] font-mono font-bold">
+            {selectedServices.length}/5 selecionados
+          </span>
         </div>
+
         <h2 className="font-heading text-xl sm:text-2xl font-black text-[#FFFFFF]">
-          SELECIONE O SERVIÇO
+          ESCOLHA OS SERVIÇOS
         </h2>
         <p className="text-xs text-[#9BA59E]">
-          Serviços cadastrados no sistema Wix de {selectedBarber.name}.
+          Selecione um ou vários serviços para realizar no mesmo atendimento com {selectedBarber.name}.
         </p>
       </div>
+
+      {/* Aviso de Limite Máximo */}
+      {limitNotice && (
+        <div className="p-3 rounded-xl bg-[#261E10] border border-[#E6A020]/40 text-xs text-[#F2C970] animate-in fade-in duration-200 flex items-center justify-between">
+          <span>Você pode selecionar no máximo 5 serviços por agendamento.</span>
+        </div>
+      )}
 
       {/* Tabs de Categoria */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none" role="tablist">
@@ -163,15 +197,15 @@ export function Step2Service() {
       </div>
 
       {/* Grid de Serviços */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[46vh] sm:max-h-[50vh] overflow-y-auto pr-1">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[44vh] sm:max-h-[48vh] overflow-y-auto pr-1">
         {filteredServices.map((service) => {
-          const isSelected = selectedService?.id === service.id;
+          const isSelected = selectedServices.some((s) => s.id === service.id);
 
           return (
             <button
               key={service.id}
               type="button"
-              onClick={() => selectService(service)}
+              onClick={() => handleServiceClick(service)}
               className={`group relative text-left p-4 rounded-xl border transition-all duration-200 flex flex-col justify-between focus:outline-none focus:ring-2 focus:ring-[#25C440] ${
                 isSelected
                   ? "bg-[#142618] border-[#25C440] shadow-[0_0_20px_rgba(37,196,64,0.25)] ring-1 ring-[#25C440]"
@@ -180,16 +214,21 @@ export function Step2Service() {
             >
               <div className="space-y-1.5 w-full">
                 <div className="flex items-start justify-between gap-2">
-                  <h4 className={`font-heading text-sm sm:text-base font-extrabold leading-tight transition-colors ${
-                    isSelected ? "text-[#25C440]" : "text-[#FFFFFF] group-hover:text-[#25C440]"
+                  <div className="space-y-0.5">
+                    <h4 className={`font-heading text-sm sm:text-base font-extrabold leading-tight transition-colors ${
+                      isSelected ? "text-[#25C440]" : "text-[#FFFFFF] group-hover:text-[#25C440]"
+                    }`}>
+                      {service.name}
+                    </h4>
+                  </div>
+
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 border transition-all ${
+                    isSelected
+                      ? "bg-[#25C440] border-[#25C440] text-[#080B09]"
+                      : "border-[#2A3B2D] text-transparent group-hover:border-[#25C440]/60"
                   }`}>
-                    {service.name}
-                  </h4>
-                  {isSelected && (
-                    <span className="w-5 h-5 rounded-full bg-[#25C440] text-[#080B09] flex items-center justify-center shrink-0">
-                      <Check className="w-3 h-3 stroke-[3]" />
-                    </span>
-                  )}
+                    <Check className="w-3 h-3 stroke-[3]" />
+                  </div>
                 </div>
 
                 {service.description && (
@@ -216,6 +255,54 @@ export function Step2Service() {
           );
         })}
       </div>
+
+      {/* Barra Fixa de Resumo & Avanço (quando há pelo menos 1 serviço selecionado) */}
+      {selectedServices.length > 0 && (
+        <div className="p-3.5 rounded-2xl bg-[#0D1610] border border-[#25C440]/50 shadow-[0_4px_25px_rgba(0,0,0,0.5)] flex flex-col sm:flex-row items-center justify-between gap-3 animate-in fade-in slide-in-from-bottom-2 duration-200">
+          <div className="flex items-center justify-between w-full sm:w-auto gap-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-heading text-sm font-black text-[#FFFFFF]">
+                  {selectedServices.length} {selectedServices.length === 1 ? "serviço" : "serviços"}
+                </span>
+                <span className="text-[11px] text-[#25C440] font-mono font-bold bg-[#142618] px-2 py-0.5 rounded-full border border-[#25C440]/30">
+                  {totalDurationMinutes} min total
+                </span>
+              </div>
+              <p className="text-xs text-[#8E9B91] truncate max-w-[220px] sm:max-w-[280px]">
+                {selectedServices.map((s) => s.name).join(" + ")}
+              </p>
+            </div>
+
+            <div className="text-right sm:text-left sm:pl-4 sm:border-l sm:border-white/10">
+              <span className="text-[10px] text-[#6F7B72] block">Total</span>
+              <span className="font-heading text-base font-black text-[#25C440]">
+                R$ {totalPrice.toFixed(2).replace(".", ",")}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <button
+              type="button"
+              onClick={clearServices}
+              title="Limpar seleção"
+              className="p-2.5 rounded-xl bg-[#141C16] hover:bg-[#1A251D] text-[#8E9B91] hover:text-[#FFFFFF] border border-[#223326] transition-colors"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => goToStep(3)}
+              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-black text-xs sm:text-sm shadow-md shadow-[#25C440]/30 transition-all"
+            >
+              <span>Avançar para Data</span>
+              <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

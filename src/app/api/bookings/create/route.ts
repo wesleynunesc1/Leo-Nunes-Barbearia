@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getBarberById, getBarberBySlug } from "@/data/barbers";
-import { BookingPayload, BookingCreateResponse, BookingErrorCode } from "@/types/booking";
+import { BookingPayload, BookingCreateResponse, BookingErrorCode, SelectedServiceItem } from "@/types/booking";
 import { getWixClient, isWixConfigured } from "@/lib/wixClient";
 import {
   computeIdempotencyKey,
@@ -9,7 +9,7 @@ import {
   finalizeIdempotency,
   BookingLockIdentifier,
 } from "@/lib/bookingStore";
-import { verifySingleSlotAvailability } from "@/lib/wixAvailability";
+import { verifySingleSlotAvailability, verifySingleMultiServiceSlot } from "@/lib/wixAvailability";
 import { AUTH_COOKIE_NAME, getCurrentMemberProfile } from "@/lib/wixAuth";
 
 export async function POST(request: NextRequest) {
@@ -87,6 +87,21 @@ export async function POST(request: NextRequest) {
         message: "Profissional não encontrado no cadastro oficial.",
       };
       return NextResponse.json(errorResponse, { status: 404 });
+    }
+
+    // 2.1. FLUXO OFICIAL WIX MULTI-SERVICE BOOKING (2 a 5 serviços)
+    if (body.services && Array.isArray(body.services) && body.services.length > 1) {
+      return await handleMultiServiceBookingFlow({
+        body,
+        barber,
+        customer,
+        date,
+        time,
+        phoneParam,
+        clientKey,
+        authenticatedMemberContactId,
+        request,
+      });
     }
 
     // 3. Resolução e validação do Serviço no servidor
@@ -290,11 +305,8 @@ export async function POST(request: NextRequest) {
 
     const endUtc = new Date(startUtc.getTime() + effectiveDurationMinutes * 60000);
 
-    // 8. CONTROLE DE SEGURANÇA: MODO DRY-RUN POR PADRÃO
-    // "Mantenha ENABLE_REAL_WIX_BOOKINGS=false. Não crie reservas reais ainda."
-    const isRealBookingEnabled =
-      process.env.ENABLE_REAL_WIX_BOOKINGS === "true" ||
-      request.headers.get("x-enable-real-booking") === "true";
+    // 8. CONTROLE DE SEGURANÇA: MODO REAL OU DRY-RUN VIA SERVIDOR
+    const isRealBookingEnabled = process.env.ENABLE_REAL_WIX_BOOKINGS === "true";
 
     if (!isRealBookingEnabled) {
       await releaseBookingLocks(lockKeysToRelease);
@@ -743,3 +755,683 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+/**
+ * Fluxo Oficial Wix Bookings V2 para Criação de Agendamentos com Múltiplos Serviços.
+ * Cria reservas sequenciais sem lacunas utilizando createMultiServiceBooking.
+ */
+async function handleMultiServiceBookingFlow({
+  body,
+  barber,
+  customer,
+  date,
+  time,
+  phoneParam,
+  clientKey,
+  authenticatedMemberContactId,
+  request,
+}: {
+  body: BookingPayload;
+  barber: NonNullable<ReturnType<typeof getBarberById>>;
+  customer: NonNullable<BookingPayload["customer"]>;
+  date: string;
+  time: string;
+  phoneParam: string;
+  clientKey?: string;
+  authenticatedMemberContactId?: string;
+  request: NextRequest;
+}): Promise<Response> {
+  let lockKeysToRelease: BookingLockIdentifier | null = null;
+  let idempotencyKey: string | null = null;
+
+  try {
+    const rawServices: SelectedServiceItem[] = body.services || [];
+
+    // 1. Limite de até 5 serviços por atendimento
+    if (rawServices.length > 5) {
+      return NextResponse.json(
+        {
+          success: false,
+          status: "ERROR",
+          errorCode: "INVALID_DATA",
+          message: "O limite máximo é de 5 serviços por agendamento.",
+        },
+        { status: 400 }
+      );
+    }
+
+    // 2. Não permitir duplicidades
+    const rawServiceIds = rawServices.map((s) => s.id);
+    if (new Set(rawServiceIds).size !== rawServiceIds.length) {
+      return NextResponse.json(
+        {
+          success: false,
+          status: "ERROR",
+          errorCode: "INVALID_DATA",
+          message: "Não é permitido selecionar o mesmo serviço mais de uma vez no mesmo agendamento.",
+        },
+        { status: 400 }
+      );
+    }
+
+    // 3. Validar se todos os serviços pertencem ao barbeiro selecionado
+    const isUuid = (id?: string | null) =>
+      Boolean(id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id));
+
+    const resolvedServices: SelectedServiceItem[] = [];
+
+    const wixClient = isWixConfigured() ? getWixClient() : null;
+
+    for (const s of rawServices) {
+      const localService = barber.services.find(
+        (bs) =>
+          bs.id === s.id ||
+          bs.wixServiceId === s.id ||
+          (Boolean(s.wixServiceId) && bs.wixServiceId === s.wixServiceId)
+      );
+
+      const resolvedUuid = isUuid(s.wixServiceId)
+        ? s.wixServiceId
+        : isUuid(s.id)
+        ? s.id
+        : localService?.wixServiceId;
+
+      if (!localService && !resolvedUuid) {
+        return NextResponse.json(
+          {
+            success: false,
+            status: "ERROR",
+            errorCode: "INVALID_DATA",
+            message: `O serviço "${s.name || s.id}" não está habilitado para o profissional ${barber.name}.`,
+          },
+          { status: 400 }
+        );
+      }
+
+      const wixSvcId =
+        resolvedUuid ||
+        (barber.id === "leo-nunes"
+          ? "71a2e1ca-2bce-410f-8d98-a64a5225a9ab"
+          : "5fdf0f3a-8e3e-4009-8421-4467ef3b3871");
+
+      let name = s.name || localService?.name || "Serviço Barbearia";
+      let duration = s.durationMinutes || localService?.durationMinutes || 30;
+      let priceVal = s.price !== undefined ? s.price : (localService?.price || 0);
+      let formattedPrice = s.formattedPrice || localService?.formattedPrice || (priceVal > 0 ? `R$ ${priceVal.toFixed(2).replace(".", ",")}` : "Sob consulta");
+
+      // Revalidação em tempo real no Wix
+      if (wixClient) {
+        try {
+          const officialSvc: any = await wixClient.services.getService(wixSvcId);
+          if (officialSvc) {
+            const nameCheck = (officialSvc.name || "").toLowerCase();
+            if (
+              officialSvc.hidden ||
+              officialSvc.status === "INACTIVE" ||
+              nameCheck.includes("assinatura") ||
+              nameCheck.includes("freestyle")
+            ) {
+              return NextResponse.json(
+                {
+                  success: false,
+                  status: "ERROR",
+                  errorCode: "SERVICE_INACTIVE",
+                  message: `O serviço "${officialSvc.name || name}" não está disponível para agendamento online.`,
+                },
+                { status: 400 }
+              );
+            }
+            name = officialSvc.name || name;
+            const officialDuration =
+              officialSvc.schedule?.availabilityConstraints?.sessionDurations?.[0] ||
+              officialSvc.schedule?.availabilityConstraints?.durations?.[0]?.minutes ||
+              officialSvc.schedule?.durationInMinutes;
+            if (officialDuration) duration = officialDuration;
+
+            const officialPriceVal =
+              officialSvc.payment?.fixed?.price?.value ||
+              officialSvc.payment?.fixedPrice?.value ||
+              officialSvc.payment?.rate?.price?.value ||
+              officialSvc.price?.value;
+            if (officialPriceVal !== undefined && officialPriceVal !== null) {
+              priceVal = Number(officialPriceVal);
+              formattedPrice = priceVal > 0 ? `R$ ${priceVal.toFixed(2).replace(".", ",")}` : "Sob consulta";
+            }
+          }
+        } catch (svcErr) {
+          console.warn(`[WIX MULTI-SERVICE LOOKUP WARN: ${wixSvcId}]`, svcErr);
+        }
+      }
+
+      resolvedServices.push({
+        id: s.id,
+        wixServiceId: wixSvcId,
+        name,
+        durationMinutes: duration,
+        price: priceVal,
+        formattedPrice,
+      });
+    }
+
+    const totalDurationMinutes = resolvedServices.reduce((acc, curr) => acc + curr.durationMinutes, 0);
+    const totalPriceValue = resolvedServices.reduce((acc, curr) => acc + curr.price, 0);
+    const formattedTotalPrice = `R$ ${totalPriceValue.toFixed(2).replace(".", ",")}`;
+    const resolvedWixServiceIds = resolvedServices.map((s) => s.wixServiceId || s.id);
+
+    // 4. Chave de idempotência e trava distribuída para o pacote de serviços
+    const comboKey = resolvedWixServiceIds.slice().sort().join("+");
+    idempotencyKey = computeIdempotencyKey({
+      barberId: barber.id,
+      serviceId: comboKey,
+      date,
+      time,
+      phone: phoneParam,
+      clientKey,
+    });
+
+    const lockResult = await checkAndAcquireBookingLock({
+      idempotencyKey,
+      barberId: barber.id,
+      serviceId: comboKey,
+      date,
+      time,
+      phone: phoneParam,
+    });
+
+    if (!lockResult.allowed) {
+      if (lockResult.existingRecord?.responsePayload) {
+        return NextResponse.json(lockResult.existingRecord.responsePayload);
+      }
+      const httpStatus =
+        lockResult.errorCode === "STORAGE_UNAVAILABLE"
+          ? 503
+          : lockResult.errorCode === "CONCURRENT_REQUEST"
+          ? 429
+          : 409;
+      return NextResponse.json(
+        {
+          success: false,
+          status: "ERROR",
+          errorCode: lockResult.errorCode || "DUPLICATE_BOOKING",
+          message: lockResult.message || "Solicitação de pacote duplicada ou em andamento. Aguarde alguns instantes.",
+        },
+        { status: httpStatus }
+      );
+    }
+
+    lockKeysToRelease = lockResult.lockKeys;
+
+    // 5. Credenciais Wix
+    if (!isWixConfigured() || !wixClient) {
+      await releaseBookingLocks(lockKeysToRelease);
+      return NextResponse.json(
+        {
+          success: false,
+          status: "WIX_CREDENTIALS_PENDING",
+          errorCode: "AUTH_ERROR",
+          wixIntegrationPending: true,
+          message: "Credenciais do Wix Bookings não configuradas no backend.",
+        },
+        { status: 401 }
+      );
+    }
+
+    // 6. Revalidação obrigatória de disponibilidade conjunta no Wix
+    const verification = await verifySingleMultiServiceSlot({
+      barberId: barber.id,
+      serviceIds: resolvedWixServiceIds,
+      dateStr: date,
+      timeStr: time,
+    });
+
+    if (!verification.valid) {
+      await releaseBookingLocks(lockKeysToRelease);
+      await finalizeIdempotency({
+        idempotencyKey,
+        barberId: barber.id,
+        serviceId: comboKey,
+        date,
+        time,
+        phone: phoneParam,
+        status: "FAILED",
+      });
+
+      return NextResponse.json(
+        {
+          success: false,
+          status: "ERROR",
+          errorCode: verification.errorCode || "SLOT_UNAVAILABLE",
+          message:
+            verification.message ||
+            `O horário ${time} não possui disponibilidade contínua para os serviços selecionados na agenda de ${barber.name}.`,
+        },
+        { status: verification.httpStatus || 409 }
+      );
+    }
+
+    const matchedSlot = verification.rawSlot || {};
+    const nestedSlots = matchedSlot.nestedTimeSlots || [];
+
+    // 7. Controle de Modo Real vs Dry-run via Configuração Segura do Servidor
+    const isRealBookingEnabled = process.env.ENABLE_REAL_WIX_BOOKINGS === "true";
+
+    const endTime = (matchedSlot.localEndDate || "").slice(11, 16) || "";
+
+    if (!isRealBookingEnabled) {
+      await releaseBookingLocks(lockKeysToRelease);
+
+      const dryRunResponse: BookingCreateResponse = {
+        success: true,
+        status: "DRY_RUN_VALIDATED",
+        dryRun: true,
+        message: `Disponibilidade do pacote de ${resolvedServices.length} serviços validada com sucesso com o Wix Bookings!`,
+        services: resolvedServices,
+        totalPrice: formattedTotalPrice,
+        totalDuration: `${totalDurationMinutes} minutos`,
+        endTime,
+        details: {
+          barberName: barber.name,
+          barberResourceId: barber.resourceId,
+          services: resolvedServices,
+          totalPrice: formattedTotalPrice,
+          totalDuration: `${totalDurationMinutes} minutos`,
+          date,
+          time,
+          endTime,
+          customerName: customer.name,
+          customerPhone: customer.phone,
+          wixSlotVerified: true,
+          nestedSlotsCount: nestedSlots.length,
+          locationId: "c9ff9499-df93-470a-8ece-12f249208d4c",
+          memberContactId: authenticatedMemberContactId || null,
+        },
+      };
+
+      await finalizeIdempotency({
+        idempotencyKey,
+        barberId: barber.id,
+        serviceId: comboKey,
+        date,
+        time,
+        phone: phoneParam,
+        status: "CONFIRMED",
+        responsePayload: dryRunResponse,
+      });
+
+      return NextResponse.json(dryRunResponse);
+    }
+
+    // 8. Criação Real do Agendamento Agrupado via Wix Bookings V2
+    const cleanDigits = phoneParam.replace(/\D/g, "");
+    const formattedPhone =
+      cleanDigits.startsWith("55") && cleanDigits.length >= 12
+        ? `+${cleanDigits}`
+        : `+55${cleanDigits}`;
+
+    const [year, month, day] = date.split("-").map(Number);
+
+    // Monta cada reserva do pacote com horário consecutivo individual oficial
+    const bookingsArray = resolvedServices.map((svc, idx) => {
+      const nested = nestedSlots[idx];
+      let nestedStartUtcIso: string;
+      let nestedEndUtcIso: string;
+
+      if (nested?.localStartDate && nested?.localEndDate) {
+        const [nStartHour, nStartMin] = (nested.localStartDate as string).slice(11, 16).split(":").map(Number);
+        const [nEndHour, nEndMin] = (nested.localEndDate as string).slice(11, 16).split(":").map(Number);
+        nestedStartUtcIso = new Date(Date.UTC(year, month - 1, day, nStartHour + 3, nStartMin, 0)).toISOString();
+        nestedEndUtcIso = new Date(Date.UTC(year, month - 1, day, nEndHour + 3, nEndMin, 0)).toISOString();
+      } else {
+        const [h, m] = time.split(":").map(Number);
+        const startMs = Date.UTC(year, month - 1, day, h + 3, m, 0);
+        nestedStartUtcIso = new Date(startMs).toISOString();
+        nestedEndUtcIso = new Date(startMs + svc.durationMinutes * 60000).toISOString();
+      }
+
+      return {
+        totalParticipants: 1,
+        bookedEntity: {
+          slot: {
+            serviceId: svc.wixServiceId,
+            scheduleId: nested?.scheduleId || undefined,
+            sessionId: nested?.sessionId || undefined,
+            startDate: nestedStartUtcIso,
+            endDate: nestedEndUtcIso,
+            timezone: "America/Sao_Paulo",
+            resource: {
+              id: barber.resourceId,
+              _id: barber.resourceId,
+              name: barber.name,
+            },
+            location: {
+              id: "c9ff9499-df93-470a-8ece-12f249208d4c",
+              _id: "c9ff9499-df93-470a-8ece-12f249208d4c",
+              locationType: "OWNER_BUSINESS",
+              name: "Léo Nunes Barbearia",
+            },
+          },
+        },
+        contactDetails: {
+          contactId: authenticatedMemberContactId || undefined,
+          firstName: customer.name.split(" ")[0],
+          lastName: customer.name.split(" ").slice(1).join(" ") || "",
+          phone: formattedPhone,
+          email: customer.email || undefined,
+        },
+        notes: customer.notes || undefined,
+      };
+    });
+
+    let multiBookingResponse: any = null;
+    try {
+      multiBookingResponse = await wixClient.bookings.createMultiServiceBooking(
+        bookingsArray as any,
+        {
+          returnFullEntity: true,
+          participantNotification: {
+            notifyParticipants: true,
+          },
+          sendSmsReminder: true,
+          flowControlSettings: {
+            skipAvailabilityValidation: false,
+            skipBusinessConfirmation: false,
+            skipSelectedPaymentOptionValidation: true,
+          },
+        } as any
+      );
+    } catch (apiError: any) {
+      const errLower = (apiError?.message || "").toLowerCase();
+      const errStatus = apiError?.status || apiError?.statusCode;
+      const wixErrorDetail =
+        apiError?.details?.applicationError?.description ||
+        apiError?.response?.data?.message ||
+        apiError?.message ||
+        "";
+
+      console.error("[WIX CREATE MULTI-SERVICE BOOKING FAILED]", {
+        status: errStatus,
+        message: wixErrorDetail,
+      });
+
+      await releaseBookingLocks(lockKeysToRelease);
+
+      const isInconclusive =
+        errLower.includes("timeout") ||
+        errLower.includes("econnreset") ||
+        errLower.includes("socket hang up") ||
+        errStatus === 504;
+
+      if (isInconclusive) {
+        await finalizeIdempotency({
+          idempotencyKey,
+          barberId: barber.id,
+          serviceId: comboKey,
+          date,
+          time,
+          phone: phoneParam,
+          status: "INCONCLUSIVE",
+        });
+
+        return NextResponse.json(
+          {
+            success: false,
+            status: "ERROR",
+            errorCode: "CONFIRMATION_PENDING",
+            message:
+              "A solicitação do pacote foi transmitida ao Wix, mas a confirmação automática não respondeu a tempo. Não tente novamente de imediato para evitar duplicidade.",
+          },
+          { status: 504 }
+        );
+      }
+
+      await finalizeIdempotency({
+        idempotencyKey,
+        barberId: barber.id,
+        serviceId: comboKey,
+        date,
+        time,
+        phone: phoneParam,
+        status: "FAILED",
+      });
+
+      let errorCode: BookingErrorCode = "CREATION_FAILED";
+      let userMsg = "Não foi possível concluir o agendamento agrupado no Wix Bookings.";
+      let httpStatus = 500;
+
+      if (errLower.includes("conflict") || errLower.includes("already") || errStatus === 409) {
+        errorCode = "SLOT_UNAVAILABLE";
+        userMsg = "Um dos horários do pacote acabou de ser preenchido por outro cliente.";
+        httpStatus = 409;
+      } else if (errStatus === 428) {
+        errorCode = "SLOT_UNAVAILABLE";
+        userMsg = "O horário selecionado não atende à disponibilidade de todas as sessões do pacote.";
+        httpStatus = 409;
+      }
+
+      return NextResponse.json(
+        {
+          success: false,
+          status: "ERROR",
+          errorCode,
+          message: userMsg,
+        },
+        { status: httpStatus }
+      );
+    }
+
+    const multiBooking = multiBookingResponse?.multiServiceBooking || multiBookingResponse;
+    const multiBookingId = multiBooking?._id || multiBooking?.id;
+    const rawBookings = multiBooking?.bookings || [];
+    const subBookings = rawBookings.map((b: any) => ({
+      bookingId: b.bookingId || b.booking?._id || b.booking?.id || b._id || b.id,
+      revision: String(b.booking?.revision || b.revision || "1"),
+      status: b.booking?.status || b.status || "CREATED",
+    }));
+    const subBookingIds = subBookings.map((b: any) => b.bookingId).filter(Boolean);
+
+    // Se o pacote foi criado e as reservas necessitam de confirmação presencial (custom checkout)
+    const needsConfirmation =
+      subBookings.some((b: any) => b.status === "CREATED" || b.status === "PENDING") ||
+      multiBooking?.status === "CREATED";
+
+    if (needsConfirmation && multiBookingId && subBookings.length > 0) {
+      try {
+        const confirmBookingsInfo = subBookings.map((b: any) => ({
+          bookingId: b.bookingId,
+          revision: b.revision,
+          paymentStatus: "NOT_PAID" as const,
+        }));
+
+        await wixClient.bookings.confirmMultiServiceBooking(multiBookingId, {
+          confirmBookingsInfo,
+          participantNotification: {
+            notifyParticipants: true,
+          },
+          sendSmsReminder: true,
+        });
+      } catch (confirmErr: any) {
+        console.error("[WIX MULTI-SERVICE CONFIRM ERROR]", confirmErr?.message || confirmErr);
+      }
+    }
+
+    // Consulta e validação obrigatória do estado oficial no Wix Bookings
+    let verifiedBookings: any[] = [];
+    let isAllConfirmed = false;
+    let isAnyPending = false;
+    let isAnyDeclined = false;
+
+    try {
+      const verifiedRes: any = await wixClient.bookings.getMultiServiceBooking(multiBookingId);
+      const vMulti = verifiedRes?.multiServiceBooking || verifiedRes;
+      verifiedBookings = vMulti?.bookings || [];
+
+      if (verifiedBookings.length > 0) {
+        isAllConfirmed = verifiedBookings.every((b: any) => {
+          const st = b.booking?.status || b.status;
+          return st === "CONFIRMED";
+        });
+        isAnyPending = verifiedBookings.some((b: any) => {
+          const st = b.booking?.status || b.status;
+          return st === "PENDING" || st === "PENDING_APPROVAL" || st === "CREATED";
+        });
+        isAnyDeclined = verifiedBookings.some((b: any) => {
+          const st = b.booking?.status || b.status;
+          return st === "DECLINED" || st === "CANCELED";
+        });
+      }
+    } catch (verifyErr: any) {
+      console.warn("[WIX MULTI-SERVICE VERIFY GET WARN]", verifyErr?.message || verifyErr);
+    }
+
+    // Se todos os serviços do pacote foram comprovadamente confirmados
+    if (isAllConfirmed) {
+      const confirmedResponse: BookingCreateResponse = {
+        success: true,
+        status: "CONFIRMED",
+        bookingId: multiBookingId || subBookingIds[0],
+        multiServiceBookingId: multiBookingId,
+        bookingIds: subBookingIds,
+        services: resolvedServices,
+        totalPrice: formattedTotalPrice,
+        totalDuration: `${totalDurationMinutes} minutos`,
+        endTime,
+        message: "Agendamento confirmado com sucesso!",
+        details: {
+          bookingId: multiBookingId,
+          barberName: barber.name,
+          services: resolvedServices,
+          totalPrice: formattedTotalPrice,
+          totalDuration: `${totalDurationMinutes} minutos`,
+          date,
+          time,
+          endTime,
+          customerName: customer.name,
+          status: "CONFIRMED",
+        },
+      };
+
+      await finalizeIdempotency({
+        idempotencyKey,
+        barberId: barber.id,
+        serviceId: comboKey,
+        date,
+        time,
+        phone: phoneParam,
+        status: "CONFIRMED",
+        bookingId: multiBookingId,
+        responsePayload: confirmedResponse,
+      });
+
+      await releaseBookingLocks(lockKeysToRelease);
+      return NextResponse.json(confirmedResponse);
+    }
+
+    // Se algum dos serviços foi recusado pelo Wix
+    if (isAnyDeclined) {
+      await releaseBookingLocks(lockKeysToRelease);
+      await finalizeIdempotency({
+        idempotencyKey,
+        barberId: barber.id,
+        serviceId: comboKey,
+        date,
+        time,
+        phone: phoneParam,
+        status: "FAILED",
+        bookingId: multiBookingId,
+      });
+
+      return NextResponse.json(
+        {
+          success: false,
+          status: "ERROR",
+          errorCode: "SLOT_UNAVAILABLE",
+          bookingId: multiBookingId,
+          message: "Um ou mais serviços foram recusados pelas políticas do Wix. Selecione outro horário.",
+        },
+        { status: 409 }
+      );
+    }
+
+    // Se o pacote estiver pendente de aprovação manual pela barbearia
+    if (isAnyPending) {
+      const pendingResponse: BookingCreateResponse = {
+        success: true,
+        status: "PENDING",
+        bookingId: multiBookingId || subBookingIds[0],
+        multiServiceBookingId: multiBookingId,
+        bookingIds: subBookingIds,
+        services: resolvedServices,
+        totalPrice: formattedTotalPrice,
+        totalDuration: `${totalDurationMinutes} minutos`,
+        endTime,
+        message: "Solicitação recebida. Aguardando confirmação da barbearia.",
+        details: {
+          bookingId: multiBookingId,
+          barberName: barber.name,
+          services: resolvedServices,
+          totalPrice: formattedTotalPrice,
+          totalDuration: `${totalDurationMinutes} minutos`,
+          date,
+          time,
+          endTime,
+          customerName: customer.name,
+          status: "PENDING",
+        },
+      };
+
+      await finalizeIdempotency({
+        idempotencyKey,
+        barberId: barber.id,
+        serviceId: comboKey,
+        date,
+        time,
+        phone: phoneParam,
+        status: "PENDING",
+        bookingId: multiBookingId,
+        responsePayload: pendingResponse,
+      });
+
+      await releaseBookingLocks(lockKeysToRelease);
+      return NextResponse.json(pendingResponse);
+    }
+
+    // Se o status final for inconclusivo / não confirmado
+    await releaseBookingLocks(lockKeysToRelease);
+    await finalizeIdempotency({
+      idempotencyKey,
+      barberId: barber.id,
+      serviceId: comboKey,
+      date,
+      time,
+      phone: phoneParam,
+      status: "INCONCLUSIVE",
+      bookingId: multiBookingId,
+    });
+
+    return NextResponse.json(
+      {
+        success: false,
+        status: "ERROR",
+        errorCode: "CONFIRMATION_PENDING",
+        bookingId: multiBookingId,
+        message: "Não foi possível confirmar todos os serviços. Verifique o status antes de tentar novamente.",
+      },
+      { status: 502 }
+    );
+  } catch (error: any) {
+    if (lockKeysToRelease) {
+      await releaseBookingLocks(lockKeysToRelease);
+    }
+    console.error("[HANDLE MULTI-SERVICE CRITICAL ERROR]", error);
+    return NextResponse.json(
+      {
+        success: false,
+        status: "ERROR",
+        errorCode: "CREATION_FAILED",
+        message: "Ocorreu um erro ao processar o agendamento com múltiplos serviços.",
+      },
+      { status: 500 }
+    );
+  }
+}
+

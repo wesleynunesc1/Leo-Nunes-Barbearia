@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getVerifiedBarberSlots } from "@/lib/wixAvailability";
+import { getVerifiedBarberSlots, getVerifiedMultiServiceSlots } from "@/lib/wixAvailability";
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,6 +8,7 @@ export async function GET(request: NextRequest) {
     const barberSlug = searchParams.get("barberSlug") || undefined;
     const barberId = searchParams.get("barberId") || undefined;
     const serviceId = searchParams.get("serviceId") || undefined;
+    const serviceIdsParam = searchParams.get("serviceIds");
 
     if (!dateStr || (!barberSlug && !barberId)) {
       return NextResponse.json(
@@ -16,12 +17,30 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const result = await getVerifiedBarberSlots({
-      barberId,
-      barberSlug,
-      serviceId,
-      dateStr,
-    });
+    const serviceIdsList: string[] = [];
+    if (serviceIdsParam) {
+      serviceIdsParam.split(",").map((s: string) => s.trim()).filter(Boolean).forEach((s: string) => {
+        if (!serviceIdsList.includes(s)) serviceIdsList.push(s);
+      });
+    } else if (serviceId) {
+      serviceId.split(",").map((s: string) => s.trim()).filter(Boolean).forEach((s: string) => {
+        if (!serviceIdsList.includes(s)) serviceIdsList.push(s);
+      });
+    }
+
+    const result = serviceIdsList.length > 1
+      ? await getVerifiedMultiServiceSlots({
+          barberId,
+          barberSlug,
+          serviceIds: serviceIdsList,
+          dateStr,
+        })
+      : await getVerifiedBarberSlots({
+          barberId,
+          barberSlug,
+          serviceId: serviceIdsList[0] || serviceId,
+          dateStr,
+        });
 
     if (!result.success) {
       const httpStatus = result.errorCode === "INVALID_DATA" ? 400 : 503;
@@ -59,6 +78,9 @@ export async function GET(request: NextRequest) {
         barberId: result.barberId,
         barberName: result.barberName,
         serviceId: result.serviceId,
+        serviceIds: result.serviceIds,
+        isMultiService: result.isMultiService || false,
+        totalDuration: result.durationMinutes,
         slots: result.slots,
         totalSlots: result.totalSlots,
         availableSlots: result.availableSlots,
