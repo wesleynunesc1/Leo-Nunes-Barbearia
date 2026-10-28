@@ -371,8 +371,8 @@ export async function getDynamicBarbers(): Promise<Barber[]> {
         name: cmsData.name || b.name,
         role: cmsData.role || b.role || "Barber Profissional",
         tagline: cmsData.tagline || b.tagline,
-        // Se houver foto no CMS ou foto atualizada no Wix Staff, utiliza; senão, mantém a foto local de altíssima definição
-        photo: cmsData.photo || (staffData?.photo ? staffData.photo : b.photo),
+        // Mantém as fotos oficiais de alta definição originais do site como solicitado
+        photo: b.photo,
         resourceId,
         services,
       };
