@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, Suspense } from "react";
+import React, { useEffect, useState, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Loader2, AlertCircle } from "lucide-react";
@@ -9,8 +9,13 @@ function CallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const hasStartedRef = useRef(false);
 
   useEffect(() => {
+    // Evita execução duplicada em re-renderizações ou React StrictMode
+    if (hasStartedRef.current) return;
+    hasStartedRef.current = true;
+
     async function processCallback() {
       // 1. Tenta obter code e state de query params
       let code = searchParams.get("code");
@@ -48,7 +53,11 @@ function CallbackContent() {
           const redirectUrl = data.redirectUrl || "/minha-conta";
           window.location.href = redirectUrl;
         } else {
-          setErrorMsg(data.error || "Falha ao validar sessão Wix. Tente fazer login novamente.");
+          let friendlyError = data.error || "Falha ao validar sessão Wix. Tente fazer login novamente.";
+          if (friendlyError.includes("invalid_grant") || friendlyError.includes("Failed to fetch tokens")) {
+            friendlyError = "O código de autorização expirou ou já foi utilizado. Por favor, volte ao login e entre novamente.";
+          }
+          setErrorMsg(friendlyError);
         }
       } catch (err: any) {
         console.error("[AUTH CALLBACK CLIENT ERROR]", err);

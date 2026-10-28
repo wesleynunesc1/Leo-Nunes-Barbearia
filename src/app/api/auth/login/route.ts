@@ -45,6 +45,8 @@ export async function POST(request: NextRequest) {
         message: "Login autenticado com sucesso! Estabelecendo sessão oficial...",
       });
 
+      response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate");
+
       // Grava o cookie temporário seguro para validação do state no callback
       response.cookies.set({
         name: OAUTH_COOKIE_NAME,
