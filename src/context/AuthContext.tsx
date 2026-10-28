@@ -62,7 +62,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (res.ok && data.authUrl) {
           window.location.href = data.authUrl;
         } else {
-          throw new Error(data.error || "Não foi possível iniciar o login no momento. Tente novamente.");
+          const err: any = new Error(
+            data.error || "Não foi possível iniciar o login no momento. Tente novamente."
+          );
+          err.code = data.code;
+          err.details = data.details;
+          throw err;
         }
       } catch (err: any) {
         console.error("[INITIATE OAUTH ERROR]", err);

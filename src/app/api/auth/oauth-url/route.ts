@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generateOAuthData, getRedirectUri, getWixAuthUrl, OAUTH_COOKIE_NAME } from "@/lib/wixAuth";
+import {
+  generateOAuthData,
+  getRedirectUri,
+  getWixAuthUrl,
+  OAUTH_COOKIE_NAME,
+  WIX_CLIENT_ID,
+} from "@/lib/wixAuth";
 
 export async function GET(request: NextRequest) {
   try {
@@ -33,8 +39,15 @@ export async function GET(request: NextRequest) {
           return NextResponse.json(
             {
               error:
-                "Configuração pendente no Wix: O endereço de redirecionamento precisa ser autorizado no painel Wix Developers.",
-              details: `Adicione '${redirectUri}' no campo 'Allowed Redirect URIs' do app Wix.`,
+                "Configuração pendente no Wix: O endereço de retorno precisa ser autorizado no painel Wix Developers.",
+              code: "INVALID_REDIRECT_URI",
+              details: {
+                clientId: WIX_CLIENT_ID,
+                redirectUri,
+                panelPath: "Wix Dashboard > Configurações > Desenvolvimento e integrações > Configurações Headless > Clientes Headless > Configurações > OAuth App Settings",
+                field: "Allowed authorization redirect URIs",
+                instruction: `Adicione exatamente '${redirectUri}' no campo 'Allowed authorization redirect URIs' do app Wix.`,
+              },
             },
             { status: 400 }
           );
