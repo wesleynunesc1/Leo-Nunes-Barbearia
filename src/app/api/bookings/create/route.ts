@@ -113,13 +113,19 @@ export async function POST(request: NextRequest) {
         if (wixClient) {
           const officialSvc: any = await wixClient.services.getService(resolvedWixServiceId);
           if (officialSvc) {
-            if (officialSvc.hidden || officialSvc.status === "INACTIVE") {
+            const nameCheck = (officialSvc.name || "").toLowerCase();
+            if (
+              officialSvc.hidden ||
+              officialSvc.status === "INACTIVE" ||
+              nameCheck.includes("assinatura") ||
+              nameCheck.includes("freestyle")
+            ) {
               return NextResponse.json(
                 {
                   success: false,
                   status: "ERROR",
                   errorCode: "SERVICE_INACTIVE",
-                  message: "Este serviço está temporariamente inativo ou indisponível para novas reservas.",
+                  message: "Este serviço não está disponível para agendamento online.",
                 },
                 { status: 400 }
               );

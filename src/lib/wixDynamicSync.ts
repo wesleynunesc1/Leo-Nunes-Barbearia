@@ -115,7 +115,14 @@ async function fetchWixOfficialServices(): Promise<BarberService[]> {
     const items = result.items || [];
 
     return items
-      .filter((s: any) => !s.hidden && s.status !== "INACTIVE")
+      .filter((s: any) => {
+        if (s.hidden || s.status === "INACTIVE") return false;
+        const nameLower = (s.name || "").toLowerCase();
+        if (nameLower.includes("assinatura") || nameLower.includes("freestyle")) {
+          return false;
+        }
+        return true;
+      })
       .map((s: any) => {
         const duration =
           s.schedule?.availabilityConstraints?.sessionDurations?.[0] ||
@@ -364,7 +371,12 @@ export async function getDynamicBarbers(): Promise<Barber[]> {
 
       // Se o Wix retornou serviços para o profissional, usa os oficiais
       // Caso contrário, preserva o fallback local validado
-      const services = professionalServices.length > 0 ? professionalServices : b.services;
+      const services = (professionalServices.length > 0 ? professionalServices : b.services).filter(
+        (s) => {
+          const lower = (s.name || "").toLowerCase();
+          return !lower.includes("assinatura") && !lower.includes("freestyle");
+        }
+      );
 
       return {
         ...b,
