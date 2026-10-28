@@ -94,14 +94,18 @@ declare module 'next/navigation' {
 }
 
 declare module 'next/server' {
+  export class NextRequest extends Request {
+    [key: string]: any;
+  }
   export const NextResponse: any;
-  export const NextRequest: any;
   export type NextMiddleware = any;
 }
 
 declare module 'next/server.js' {
+  export class NextRequest extends Request {
+    [key: string]: any;
+  }
   export const NextResponse: any;
-  export const NextRequest: any;
   export type NextMiddleware = any;
 }
 

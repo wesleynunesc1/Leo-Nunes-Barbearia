@@ -5,6 +5,7 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { getAllBarbers } from "@/data/barbers";
 import { BarberCard } from "@/components/BarberCard";
 import { ShieldCheck, Calendar, ArrowRight, HelpCircle } from "lucide-react";
+import { BookingTriggerButton } from "@/components/BookingTriggerButton";
 
 export const metadata: Metadata = {
   title: "Escolha seu Barbeiro | Agendamento Online",
@@ -38,6 +39,13 @@ export default function AgendarBarbeiroPage() {
           O próximo corte começa aqui. Cada profissional possui sua agenda e lista exclusiva de serviços.
           Selecione o barbeiro com quem deseja agendar para conferir as opções disponíveis.
         </p>
+
+        <div className="pt-2">
+          <BookingTriggerButton className="btn-shimmer inline-flex items-center gap-2 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-[0_0_20px_rgba(37,196,64,0.3)] transition-all cursor-pointer">
+            <Calendar className="w-4 h-4" />
+            <span>Abrir Sistema de Agendamento Integrado</span>
+          </BookingTriggerButton>
+        </div>
       </div>
 
       {/* Barbers Grid: 2 columns on mobile, 4 columns on desktop */}

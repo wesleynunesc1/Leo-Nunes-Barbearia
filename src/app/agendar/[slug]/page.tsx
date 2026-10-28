@@ -123,7 +123,7 @@ export default async function BarberServicesPage({ params }: PageProps) {
       </div>
 
       {/* Services List with Filter */}
-      <ServiceList services={barber.services} barberName={barber.name} />
+      <ServiceList services={barber.services} barberName={barber.name} barberSlug={barber.slug} />
 
       {/* Support and Safety Note */}
       <div className="pt-5 sm:pt-6 border-t border-[#1C2620] flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-xs text-[#9BA59E] text-center sm:text-left">

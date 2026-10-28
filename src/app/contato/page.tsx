@@ -12,6 +12,7 @@ import {
   Award,
   Scissors,
 } from "lucide-react";
+import { BookingTriggerButton } from "@/components/BookingTriggerButton";
 
 export const metadata: Metadata = {
   title: "Contato & Agendamento | Léo Nunes Barbearia - Pacajus CE",
@@ -98,11 +99,8 @@ export default function ContatoPage() {
             {/* Coluna dos 4 Botões Grandes Oficiais (Colunas 1 a 7) */}
             <div className="lg:col-span-7 flex flex-col gap-4 sm:gap-5 justify-center">
               {/* BOTÃO 03: AGENDAR PELO SITE (CTA PRINCIPAL / MAIOR DESTAQUE) */}
-              <a
-                href={ACTION_LINKS.webBooking}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-shimmer group relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#25C440] via-[#2CD64A] to-[#25C440] text-[#080B09] p-5 sm:p-6 shadow-[0_10px_35px_rgba(37,196,64,0.35)] border border-[#5BE376]/50 transition-all duration-300 hover:scale-[1.015] hover:shadow-[0_15px_45px_rgba(37,196,64,0.5)] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#25C440]"
+              <BookingTriggerButton
+                className="btn-shimmer group relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#25C440] via-[#2CD64A] to-[#25C440] text-[#080B09] p-5 sm:p-6 shadow-[0_10px_35px_rgba(37,196,64,0.35)] border border-[#5BE376]/50 transition-all duration-300 hover:scale-[1.015] hover:shadow-[0_15px_45px_rgba(37,196,64,0.5)] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#25C440] text-left cursor-pointer w-full"
                 id="btn-contato-agendar-site"
               >
                 <div className="flex items-center justify-between gap-4">
@@ -132,7 +130,7 @@ export default function ContatoPage() {
                     <ArrowRight className="w-5 h-5" />
                   </div>
                 </div>
-              </a>
+              </BookingTriggerButton>
 
               {/* BOTÃO 04: WHATSAPP */}
               <a
@@ -379,15 +377,14 @@ export default function ContatoPage() {
 
               {/* Botão de Agendamento da Seção */}
               <div className="pt-2">
-                <Link
-                  href="/agendar"
-                  className="btn-shimmer inline-flex items-center justify-center gap-3 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-sm sm:text-base px-8 py-4 rounded-xl shadow-[0_0_25px_rgba(37,196,64,0.35)] transition-all duration-300 hover:scale-[1.02] active:scale-95 group w-full sm:w-auto"
+                <BookingTriggerButton
+                  className="btn-shimmer inline-flex items-center justify-center gap-3 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-sm sm:text-base px-8 py-4 rounded-xl shadow-[0_0_25px_rgba(37,196,64,0.35)] transition-all duration-300 hover:scale-[1.02] active:scale-95 group w-full sm:w-auto cursor-pointer"
                   id="btn-historia-agendar"
                 >
                   <Calendar className="w-5 h-5 shrink-0" />
                   <span>AGENDAR MEU HORÁRIO</span>
                   <ArrowRight className="w-5 h-5 shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
-                </Link>
+                </BookingTriggerButton>
               </div>
             </div>
 

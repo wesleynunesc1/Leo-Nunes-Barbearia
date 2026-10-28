@@ -3,9 +3,13 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, Calendar, MapPin, Phone } from "lucide-react";
+import { Menu, X, Calendar, MapPin, Phone, User } from "lucide-react";
+import { useBooking } from "@/context/BookingContext";
+import { useAuth } from "@/context/AuthContext";
 
 export function Header() {
+  const { openBooking } = useBooking();
+  const { member } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const navLinks = [
@@ -102,27 +106,45 @@ export function Header() {
             })}
           </nav>
 
-          {/* Desktop CTA with Shimmer Beam */}
-          <div className="hidden sm:flex items-center gap-4">
+          {/* Desktop CTA with Shimmer Beam + Minha Conta */}
+          <div className="hidden sm:flex items-center gap-3">
             <Link
-              href="/agendar"
-              className="btn-shimmer inline-flex items-center gap-2 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-sm px-5 py-2.5 rounded-xl shadow-[0_0_20px_rgba(37,196,64,0.35)] transition-all duration-300 hover:scale-[1.02] active:scale-95"
+              href={member ? "/minha-conta" : "/login"}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-[#0D1810]/90 hover:bg-[#142618] border border-white/[0.08] hover:border-[#25C440]/40 text-[#A6AEA8] hover:text-white text-xs font-semibold transition-all shadow-sm"
+              id="header-cta-minha-conta"
+            >
+              <User className="w-3.5 h-3.5 text-[#25C440]" />
+              <span>{member ? member.name.split(" ")[0] : "Minha Conta"}</span>
+            </Link>
+
+            <button
+              type="button"
+              onClick={() => openBooking()}
+              className="btn-shimmer inline-flex items-center gap-2 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-sm px-5 py-2.5 rounded-xl shadow-[0_0_20px_rgba(37,196,64,0.35)] transition-all duration-300 hover:scale-[1.02] active:scale-95 cursor-pointer"
               id="header-cta-agendar"
             >
               <Calendar className="w-4 h-4 shrink-0" />
               <span>Agendar horário</span>
               <span className="text-base font-bold shrink-0">›</span>
-            </Link>
+            </button>
           </div>
 
           {/* Mobile Menu Button */}
           <div className="flex sm:hidden items-center gap-2">
             <Link
-              href="/agendar"
-              className="bg-[#25C440] text-[#080B09] font-bold text-xs px-3 py-2 rounded-md"
+              href={member ? "/minha-conta" : "/login"}
+              className="p-2 text-[#A6AEA8] hover:text-white rounded-lg"
+              aria-label="Minha Conta"
+            >
+              <User className="w-5 h-5 text-[#25C440]" />
+            </Link>
+            <button
+              type="button"
+              onClick={() => openBooking()}
+              className="bg-[#25C440] text-[#080B09] font-bold text-xs px-3 py-2 rounded-md active:scale-95 transition-transform cursor-pointer"
             >
               Agendar
-            </Link>
+            </button>
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -141,6 +163,18 @@ export function Header() {
       {mobileMenuOpen && (
         <div className="sm:hidden absolute inset-x-0 top-full max-h-[calc(100vh-100%)] overflow-y-auto bg-[#080B09] border-b border-white/[0.08] px-5 pt-4 pb-8 space-y-4 shadow-2xl animate-in slide-in-from-top duration-200 z-50">
           <div className="flex flex-col space-y-1">
+            <Link
+              href={member ? "/minha-conta" : "/login"}
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-base font-bold text-[#25C440] py-3 px-3.5 rounded-xl bg-[#121813] border border-[#25C440]/25 transition-colors flex items-center justify-between mb-1"
+            >
+              <span className="flex items-center gap-2">
+                <User className="w-4 h-4" />
+                <span>{member ? `Minha Conta (${member.name.split(" ")[0]})` : "Área do Cliente (Entrar / Cadastrar)"}</span>
+              </span>
+              <span className="text-[#25C440] text-xs">→</span>
+            </Link>
+
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -155,14 +189,17 @@ export function Header() {
           </div>
 
           <div className="pt-4 border-t border-[#202A22] space-y-4">
-            <Link
-              href="/agendar"
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full flex items-center justify-center gap-2 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold py-3.5 rounded-xl text-center btn-green-glow text-sm"
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                openBooking();
+              }}
+              className="w-full flex items-center justify-center gap-2 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold py-3.5 rounded-xl text-center btn-green-glow text-sm cursor-pointer"
             >
               <Calendar className="w-4 h-4" />
               <span>Agendar Horário Agora</span>
-            </Link>
+            </button>
 
             <div className="text-xs text-[#A6AEA8] space-y-2 pt-1 bg-[#101611] p-3.5 rounded-xl border border-[#202A22]">
               <p className="flex items-center gap-2">

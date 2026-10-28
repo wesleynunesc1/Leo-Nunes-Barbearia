@@ -8,9 +8,10 @@ import { Scissors, Layers, Shield, CheckCircle2, Droplets } from "lucide-react";
 interface ServiceListProps {
   services: BarberService[];
   barberName: string;
+  barberSlug?: string;
 }
 
-export function ServiceList({ services, barberName }: ServiceListProps) {
+export function ServiceList({ services, barberName, barberSlug }: ServiceListProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   const categories = [
@@ -86,6 +87,7 @@ export function ServiceList({ services, barberName }: ServiceListProps) {
             key={service.id}
             service={service}
             barberName={barberName}
+            barberSlug={barberSlug}
           />
         ))}
       </div>

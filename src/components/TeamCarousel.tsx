@@ -2,9 +2,9 @@
 
 import React from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { ArrowRight, CalendarCheck } from "lucide-react";
 import { Barber } from "@/data/barbers";
+import { BookingTriggerButton } from "@/components/BookingTriggerButton";
 
 interface TeamCarouselProps {
   barbers: Barber[];
@@ -50,14 +50,14 @@ export function TeamCarousel({ barbers }: TeamCarouselProps) {
 
             {/* Ação de Agendamento */}
             <div className="p-2 sm:p-2.5 bg-[#0A0E0B] border-t border-white/[0.06]">
-              <Link
-                href={`/agendar/${barber.slug}`}
-                className="w-full flex items-center justify-center gap-1.5 bg-[#162219] hover:bg-[#25C440] active:bg-[#25C440] text-[#FFFFFF] hover:text-[#080B09] active:text-[#080B09] font-extrabold text-[11px] sm:text-xs py-2 px-2 rounded-xl border border-[#25C440]/30 transition-all duration-300 text-center"
+              <BookingTriggerButton
+                barberSlug={barber.slug}
+                className="w-full flex items-center justify-center gap-1.5 bg-[#162219] hover:bg-[#25C440] active:bg-[#25C440] text-[#FFFFFF] hover:text-[#080B09] active:text-[#080B09] font-extrabold text-[11px] sm:text-xs py-2 px-2 rounded-xl border border-[#25C440]/30 transition-all duration-300 text-center cursor-pointer"
               >
                 <CalendarCheck className="w-3 h-3 shrink-0" />
                 <span>Agendar</span>
                 <ArrowRight className="w-3 h-3 transition-transform duration-300 group-hover:translate-x-0.5 shrink-0" />
-              </Link>
+              </BookingTriggerButton>
             </div>
           </div>
         ))}
@@ -100,14 +100,14 @@ export function TeamCarousel({ barbers }: TeamCarouselProps) {
 
             {/* Ação de Agendamento */}
             <div className="p-3 bg-[#0A0E0B] border-t border-white/[0.06]">
-              <Link
-                href={`/agendar/${barber.slug}`}
-                className="w-full flex items-center justify-center gap-2 bg-[#162219] hover:bg-[#25C440] text-[#FFFFFF] hover:text-[#080B09] font-extrabold text-xs sm:text-sm py-2.5 px-3 rounded-xl border border-[#25C440]/30 hover:border-transparent transition-all duration-300 group-hover:bg-[#25C440] group-hover:text-[#080B09] shadow-sm text-center"
+              <BookingTriggerButton
+                barberSlug={barber.slug}
+                className="w-full flex items-center justify-center gap-2 bg-[#162219] hover:bg-[#25C440] text-[#FFFFFF] hover:text-[#080B09] font-extrabold text-xs sm:text-sm py-2.5 px-3 rounded-xl border border-[#25C440]/30 hover:border-transparent transition-all duration-300 group-hover:bg-[#25C440] group-hover:text-[#080B09] shadow-sm text-center cursor-pointer"
               >
                 <CalendarCheck className="w-3.5 h-3.5 shrink-0" />
                 <span>Agendar Horário</span>
                 <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1 shrink-0" />
-              </Link>
+              </BookingTriggerButton>
             </div>
           </div>
         ))}

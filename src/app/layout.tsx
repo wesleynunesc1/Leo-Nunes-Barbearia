@@ -79,6 +79,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { Providers } from "@/components/Providers";
+
 export default function RootLayout({
   children,
 }: {
@@ -146,10 +148,12 @@ export default function RootLayout({
       <body className="bg-[#080B09] text-[#F5F7F3] antialiased flex flex-col min-h-screen">
         {/* Camada Fixa de Ruído / Dots Pattern (Apenas Desktop) */}
         <div className="quadrado hidden md:block" aria-hidden="true" />
-        <PageTitleChanger />
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <Providers>
+          <PageTitleChanger />
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </Providers>
       </body>
     </html>
   );

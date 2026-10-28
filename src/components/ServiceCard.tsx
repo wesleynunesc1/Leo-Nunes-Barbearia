@@ -1,14 +1,20 @@
+"use client";
+
 import React from "react";
-import { Clock, ExternalLink, ShieldCheck } from "lucide-react";
+import { Clock, ShieldCheck, ChevronRight } from "lucide-react";
 import { BarberService } from "@/data/barbers";
 import { SpotlightCard } from "@/components/MotionSystem";
+import { useBooking } from "@/context/BookingContext";
 
 interface ServiceCardProps {
   service: BarberService;
   barberName: string;
+  barberSlug?: string;
 }
 
-export function ServiceCard({ service, barberName }: ServiceCardProps) {
+export function ServiceCard({ service, barberName, barberSlug }: ServiceCardProps) {
+  const { openBooking } = useBooking();
+
   // Strict palette: Green, Black and White only
   const categoryLabels: Record<string, { label: string; badgeClass: string }> = {
     cabelo: {
@@ -67,26 +73,27 @@ export function ServiceCard({ service, barberName }: ServiceCardProps) {
         <div className="flex items-center justify-between text-xs text-[#6F7B72]">
           <span className="flex items-center gap-1">
             <Clock className="w-3.5 h-3.5 text-[#25C440]" />
-            Horários em tempo real
+            {service.durationMinutes} minutos
           </span>
-          <span className="text-[#A6AEA8] font-medium text-[11px]">
-            Valores no calendário
+          <span className="text-[#25C440] font-heading font-black text-sm">
+            {service.formattedPrice}
           </span>
         </div>
 
-        {/* Primary CTA - literal exact bookingUrl */}
-        <a
-          href={service.bookingUrl}
-          className="w-full flex items-center justify-center gap-2 bg-[#25C440] hover:bg-[#2CD64A] text-[#080A08] font-bold text-xs sm:text-sm py-3 px-4 rounded-xl btn-green-glow transition-all duration-200"
+        {/* Primary CTA - Abre fluxo integrado no modal */}
+        <button
+          type="button"
+          onClick={() => openBooking({ barberSlug, serviceId: service.id })}
+          className="w-full flex items-center justify-center gap-2 bg-[#25C440] hover:bg-[#2CD64A] text-[#080A08] font-bold text-xs sm:text-sm py-3 px-4 rounded-xl btn-green-glow transition-all duration-200 cursor-pointer"
           id={`btn-book-${service.id}`}
           aria-label={`Agendar ${service.name} com ${barberName}`}
         >
           <span>Escolher Dia e Horário</span>
-          <ExternalLink className="w-4 h-4 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-        </a>
+          <ChevronRight className="w-4 h-4 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5" />
+        </button>
 
         <p className="text-[10px] text-center text-[#6F7B72] leading-tight">
-          Você continuará no sistema oficial de agendamento (Wix)
+          Agendamento integrado com o sistema oficial Wix
         </p>
       </div>
     </SpotlightCard>

@@ -14,6 +14,7 @@ import {
   Clock,
 } from "lucide-react";
 import { ScrollReveal } from "@/components/MotionSystem";
+import { BookingTriggerButton } from "@/components/BookingTriggerButton";
 
 interface ServiceModule {
   id: string;
@@ -178,13 +179,12 @@ export function ModulesServicesSection() {
                         {module.badge}
                       </span>
 
-                      <Link
-                        href="/agendar"
-                        className="inline-flex items-center gap-1.5 text-xs font-bold text-[#FFFFFF] group-hover:text-[#25C440] transition-colors"
+                      <BookingTriggerButton
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-[#FFFFFF] group-hover:text-[#25C440] transition-colors cursor-pointer"
                       >
                         <span>Agendar</span>
                         <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                      </Link>
+                      </BookingTriggerButton>
                     </div>
                   </div>
                 </ScrollReveal>
@@ -210,14 +210,13 @@ export function ModulesServicesSection() {
                 </p>
               </div>
 
-              <Link
-                href="/agendar"
-                className="btn-shimmer w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-sm px-7 py-3.5 rounded-xl shadow-[0_0_20px_rgba(37,196,64,0.35)] hover:shadow-[0_0_30px_rgba(37,196,64,0.5)] transition-all duration-300 shrink-0 group active:scale-95"
+              <BookingTriggerButton
+                className="btn-shimmer w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-sm px-7 py-3.5 rounded-xl shadow-[0_0_20px_rgba(37,196,64,0.35)] hover:shadow-[0_0_30px_rgba(37,196,64,0.5)] transition-all duration-300 shrink-0 group active:scale-95 cursor-pointer"
               >
                 <Calendar className="w-4 h-4 stroke-[2.2]" />
                 <span>Escolher Barbeiro</span>
                 <ChevronRight className="w-4 h-4 stroke-[2.5] group-hover:translate-x-0.5 transition-transform" />
-              </Link>
+              </BookingTriggerButton>
             </div>
           </ScrollReveal>
         </div>

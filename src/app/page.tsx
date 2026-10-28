@@ -25,6 +25,7 @@ import {
   SpotlightCard,
   PointerAura,
 } from "@/components/MotionSystem";
+import { BookingTriggerButton } from "@/components/BookingTriggerButton";
 
 export default function HomePage() {
   const barbers = getAllBarbers();
@@ -106,15 +107,14 @@ export default function HomePage() {
               {/* Action Buttons Row - 100% responsivo para toque no mobile */}
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-1">
                 {/* Primary CTA */}
-                <Link
-                  href="/agendar"
+                <BookingTriggerButton
                   id="hero-cta-agendar"
-                  className="btn-shimmer w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-sm sm:text-base px-7 py-3.5 sm:py-4 rounded-xl shadow-[0_0_25px_rgba(37,196,64,0.35)] hover:shadow-[0_0_35px_rgba(37,196,64,0.5)] transition-all duration-300 transform active:scale-95 group"
+                  className="btn-shimmer w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-sm sm:text-base px-7 py-3.5 sm:py-4 rounded-xl shadow-[0_0_25px_rgba(37,196,64,0.35)] hover:shadow-[0_0_35px_rgba(37,196,64,0.5)] transition-all duration-300 transform active:scale-95 group cursor-pointer"
                 >
                   <Calendar className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 stroke-[2.2]" />
                   <span>Agendar meu horário</span>
                   <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 stroke-[2.5] transition-transform duration-300 group-hover:translate-x-0.5" />
-                </Link>
+                </BookingTriggerButton>
 
                 {/* Secondary CTA */}
                 <a
@@ -392,14 +392,13 @@ export default function HomePage() {
           </div>
 
           <div className="text-center pt-10 sm:pt-14">
-            <Link
-              href="/agendar"
-              className="btn-shimmer w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-sm sm:text-base px-8 py-4 rounded-xl shadow-[0_0_20px_rgba(37,196,64,0.35)] hover:shadow-[0_0_30px_rgba(37,196,64,0.5)] transition-all duration-300 transform active:scale-95"
+            <BookingTriggerButton
+              className="btn-shimmer w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-sm sm:text-base px-8 py-4 rounded-xl shadow-[0_0_20px_rgba(37,196,64,0.35)] hover:shadow-[0_0_30px_rgba(37,196,64,0.5)] transition-all duration-300 transform active:scale-95 cursor-pointer"
             >
               <Calendar className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 stroke-[2.2]" />
               <span>Iniciar Meu Agendamento Agora</span>
               <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 stroke-[2.5]" />
-            </Link>
+            </BookingTriggerButton>
           </div>
         </div>
       </section>
@@ -507,14 +506,13 @@ export default function HomePage() {
                 </div>
 
                 <div className="pt-2">
-                  <Link
-                    href="/agendar"
-                    className="btn-shimmer w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-sm px-8 py-4 rounded-xl shadow-[0_0_20px_rgba(37,196,64,0.3)] transition-all"
+                  <BookingTriggerButton
+                    className="btn-shimmer w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-sm px-8 py-4 rounded-xl shadow-[0_0_20px_rgba(37,196,64,0.3)] transition-all cursor-pointer"
                   >
                     <Calendar className="w-4 h-4 stroke-[2.2]" />
                     <span>Agendar com um Barbeiro</span>
                     <ArrowRight className="w-4 h-4" />
-                  </Link>
+                  </BookingTriggerButton>
                 </div>
               </div>
             </ScrollReveal>

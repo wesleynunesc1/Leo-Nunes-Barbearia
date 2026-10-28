@@ -30,8 +30,11 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# env files (secret and local files ignored, example tracked)
+.env
+.env.local
+.env*.local
+!.env.example
 
 # vercel
 .vercel
@@ -47,4 +50,6 @@ next-env.d.ts
 /Páginas de Ref/
 /Home.png
 /Home Mobile.png
-
+# local runtime locks
+.bookings_lock.json
+/scratch/
