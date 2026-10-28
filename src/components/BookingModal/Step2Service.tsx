@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { Scissors, Clock, Check, Sparkles, CheckCircle2, Shield, Droplets, Layers } from "lucide-react";
+import { Scissors, Clock, Check, CalendarCheck, CheckCircle2, Shield, Droplets, Layers } from "lucide-react";
 import { useBooking } from "@/context/BookingContext";
 import { BarberService } from "@/data/barbers";
 
@@ -121,7 +121,7 @@ export function Step2Service() {
 
       <div className="space-y-1 text-center sm:text-left">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#142618] border border-[#25C440]/30 text-[11px] font-bold uppercase tracking-wider text-[#25C440]">
-          <Sparkles className="w-3.5 h-3.5" />
+          <CalendarCheck className="w-3.5 h-3.5" />
           <span>Etapa 2 de 5</span>
         </div>
         <h2 className="font-heading text-xl sm:text-2xl font-black text-[#FFFFFF]">

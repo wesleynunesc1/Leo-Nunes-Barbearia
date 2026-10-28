@@ -2,7 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
-import { Check, ChevronRight, Sparkles } from "lucide-react";
+import { Check, ChevronRight, CalendarCheck } from "lucide-react";
 import { getAllBarbers, Barber } from "@/data/barbers";
 import { useBooking } from "@/context/BookingContext";
 
@@ -29,7 +29,7 @@ export function Step1Barber() {
     <div className="space-y-6">
       <div className="space-y-1.5 text-center sm:text-left">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#142618] border border-[#25C440]/30 text-[11px] font-bold uppercase tracking-wider text-[#25C440]">
-          <Sparkles className="w-3.5 h-3.5" />
+          <CalendarCheck className="w-3.5 h-3.5" />
           <span>Etapa 1 de 5</span>
         </div>
         <h2 className="font-heading text-xl sm:text-2xl md:text-3xl font-black text-[#FFFFFF]">

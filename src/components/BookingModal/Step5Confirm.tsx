@@ -10,7 +10,7 @@ import {
   AlertTriangle,
   ExternalLink,
   Loader2,
-  Sparkles,
+  CalendarCheck,
   Phone,
   User,
   Mail,
@@ -386,7 +386,7 @@ export function Step5Confirm() {
         <div className="p-4 sm:p-5 rounded-2xl bg-[#131A14] border border-[#25C440]/40 space-y-4">
           <div className="flex items-start gap-3.5">
             <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#1D3220] border border-[#25C440]/50 flex items-center justify-center text-[#25C440] shrink-0">
-              <Sparkles className="w-5 h-5" />
+              <CalendarCheck className="w-5 h-5" />
             </div>
             <div className="space-y-1">
               <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#18281C] text-[10px] font-mono font-bold uppercase tracking-wider text-[#25C440] border border-[#25C440]/30">
@@ -463,7 +463,7 @@ export function Step5Confirm() {
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="space-y-1 text-center sm:text-left">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#142618] border border-[#25C440]/30 text-[11px] font-bold uppercase tracking-wider text-[#25C440]">
-          <Sparkles className="w-3.5 h-3.5" />
+          <CalendarCheck className="w-3.5 h-3.5" />
           <span>Etapa 5 de 5</span>
         </div>
         <h2 className="font-heading text-xl sm:text-2xl font-black text-[#FFFFFF]">

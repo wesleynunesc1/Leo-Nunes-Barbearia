@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Clock, Sun, Sunset, AlertCircle, Loader2, Sparkles } from "lucide-react";
+import { Clock, Sun, Sunset, AlertCircle, Loader2, CalendarCheck } from "lucide-react";
 import { useBooking } from "@/context/BookingContext";
 import { TimeSlot, BookingSlotResponse } from "@/types/booking";
 
@@ -106,7 +106,7 @@ export function Step4Time() {
 
       <div className="space-y-1 text-center sm:text-left">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#142618] border border-[#25C440]/30 text-[11px] font-bold uppercase tracking-wider text-[#25C440]">
-          <Sparkles className="w-3.5 h-3.5" />
+          <CalendarCheck className="w-3.5 h-3.5" />
           <span>Etapa 4 de 5</span>
         </div>
         <h2 className="font-heading text-xl sm:text-2xl font-black text-[#FFFFFF]">

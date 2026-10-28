@@ -54,10 +54,10 @@ export function Header() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-out ${
         mobileMenuOpen
-          ? "bg-[#080B09] border-b border-white/[0.08] py-3.5 sm:py-4 shadow-2xl"
+          ? "bg-[#080B09] py-3.5 sm:py-4 shadow-2xl"
           : scrolled
-          ? "header-glass py-3 sm:py-3.5 shadow-lg shadow-black/40"
-          : "bg-gradient-to-b from-black/50 via-black/15 to-transparent border-b border-transparent py-4 sm:py-5"
+          ? "header-glass py-3 sm:py-3.5 shadow-none sm:shadow-lg sm:shadow-black/40"
+          : "bg-gradient-to-b from-black/50 via-black/15 to-transparent py-4 sm:py-5"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

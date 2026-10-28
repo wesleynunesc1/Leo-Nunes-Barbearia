@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, CalendarCheck } from "lucide-react";
 import { useBooking } from "@/context/BookingContext";
 
 const MONTH_NAMES = [
@@ -89,7 +89,7 @@ export function Step3Date() {
 
       <div className="space-y-1 text-center sm:text-left">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#142618] border border-[#25C440]/30 text-[11px] font-bold uppercase tracking-wider text-[#25C440]">
-          <Sparkles className="w-3.5 h-3.5" />
+          <CalendarCheck className="w-3.5 h-3.5" />
           <span>Etapa 3 de 5</span>
         </div>
         <h2 className="font-heading text-xl sm:text-2xl font-black text-[#FFFFFF]">
