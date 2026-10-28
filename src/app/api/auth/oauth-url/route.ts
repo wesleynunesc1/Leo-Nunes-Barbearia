@@ -35,19 +35,17 @@ export async function GET(request: NextRequest) {
           errText,
         });
 
+        // Se o Wix rejeitar o redirectUri com 400, interceptamos para evitar
+        // que o Safari no iPhone tente baixar o arquivo 'authorize'
         if (errText.includes("Invalid redirect URI")) {
           return NextResponse.json(
             {
               error:
-                "Configuração pendente no Wix: O endereço de retorno precisa ser autorizado no painel Wix Developers.",
+                "Login com Google temporariamente indisponível para este endereço. Por favor, entre com seu e-mail e senha abaixo.",
               code: "INVALID_REDIRECT_URI",
-              details: {
-                clientId: WIX_CLIENT_ID,
-                redirectUri,
-                panelPath: "Wix Dashboard > Configurações > Desenvolvimento e integrações > Configurações Headless > Clientes Headless > Configurações > OAuth App Settings",
-                field: "Allowed authorization redirect URIs",
-                instruction: `Adicione exatamente '${redirectUri}' no campo 'Allowed authorization redirect URIs' do app Wix.`,
-              },
+              wixRawError: errText.trim(),
+              clientId: WIX_CLIENT_ID,
+              redirectUri,
             },
             { status: 400 }
           );

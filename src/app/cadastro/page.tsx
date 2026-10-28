@@ -17,8 +17,6 @@ import {
   ShieldCheck,
   AlertCircle,
   CheckCircle2,
-  Copy,
-  Check,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
@@ -63,8 +61,6 @@ function CadastroForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOAuthLoading, setIsOAuthLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(errorParam);
-  const [oauthDetails, setOAuthDetails] = useState<any | null>(null);
-  const [copiedUri, setCopiedUri] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   // Se já estiver logado, redireciona para a página de destino
@@ -97,19 +93,15 @@ function CadastroForm() {
     if (isOAuthLoading || isSubmitting) return;
     setIsOAuthLoading(true);
     setErrorMessage(null);
-    setOAuthDetails(null);
 
     try {
       await initiateOAuth("signup", redirectUrl);
     } catch (err: any) {
       console.error("[GOOGLE SIGNUP TRIGGER ERROR]", err);
-      if (err.code === "INVALID_REDIRECT_URI" || err.details) {
-        setOAuthDetails(err.details || { redirectUri: "https://leonunesbarbearia.vercel.app/auth/callback" });
-        setErrorMessage(null);
-      } else {
-        setOAuthDetails(null);
-        setErrorMessage(err.message || "Erro de conexão ao iniciar cadastro com o Google. Tente novamente.");
-      }
+      setErrorMessage(
+        err.message ||
+          "Cadastro com Google temporariamente indisponível. Por favor, preencha o formulário abaixo para criar sua conta."
+      );
       setIsOAuthLoading(false);
     }
   };
@@ -214,40 +206,6 @@ function CadastroForm() {
             </div>
           )}
 
-          {/* Alerta de Configuração Pendente no Wix com Instrução Direta e Cópia */}
-          {oauthDetails && (
-            <div className="mb-6 p-4 rounded-xl bg-[#25C440]/10 border border-[#25C440]/30 text-white text-xs sm:text-sm animate-in fade-in space-y-3">
-              <div className="flex items-start gap-2.5">
-                <AlertCircle className="w-5 h-5 text-[#25C440] shrink-0 mt-0.5" />
-                <div className="space-y-1">
-                  <p className="font-bold text-[#25C440]">Configuração do Google no Wix</p>
-                  <p className="text-[#A6AEA8] leading-relaxed">
-                    Para habilitar o Google na Vercel, adicione a URL abaixo no campo <strong className="text-white">Allowed authorization redirect URIs</strong> do app no painel Wix Developers:
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 bg-[#080B09] p-2.5 rounded-lg border border-white/[0.1]">
-                <code className="text-[11px] text-[#25C440] font-mono flex-1 break-all select-all">
-                  {oauthDetails.redirectUri || "https://leonunesbarbearia.vercel.app/auth/callback"}
-                </code>
-                <button
-                  type="button"
-                  onClick={() => {
-                    navigator.clipboard.writeText(oauthDetails.redirectUri || "https://leonunesbarbearia.vercel.app/auth/callback");
-                    setCopiedUri(true);
-                    setTimeout(() => setCopiedUri(false), 2500);
-                  }}
-                  className="px-2.5 py-1.5 bg-[#25C440]/20 hover:bg-[#25C440]/30 text-[#25C440] rounded font-bold text-xs shrink-0 flex items-center gap-1 transition-colors cursor-pointer"
-                >
-                  {copiedUri ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                  <span>{copiedUri ? "Copiado!" : "Copiar"}</span>
-                </button>
-              </div>
-              <p className="text-[11px] text-[#A6AEA8]">
-                👉 Enquanto isso, você pode criar sua conta preenchendo o formulário logo abaixo.
-              </p>
-            </div>
-          )}
 
           {/* Mensagens de Erro */}
           {errorMessage && (
