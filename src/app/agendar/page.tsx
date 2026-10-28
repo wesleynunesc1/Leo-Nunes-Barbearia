@@ -2,7 +2,7 @@ import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { getAllBarbers } from "@/data/barbers";
+import { getDynamicBarbers } from "@/lib/wixDynamicSync";
 import { BarberCard } from "@/components/BarberCard";
 import { ShieldCheck, Calendar, ArrowRight, HelpCircle } from "lucide-react";
 import { BookingTriggerButton } from "@/components/BookingTriggerButton";
@@ -16,8 +16,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function AgendarBarbeiroPage() {
-  const barbers = getAllBarbers();
+export default async function AgendarBarbeiroPage() {
+  const barbers = await getDynamicBarbers();
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-12 sm:pb-16 space-y-6 sm:space-y-12">

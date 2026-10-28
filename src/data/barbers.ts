@@ -8,6 +8,7 @@ export interface BarberService {
   price: number;
   formattedPrice: string;
   wixServiceId?: string;
+  resourceIds?: string[];
 }
 
 export interface Barber {

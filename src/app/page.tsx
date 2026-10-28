@@ -15,7 +15,7 @@ import {
   ExternalLink,
   Users,
 } from "lucide-react";
-import { getAllBarbers } from "@/data/barbers";
+import { getDynamicBarbers, getDynamicInstitutional } from "@/lib/wixDynamicSync";
 import { TeamCarousel } from "@/components/TeamCarousel";
 import { ModulesServicesSection } from "@/components/ModulesServicesSection";
 import { ThreeDScrollTrigger } from "@/components/ThreeDScrollTrigger";
@@ -26,8 +26,11 @@ import {
 } from "@/components/MotionSystem";
 import { BookingTriggerButton } from "@/components/BookingTriggerButton";
 
-export default function HomePage() {
-  const barbers = getAllBarbers();
+export default async function HomePage() {
+  const [barbers, institutional] = await Promise.all([
+    getDynamicBarbers(),
+    getDynamicInstitutional(),
+  ]);
 
   return (
     <div className="pb-16 sm:pb-24 overflow-x-hidden" id="inicio">
@@ -84,23 +87,23 @@ export default function HomePage() {
               <div className="flex items-center gap-2.5">
                 <div className="w-6 sm:w-8 h-[2px] bg-[#25C440]" aria-hidden="true" />
                 <span className="text-[11px] sm:text-xs font-mono font-bold uppercase tracking-[0.24em] text-[#25C440]">
-                  BARBEARIA EM PACAJUS
+                  {institutional.hero.badge}
                 </span>
               </div>
 
               {/* Headline nítida com sombra cinematográfica para contraste perfeito sobre a imagem */}
               <h1 className="font-heading font-black text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-[58px] xl:text-[66px] tracking-tight uppercase leading-[0.98] drop-shadow-[0_2px_14px_rgba(0,0,0,0.85)]">
                 <span className="text-[#FFFFFF] block">
-                  NA LÉO NUNES
+                  {institutional.hero.headlineLine1}
                 </span>
                 <span className="text-[#25C440] block mt-1 sm:mt-1.5">
-                  VOCÊ SAI COM VISUAL ALINHADO
+                  {institutional.hero.headlineLine2}
                 </span>
               </h1>
 
               {/* Subtitle Paragraph calibrado com contraste elevado */}
               <p className="text-xs sm:text-base text-[#D4DDD6] max-w-lg leading-relaxed font-normal drop-shadow-[0_1px_8px_rgba(0,0,0,0.95)]">
-                Cortes contemporâneos, barbas desenhadas com precisão cirúrgica e atendimento de alto padrão, em Pacajus.
+                {institutional.hero.subheadline}
               </p>
 
               {/* Action Buttons Row - 100% responsivo para toque no mobile */}
@@ -544,16 +547,16 @@ export default function HomePage() {
                     </span>
                     <span className="inline-flex items-center gap-1.5 text-[10px] font-mono text-[#25C440] bg-[#25C440]/10 border border-[#25C440]/30 px-2 py-0.5 rounded-full">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#25C440] animate-pulse" />
-                      ABERTO HOJE
+                      {institutional.hours.badgeText}
                     </span>
                   </div>
                   <h3 className="font-heading text-lg sm:text-xl font-bold text-[#F5F7F3]">
-                    Pacajus — Ceará
+                    {institutional.contact.cityStateZip}
                   </h3>
                   <p className="text-xs sm:text-sm text-[#A6AEA8] leading-relaxed">
-                    Rua Joaquim Nogueira Lopes, 180, Centro
+                    {institutional.contact.addressLine1}
                     <br />
-                    CEP 62870-000 — Pacajus / Ceará
+                    {institutional.contact.addressLine2}
                   </p>
                 </div>
 
@@ -564,15 +567,15 @@ export default function HomePage() {
                   <div className="space-y-1.5 text-xs text-[#A6AEA8]">
                     <p className="flex justify-between py-0.5">
                       <span>Segunda a Sexta:</span>
-                      <strong className="text-[#F5F7F3]">08h às 19h</strong>
+                      <strong className="text-[#F5F7F3]">{institutional.hours.weekdays}</strong>
                     </p>
                     <p className="flex justify-between py-0.5">
                       <span>Sábado:</span>
-                      <strong className="text-[#F5F7F3]">08h às 18h</strong>
+                      <strong className="text-[#F5F7F3]">{institutional.hours.saturday}</strong>
                     </p>
                     <p className="flex justify-between py-0.5 text-[#6F7B72]">
                       <span>Domingo:</span>
-                      <span>Fechado</span>
+                      <span>{institutional.hours.sunday}</span>
                     </p>
                   </div>
                 </div>
@@ -582,14 +585,14 @@ export default function HomePage() {
                     Telefone / WhatsApp
                   </span>
                   <p className="text-sm sm:text-base font-bold text-[#F5F7F3]">
-                    (85) 99222-7064
+                    {institutional.contact.phoneFormatted}
                   </p>
                 </div>
               </div>
 
               <div className="space-y-2.5 pt-4 sm:pt-6">
                 <a
-                  href="https://maps.google.com/?q=Rua+Joaquim+Nogueira+Lopes,+180,+Centro,+Pacajus+-+CE,+62870-000"
+                  href={institutional.contact.googleMapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full flex items-center justify-center gap-2 bg-[#1B261E] hover:bg-[#25C440] text-[#F5F7F3] hover:text-[#080B09] font-bold text-xs py-3.5 rounded-xl border border-[#25C440]/30 transition-all duration-200"
@@ -600,7 +603,7 @@ export default function HomePage() {
                 </a>
 
                 <a
-                  href="https://wa.me/5585992227064?text=Ol%C3%A1!%20Gostaria%20de%20tirar%20uma%20d%C3%BAvida%20sobre%20a%20L%C3%A9o%20Nunes%20Barbearia."
+                  href={institutional.contact.whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full flex items-center justify-center gap-2 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-bold text-xs py-3.5 rounded-xl transition-all duration-200 shadow-[0_0_15px_rgba(37,196,64,0.2)]"

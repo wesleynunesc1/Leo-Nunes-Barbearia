@@ -13,6 +13,7 @@ import {
   Scissors,
 } from "lucide-react";
 import { BookingTriggerButton } from "@/components/BookingTriggerButton";
+import { getDynamicInstitutional } from "@/lib/wixDynamicSync";
 
 export const metadata: Metadata = {
   title: "Contato & Agendamento | Léo Nunes Barbearia - Pacajus CE",
@@ -51,7 +52,8 @@ const ACTION_LINKS = {
     "https://api.whatsapp.com/send/?phone=5585992227064&text&type=phone_number&app_absent=0",
 };
 
-export default function ContatoPage() {
+export default async function ContatoPage() {
+  const institutional = await getDynamicInstitutional();
   return (
     <div className="min-h-screen bg-[#080B09] text-[#F5F7F3] selection:bg-[#25C440] selection:text-[#080B09]">
       {/* =========================================================================
@@ -269,7 +271,9 @@ export default function ContatoPage() {
                   <MapPin className="w-4 h-4 text-[#25C440] shrink-0 mt-0.5" />
                   <div>
                     <strong className="text-[#FFFFFF] block">Endereço Oficial</strong>
-                    <span className="text-[#9BA69E]">Rua Joaquim Nogueira Lopes, 180, Pacajus - CE</span>
+                    <span className="text-[#9BA69E]">
+                      {institutional.contact.addressLine1}, {institutional.contact.cityStateZip}
+                    </span>
                   </div>
                 </div>
 
@@ -277,7 +281,9 @@ export default function ContatoPage() {
                   <Clock className="w-4 h-4 text-[#25C440] shrink-0 mt-0.5" />
                   <div>
                     <strong className="text-[#FFFFFF] block">Horário de Funcionamento</strong>
-                    <span className="text-[#9BA69E]">Segunda a Sexta: 08h às 19h | Sábado: 08h às 18h</span>
+                    <span className="text-[#9BA69E]">
+                      Segunda a Sexta: {institutional.hours.weekdays} | Sábado: {institutional.hours.saturday}
+                    </span>
                   </div>
                 </div>
 
@@ -285,7 +291,14 @@ export default function ContatoPage() {
                   <Phone className="w-4 h-4 text-[#25C440] shrink-0 mt-0.5" />
                   <div>
                     <strong className="text-[#FFFFFF] block">Telefone & WhatsApp</strong>
-                    <span className="text-[#9BA69E]">(85) 99222-7064</span>
+                    <a
+                      href={institutional.contact.whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#25C440] hover:underline"
+                    >
+                      {institutional.contact.phoneFormatted}
+                    </a>
                   </div>
                 </div>
               </div>

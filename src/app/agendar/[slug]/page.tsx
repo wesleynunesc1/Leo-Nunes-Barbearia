@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getAllBarbers, getBarberBySlug } from "@/data/barbers";
+import { getDynamicBarbers, getDynamicBarberBySlug } from "@/lib/wixDynamicSync";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ServiceList } from "@/components/ServiceList";
 import { ArrowLeft, Users, Calendar, ShieldCheck, Phone } from "lucide-react";
@@ -13,7 +13,7 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  const barbers = getAllBarbers();
+  const barbers = await getDynamicBarbers();
   return barbers.map((b) => ({
     slug: b.slug,
   }));
@@ -21,7 +21,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const barber = getBarberBySlug(slug);
+  const barber = await getDynamicBarberBySlug(slug);
 
   if (!barber) {
     return {
@@ -52,7 +52,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function BarberServicesPage({ params }: PageProps) {
   const { slug } = await params;
-  const barber = getBarberBySlug(slug);
+  const barber = await getDynamicBarberBySlug(slug);
 
   if (!barber) {
     notFound();

@@ -11,8 +11,44 @@ interface ServiceListProps {
   barberSlug?: string;
 }
 
-export function ServiceList({ services, barberName, barberSlug }: ServiceListProps) {
+export function ServiceList({ services: initialServices, barberName, barberSlug }: ServiceListProps) {
+  const [services, setServices] = useState<BarberService[]>(initialServices);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+
+  React.useEffect(() => {
+    setServices(initialServices);
+  }, [initialServices]);
+
+  React.useEffect(() => {
+    if (!barberSlug) return;
+
+    const refresh = () => {
+      fetch(`/api/bookings/services?barberSlug=${barberSlug}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success && Array.isArray(data.services) && data.services.length > 0) {
+            setServices(data.services);
+          }
+        })
+        .catch(() => {});
+    };
+
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        refresh();
+      }
+    };
+
+    window.addEventListener("focus", refresh);
+    document.addEventListener("visibilitychange", handleVisibility);
+    const interval = setInterval(refresh, 60000);
+
+    return () => {
+      window.removeEventListener("focus", refresh);
+      document.removeEventListener("visibilitychange", handleVisibility);
+      clearInterval(interval);
+    };
+  }, [barberSlug]);
 
   const categories = [
     { id: "all", label: "Todos os Serviços", icon: Layers, count: services.length },

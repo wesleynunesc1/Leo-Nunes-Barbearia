@@ -101,10 +101,57 @@ export async function POST(request: NextRequest) {
           ? "71a2e1ca-2bce-410f-8d98-a64a5225a9ab"
           : "5fdf0f3a-8e3e-4009-8421-4467ef3b3871");
 
-    const durationMinutes = localService?.durationMinutes || 40;
-    const serviceName = localService?.name || "Serviço Barbearia";
-    const formattedPrice = localService?.formattedPrice || "Sob consulta";
-    const directWixUrl = localService?.bookingUrl;
+    let durationMinutes = localService?.durationMinutes || 40;
+    let serviceName = localService?.name || "Serviço Barbearia";
+    let formattedPrice = localService?.formattedPrice || "Sob consulta";
+    let directWixUrl = localService?.bookingUrl;
+
+    // 3.1. Validação em tempo real do serviço oficial no Wix Bookings
+    if (isWixConfigured()) {
+      try {
+        const wixClient = getWixClient();
+        if (wixClient) {
+          const officialSvc: any = await wixClient.services.getService(resolvedWixServiceId);
+          if (officialSvc) {
+            if (officialSvc.hidden || officialSvc.status === "INACTIVE") {
+              return NextResponse.json(
+                {
+                  success: false,
+                  status: "ERROR",
+                  errorCode: "SERVICE_INACTIVE",
+                  message: "Este serviço está temporariamente inativo ou indisponível para novas reservas.",
+                },
+                { status: 400 }
+              );
+            }
+            serviceName = officialSvc.name || serviceName;
+            const officialDuration =
+              officialSvc.schedule?.availabilityConstraints?.sessionDurations?.[0] ||
+              officialSvc.schedule?.availabilityConstraints?.durations?.[0]?.minutes ||
+              officialSvc.schedule?.durationInMinutes;
+            if (officialDuration) {
+              durationMinutes = officialDuration;
+            }
+            const officialPriceVal =
+              officialSvc.payment?.fixed?.price?.value ||
+              officialSvc.payment?.fixedPrice?.value ||
+              officialSvc.payment?.rate?.price?.value ||
+              officialSvc.price?.value;
+            if (officialPriceVal !== undefined && officialPriceVal !== null) {
+              const num = Number(officialPriceVal);
+              formattedPrice =
+                num > 0
+                  ? `R$ ${num.toFixed(2).replace(".", ",")}`
+                  : officialSvc.name?.toLowerCase().includes("assinatura")
+                  ? "Plano Assinatura"
+                  : "Sob consulta";
+            }
+          }
+        }
+      } catch (svcErr) {
+        console.warn("[WIX REALTIME SERVICE LOOKUP FALLBACK]", svcErr);
+      }
+    }
 
     // 4. CHAVE DE IDEMPOTÊNCIA E TRAVA DE CONCORRÊNCIA DISTRIBUÍDA
     idempotencyKey = computeIdempotencyKey({

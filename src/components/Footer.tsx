@@ -109,25 +109,25 @@ export function Footer() {
               <li>
                 <Link href="/agendar/leo-nunes" className="hover:text-[#25C440] transition-colors flex items-center justify-between group">
                   <span>Léo Nunes</span>
-                  <span className="text-xs text-[#25C440] opacity-0 group-hover:opacity-100 transition-opacity">10 serviços →</span>
+                  <span className="text-xs text-[#25C440] opacity-0 group-hover:opacity-100 transition-opacity">Ver agenda →</span>
                 </Link>
               </li>
               <li>
                 <Link href="/agendar/aleffer-nunes" className="hover:text-[#25C440] transition-colors flex items-center justify-between group">
                   <span>Aleffer Nunes</span>
-                  <span className="text-xs text-[#25C440] opacity-0 group-hover:opacity-100 transition-opacity">8 serviços →</span>
+                  <span className="text-xs text-[#25C440] opacity-0 group-hover:opacity-100 transition-opacity">Ver agenda →</span>
                 </Link>
               </li>
               <li>
                 <Link href="/agendar/helio-victor" className="hover:text-[#25C440] transition-colors flex items-center justify-between group">
                   <span>Hélio Victor</span>
-                  <span className="text-xs text-[#25C440] opacity-0 group-hover:opacity-100 transition-opacity">10 serviços →</span>
+                  <span className="text-xs text-[#25C440] opacity-0 group-hover:opacity-100 transition-opacity">Ver agenda →</span>
                 </Link>
               </li>
               <li>
                 <Link href="/agendar/guilherme-oliveira" className="hover:text-[#25C440] transition-colors flex items-center justify-between group">
                   <span>Guilherme Oliveira</span>
-                  <span className="text-xs text-[#25C440] opacity-0 group-hover:opacity-100 transition-opacity">8 serviços →</span>
+                  <span className="text-xs text-[#25C440] opacity-0 group-hover:opacity-100 transition-opacity">Ver agenda →</span>
                 </Link>
               </li>
             </ul>

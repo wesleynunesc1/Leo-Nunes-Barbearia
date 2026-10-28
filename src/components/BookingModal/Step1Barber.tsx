@@ -7,8 +7,23 @@ import { getAllBarbers, Barber } from "@/data/barbers";
 import { useBooking } from "@/context/BookingContext";
 
 export function Step1Barber() {
-  const barbers = getAllBarbers();
+  const [barbers, setBarbers] = React.useState<Barber[]>(() => getAllBarbers());
   const { selectedBarber, selectBarber } = useBooking();
+
+  React.useEffect(() => {
+    let isMounted = true;
+    fetch("/api/bookings/services")
+      .then((res) => res.json())
+      .then((resData) => {
+        if (isMounted && resData.success && Array.isArray(resData.data) && resData.data.length > 0) {
+          setBarbers(resData.data);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <div className="space-y-6">

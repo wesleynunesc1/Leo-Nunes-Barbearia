@@ -8,6 +8,7 @@ import {
   extendedBookings,
 } from "@wix/bookings";
 import { members } from "@wix/members";
+import { items } from "@wix/data";
 
 export function getWixClient() {
   const apiKey = process.env.WIX_API_KEY?.trim();
@@ -26,6 +27,7 @@ export function getWixClient() {
       bookings,
       extendedBookings,
       members,
+      items,
     },
     auth: ApiKeyStrategy({
       apiKey,

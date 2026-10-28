@@ -109,3 +109,17 @@ declare module 'next/server.js' {
   export type NextMiddleware = any;
 }
 
+declare module 'next/cache' {
+  export function unstable_cache<T extends (...args: any[]) => Promise<any>>(
+    cb: T,
+    keyParts?: string[],
+    options?: {
+      revalidate?: number | false;
+      tags?: string[];
+    }
+  ): T;
+  export function revalidateTag(tag: string, profile?: any): void;
+  export function revalidatePath(path: string, type?: 'layout' | 'page'): void;
+}
+
+
