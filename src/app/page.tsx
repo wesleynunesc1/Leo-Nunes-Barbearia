@@ -47,7 +47,7 @@ export default async function HomePage() {
         {/* Desktop Background (md e superiores) */}
         <div className="hidden md:block absolute inset-0 z-0 select-none pointer-events-none">
           <Image
-            src="/images/home-desktop.webp"
+            src="/images/hero-barbearia-desktop.webp"
             alt="Atendimento premium na Léo Nunes Barbearia"
             fill
             priority
@@ -65,17 +65,17 @@ export default async function HomePage() {
         {/* Mobile Background (abaixo de md - Fundo com claridade natural e nitidez fotográfica) */}
         <div className="block md:hidden absolute inset-0 z-0 select-none pointer-events-none">
           <Image
-            src="/images/home-mobile.webp"
+            src="/images/hero-barbearia-mobile.webp"
             alt="Atendimento premium na Léo Nunes Barbearia"
             fill
             priority
-            className="object-cover object-top brightness-[1.0] contrast-[1.04]"
-            sizes="(max-width: 767px) 100vw, 1px"
+            className="object-cover object-[center_28%] brightness-[0.98] contrast-[1.05]"
+            sizes="100vw"
           />
           {/* Suave vinheta superior para destacar header transparente */}
-          <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[#080B09]/60 via-[#080B09]/15 to-transparent z-10 pointer-events-none" />
-          {/* Suave vinheta inferior para acomodar os textos mantendo a foto do corte visível */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#080B09] via-[#080B09]/75 via-45% to-transparent z-10 pointer-events-none" />
+          <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#080B09]/70 via-[#080B09]/20 to-transparent z-10 pointer-events-none" />
+          {/* Suave vinheta inferior calibrada para acomodar os textos mantendo os barbeiros e cliente visíveis */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#080B09] via-[#080B09]/75 via-35% to-transparent z-10 pointer-events-none" />
         </div>
 
         {/* Main Content Area (Left Column Content + Right Floating Tag) */}
@@ -305,13 +305,13 @@ export default async function HomePage() {
       {/* =========================================================================
           COMO AGENDAR (3 Passos Claros) - Dark Luxury Theme
          ========================================================================= */}
-      <section className="w-full bg-gradient-to-b from-[#080B09] via-[#0C130E] to-[#080B09] text-[#FFFFFF] border-y border-[#18241B] py-16 sm:py-24 relative overflow-hidden">
+      <section className="w-full bg-gradient-to-b from-[#080B09] via-[#0C130E] to-[#080B09] text-[#FFFFFF] border-t border-[#18241B] pt-14 sm:pt-20 pb-8 sm:pb-12 relative overflow-hidden">
         {/* Ambient lighting */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-[#25C440]/[0.03] blur-[120px] pointer-events-none rounded-full" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
-            <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+            <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
               <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-[#25C440] bg-[#121A14] border border-[#25C440]/30 shadow-[0_0_15px_rgba(37,196,64,0.1)] mb-3 sm:mb-4">
                 PASSO A PASSO
               </span>
@@ -383,7 +383,7 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className="text-center pt-10 sm:pt-14">
+          <div className="text-center pt-8 sm:pt-10">
             <BookingTriggerButton
               className="btn-shimmer w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-sm sm:text-base px-8 py-4 rounded-xl shadow-[0_0_20px_rgba(37,196,64,0.35)] hover:shadow-[0_0_30px_rgba(37,196,64,0.5)] transition-all duration-300 transform active:scale-95 cursor-pointer"
             >
@@ -398,7 +398,7 @@ export default async function HomePage() {
       {/* =========================================================================
           EXPERIÊNCIA & ESPAÇO (#experiencia) - Tema Escuro Oficial (Dark Luxury Theme)
          ========================================================================= */}
-      <section id="experiencia" className="w-full bg-[#080B09] text-[#FFFFFF] py-16 sm:py-28 border-y border-[#18241B] scroll-mt-28 relative overflow-hidden">
+      <section id="experiencia" className="w-full bg-[#080B09] text-[#FFFFFF] pt-10 sm:pt-14 pb-14 sm:pb-22 border-y border-[#18241B] scroll-mt-28 relative overflow-hidden">
         {/* Subtle Ambient Glow */}
         <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[500px] h-[350px] bg-[#25C440]/[0.03] blur-[140px] pointer-events-none rounded-full" />
 
