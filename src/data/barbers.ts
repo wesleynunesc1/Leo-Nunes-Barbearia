@@ -62,7 +62,7 @@ export const BARBERS: Barber[] = [
         category: "combo",
         bookingUrl: "https://www.leonunesbarbearia.com/booking-calendar/cabelo-barba-sobrancelha-com-leo?resource=76570209-101f-409b-af97-b445bdb63125&referral=service_list_widget",
         description: "Alinhamento total: cabelo, desenho de barba e sobrancelha com padrão de excelência.",
-        durationMinutes: 70,
+        durationMinutes: 60,
         price: 70,
         formattedPrice: "R$ 70,00"
       },
@@ -73,7 +73,7 @@ export const BARBERS: Barber[] = [
         category: "combo",
         bookingUrl: "https://www.leonunesbarbearia.com/booking-calendar/cabelo-sobrancelha-com-leo?resource=76570209-101f-409b-af97-b445bdb63125&referral=service_list_widget",
         description: "Corte de precisão acompanhado de design de sobrancelha.",
-        durationMinutes: 50,
+        durationMinutes: 40,
         price: 50,
         formattedPrice: "R$ 50,00"
       },
@@ -95,7 +95,7 @@ export const BARBERS: Barber[] = [
         category: "tratamento",
         bookingUrl: "https://www.leonunesbarbearia.com/booking-calendar/sobrancelha?resource=76570209-101f-409b-af97-b445bdb63125&referral=service_list_widget",
         description: "Alinhamento e limpeza dos fios com simetria natural.",
-        durationMinutes: 15,
+        durationMinutes: 10,
         price: 10,
         formattedPrice: "R$ 10,00"
       },
@@ -106,7 +106,7 @@ export const BARBERS: Barber[] = [
         category: "tratamento",
         bookingUrl: "https://www.leonunesbarbearia.com/booking-calendar/hidrata%C3%A7%C3%A3o-1?resource=76570209-101f-409b-af97-b445bdb63125&referral=service_list_widget",
         description: "Nutrição e restauração profunda dos fios com produtos profissionais de alta performance.",
-        durationMinutes: 30,
+        durationMinutes: 20,
         price: 15,
         formattedPrice: "R$ 15,00"
       },
@@ -117,7 +117,7 @@ export const BARBERS: Barber[] = [
         category: "cabelo",
         bookingUrl: "https://www.leonunesbarbearia.com/booking-calendar/penteado?resource=76570209-101f-409b-af97-b445bdb63125&referral=service_list_widget",
         description: "Finalização estilizada e fixação para eventos e ocasiões especiais.",
-        durationMinutes: 20,
+        durationMinutes: 15,
         price: 10,
         formattedPrice: "R$ 10,00"
       },
@@ -128,7 +128,7 @@ export const BARBERS: Barber[] = [
         category: "tratamento",
         bookingUrl: "https://www.leonunesbarbearia.com/booking-calendar/limpeza-facial?resource=76570209-101f-409b-af97-b445bdb63125&referral=service_list_widget",
         description: "Higienização da pele, remoção de impurezas e hidratação revigorante.",
-        durationMinutes: 35,
+        durationMinutes: 30,
         price: 30,
         formattedPrice: "R$ 30,00"
       },
@@ -139,7 +139,7 @@ export const BARBERS: Barber[] = [
         category: "tratamento",
         bookingUrl: "https://www.leonunesbarbearia.com/booking-calendar/botox?resource=76570209-101f-409b-af97-b445bdb63125&referral=service_list_widget",
         description: "Tratamento de alinhamento e redução de volume com reposição de massa capilar.",
-        durationMinutes: 45,
+        durationMinutes: 60,
         price: 55,
         formattedPrice: "R$ 55,00"
       }
@@ -162,7 +162,7 @@ export const BARBERS: Barber[] = [
         category: "cabelo",
         bookingUrl: "https://www.leonunesbarbearia.com/booking-calendar/corte-com-equipe-1?resource=ea570fb8-8b9c-493d-af1b-437f2b7a9883&referral=service_list_widget",
         description: "Corte moderno alinhado ao seu estilo com acabamento de alta qualidade.",
-        durationMinutes: 35,
+        durationMinutes: 40,
         price: 35,
         formattedPrice: "R$ 35,00"
       },
@@ -173,7 +173,7 @@ export const BARBERS: Barber[] = [
         category: "combo",
         bookingUrl: "https://www.leonunesbarbearia.com/booking-calendar/cabelo-barba?resource=ea570fb8-8b9c-493d-af1b-437f2b7a9883&referral=service_list_widget",
         description: "Combo essencial para renovar o visual por completo.",
-        durationMinutes: 55,
+        durationMinutes: 60,
         price: 55,
         formattedPrice: "R$ 55,00"
       },
@@ -184,7 +184,7 @@ export const BARBERS: Barber[] = [
         category: "combo",
         bookingUrl: "https://www.leonunesbarbearia.com/booking-calendar/cabelo-barba-sobrancelha?resource=ea570fb8-8b9c-493d-af1b-437f2b7a9883&referral=service_list_widget",
         description: "Cuidado integral do rosto: corte de cabelo, barba alinhada e sobrancelha desenhada.",
-        durationMinutes: 65,
+        durationMinutes: 60,
         price: 65,
         formattedPrice: "R$ 65,00"
       },
@@ -195,7 +195,7 @@ export const BARBERS: Barber[] = [
         category: "combo",
         bookingUrl: "https://www.leonunesbarbearia.com/booking-calendar/cabelo-sobrancelha?resource=ea570fb8-8b9c-493d-af1b-437f2b7a9883&referral=service_list_widget",
         description: "Harmonia entre corte de cabelo e design de sobrancelha.",
-        durationMinutes: 45,
+        durationMinutes: 40,
         price: 45,
         formattedPrice: "R$ 45,00"
       },
@@ -217,7 +217,7 @@ export const BARBERS: Barber[] = [
         category: "tratamento",
         bookingUrl: "https://www.leonunesbarbearia.com/booking-calendar/sobrancelha?resource=ea570fb8-8b9c-493d-af1b-437f2b7a9883&referral=service_list_widget",
         description: "Design limpo e harmônico respeitando o desenho natural.",
-        durationMinutes: 15,
+        durationMinutes: 10,
         price: 10,
         formattedPrice: "R$ 10,00"
       },
@@ -228,7 +228,7 @@ export const BARBERS: Barber[] = [
         category: "tratamento",
         bookingUrl: "https://www.leonunesbarbearia.com/booking-calendar/hidrata%C3%A7%C3%A3o-1?resource=ea570fb8-8b9c-493d-af1b-437f2b7a9883&referral=service_list_widget",
         description: "Tratamento de condicionamento e vitalidade para cabelo e couro cabeludo.",
-        durationMinutes: 30,
+        durationMinutes: 20,
         price: 15,
         formattedPrice: "R$ 15,00"
       },
@@ -239,7 +239,7 @@ export const BARBERS: Barber[] = [
         category: "tratamento",
         bookingUrl: "https://www.leonunesbarbearia.com/booking-calendar/limpeza-facial?resource=ea570fb8-8b9c-493d-af1b-437f2b7a9883&referral=service_list_widget",
         description: "Pele renovada com esfoliação e hidratação profunda masculina.",
-        durationMinutes: 35,
+        durationMinutes: 30,
         price: 30,
         formattedPrice: "R$ 30,00"
       }
@@ -262,7 +262,7 @@ export const BARBERS: Barber[] = [
         category: "cabelo",
         bookingUrl: "https://www.leonunesbarbearia.com/booking-calendar/corte-com-equipe-1?resource=9ede92c1-dc85-4536-895f-5a9ec6665612&referral=service_list_widget",
         description: "Corte executado com precisão e estilo individualizado.",
-        durationMinutes: 35,
+        durationMinutes: 40,
         price: 35,
         formattedPrice: "R$ 35,00"
       },
@@ -273,7 +273,7 @@ export const BARBERS: Barber[] = [
         category: "combo",
         bookingUrl: "https://www.leonunesbarbearia.com/booking-calendar/cabelo-barba?resource=9ede92c1-dc85-4536-895f-5a9ec6665612&referral=service_list_widget",
         description: "Visual completo com corte moderno e alinhamento milimétrico da barba.",
-        durationMinutes: 55,
+        durationMinutes: 60,
         price: 55,
         formattedPrice: "R$ 55,00"
       },
@@ -284,7 +284,7 @@ export const BARBERS: Barber[] = [
         category: "combo",
         bookingUrl: "https://www.leonunesbarbearia.com/booking-calendar/cabelo-sobrancelha?resource=9ede92c1-dc85-4536-895f-5a9ec6665612&referral=service_list_widget",
         description: "Corte de cabelo e limpeza das sobrancelhas para um semblante leve e definido.",
-        durationMinutes: 45,
+        durationMinutes: 40,
         price: 45,
         formattedPrice: "R$ 45,00"
       },
@@ -306,7 +306,7 @@ export const BARBERS: Barber[] = [
         category: "combo",
         bookingUrl: "https://www.leonunesbarbearia.com/booking-calendar/cabelo-barba-sobrancelha?resource=9ede92c1-dc85-4536-895f-5a9ec6665612&referral=service_list_widget",
         description: "O combo supremo para sair com corte, barba e sobrancelhas impecáveis.",
-        durationMinutes: 65,
+        durationMinutes: 60,
         price: 65,
         formattedPrice: "R$ 65,00"
       },
@@ -317,7 +317,7 @@ export const BARBERS: Barber[] = [
         category: "tratamento",
         bookingUrl: "https://www.leonunesbarbearia.com/booking-calendar/sobrancelha?resource=9ede92c1-dc85-4536-895f-5a9ec6665612&referral=service_list_widget",
         description: "Acabamento natural e limpeza de excessos.",
-        durationMinutes: 15,
+        durationMinutes: 10,
         price: 10,
         formattedPrice: "R$ 10,00"
       },
@@ -328,7 +328,7 @@ export const BARBERS: Barber[] = [
         category: "tratamento",
         bookingUrl: "https://www.leonunesbarbearia.com/booking-calendar/hidrata%C3%A7%C3%A3o-1?resource=9ede92c1-dc85-4536-895f-5a9ec6665612&referral=service_list_widget",
         description: "Restauração da maciez e brilho natural dos fios.",
-        durationMinutes: 30,
+        durationMinutes: 20,
         price: 15,
         formattedPrice: "R$ 15,00"
       },
@@ -339,7 +339,7 @@ export const BARBERS: Barber[] = [
         category: "tratamento",
         bookingUrl: "https://www.leonunesbarbearia.com/booking-calendar/limpeza-facial?resource=9ede92c1-dc85-4536-895f-5a9ec6665612&referral=service_list_widget",
         description: "Tratamento facial purificante e relaxante.",
-        durationMinutes: 35,
+        durationMinutes: 30,
         price: 30,
         formattedPrice: "R$ 30,00"
       },
@@ -350,7 +350,7 @@ export const BARBERS: Barber[] = [
         category: "cabelo",
         bookingUrl: "https://www.leonunesbarbearia.com/booking-calendar/penteado?resource=9ede92c1-dc85-4536-895f-5a9ec6665612&referral=service_list_widget",
         description: "Estilização com secador e pomadas de alta fixação.",
-        durationMinutes: 20,
+        durationMinutes: 15,
         price: 10,
         formattedPrice: "R$ 10,00"
       },
@@ -361,7 +361,7 @@ export const BARBERS: Barber[] = [
         category: "tratamento",
         bookingUrl: "https://www.leonunesbarbearia.com/booking-calendar/botox?resource=9ede92c1-dc85-4536-895f-5a9ec6665612&referral=service_list_widget",
         description: "Tratamento de alinhamento com hidratação intensa e duradoura.",
-        durationMinutes: 45,
+        durationMinutes: 60,
         price: 55,
         formattedPrice: "R$ 55,00"
       }
@@ -384,7 +384,7 @@ export const BARBERS: Barber[] = [
         category: "cabelo",
         bookingUrl: "https://wix.to/2I5cgLC",
         description: "Corte sob medida com visual atual e alinhado.",
-        durationMinutes: 35,
+        durationMinutes: 40,
         price: 35,
         formattedPrice: "R$ 35,00"
       },
@@ -395,7 +395,7 @@ export const BARBERS: Barber[] = [
         category: "combo",
         bookingUrl: "https://wix.to/KbvPXny",
         description: "Corte de cabelo e acabamento completo de barba.",
-        durationMinutes: 55,
+        durationMinutes: 60,
         price: 55,
         formattedPrice: "R$ 55,00"
       },
@@ -406,7 +406,7 @@ export const BARBERS: Barber[] = [
         category: "combo",
         bookingUrl: "https://wix.to/lHygBj0",
         description: "Pacote completo com corte, barba detalhada e sobrancelhas.",
-        durationMinutes: 65,
+        durationMinutes: 60,
         price: 65,
         formattedPrice: "R$ 65,00"
       },
@@ -417,7 +417,7 @@ export const BARBERS: Barber[] = [
         category: "combo",
         bookingUrl: "https://wix.to/gWTv5wh",
         description: "Harmonia facial com corte de cabelo e sobrancelhas limpas.",
-        durationMinutes: 45,
+        durationMinutes: 40,
         price: 45,
         formattedPrice: "R$ 45,00"
       },
@@ -439,7 +439,7 @@ export const BARBERS: Barber[] = [
         category: "tratamento",
         bookingUrl: "https://wix.to/TMp5QmM",
         description: "Limpeza de sobrancelha com navalha e simetria.",
-        durationMinutes: 15,
+        durationMinutes: 10,
         price: 10,
         formattedPrice: "R$ 10,00"
       },
@@ -450,7 +450,7 @@ export const BARBERS: Barber[] = [
         category: "tratamento",
         bookingUrl: "https://wix.to/eY7WEYe",
         description: "Nutrição e maciez instantânea para o cabelo.",
-        durationMinutes: 30,
+        durationMinutes: 20,
         price: 15,
         formattedPrice: "R$ 15,00"
       },
@@ -461,7 +461,7 @@ export const BARBERS: Barber[] = [
         category: "tratamento",
         bookingUrl: "https://wix.to/LpILH2Q",
         description: "Remoção de impurezas e hidratação da pele masculina.",
-        durationMinutes: 35,
+        durationMinutes: 30,
         price: 30,
         formattedPrice: "R$ 30,00"
       }

@@ -9,6 +9,33 @@ export const WIX_CLIENT_ID =
 export const AUTH_COOKIE_NAME = "wix_member_tokens";
 export const OAUTH_COOKIE_NAME = "wix_oauth_data";
 export const DEFAULT_REDIRECT_URI = "http://localhost:3000/auth/callback";
+export const PRODUCTION_REDIRECT_URI = "https://leonunesbarbearia.vercel.app/auth/callback";
+
+/**
+ * Resolve a Redirect URI oficial para o Wix OAuth sem misturar ambientes:
+ * - Vercel / Produção: https://leonunesbarbearia.vercel.app/auth/callback
+ * - Localhost / Desenvolvimento: http://localhost:3000/auth/callback
+ */
+export function getRedirectUri(originHeader?: string | null): string {
+  if (process.env.WIX_REDIRECT_URI?.trim()) {
+    return process.env.WIX_REDIRECT_URI.trim();
+  }
+
+  const isVercel =
+    process.env.VERCEL === "1" ||
+    process.env.VERCEL_ENV === "production" ||
+    process.env.VERCEL_ENV === "preview";
+
+  const isVercelHost =
+    Boolean(originHeader?.includes("leonunesbarbearia.vercel.app")) ||
+    Boolean(originHeader?.includes(".vercel.app"));
+
+  if (isVercel || isVercelHost || (process.env.NODE_ENV === "production" && !originHeader?.includes("localhost"))) {
+    return PRODUCTION_REDIRECT_URI;
+  }
+
+  return DEFAULT_REDIRECT_URI;
+}
 
 export interface StoredOAuthData {
   codeVerifier: string;
@@ -66,9 +93,13 @@ export function getWixOAuthClient(tokens?: Tokens) {
 /**
  * Gera os dados PKCE e state para iniciar o fluxo OAuth oficial do Wix
  */
-export function generateOAuthData(returnUrl: string = "/minha-conta"): StoredOAuthData {
+export function generateOAuthData(
+  returnUrl: string = "/minha-conta",
+  customRedirectUri?: string
+): StoredOAuthData {
   const client = getWixOAuthClient();
-  const oauthData = client.auth.generateOAuthData(DEFAULT_REDIRECT_URI);
+  const redirectUri = customRedirectUri || getRedirectUri();
+  const oauthData = client.auth.generateOAuthData(redirectUri);
 
   return {
     codeVerifier: oauthData.codeVerifier,

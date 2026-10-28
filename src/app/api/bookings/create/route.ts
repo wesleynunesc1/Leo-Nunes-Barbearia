@@ -222,7 +222,20 @@ export async function POST(request: NextRequest) {
     const [year, month, day] = date.split("-").map(Number);
     const [hour, minute] = time.split(":").map(Number);
     const startUtc = new Date(Date.UTC(year, month - 1, day, hour + 3, minute, 0));
-    const endUtc = new Date(startUtc.getTime() + durationMinutes * 60000);
+
+    // Determina a duração oficial: se o slot oficial do Wix possui localStartDate e localEndDate,
+    // calcula a duração exata do slot fornecida pela API de disponibilidade do Wix
+    let effectiveDurationMinutes = durationMinutes;
+    if (matchedSlot?.localStartDate && matchedSlot?.localEndDate) {
+      const slotStartMs = new Date(matchedSlot.localStartDate).getTime();
+      const slotEndMs = new Date(matchedSlot.localEndDate).getTime();
+      const slotDiffMinutes = Math.round((slotEndMs - slotStartMs) / 60000);
+      if (slotDiffMinutes > 0) {
+        effectiveDurationMinutes = slotDiffMinutes;
+      }
+    }
+
+    const endUtc = new Date(startUtc.getTime() + effectiveDurationMinutes * 60000);
 
     // 8. CONTROLE DE SEGURANÇA: MODO DRY-RUN POR PADRÃO
     // "Mantenha ENABLE_REAL_WIX_BOOKINGS=false. Não crie reservas reais ainda."
@@ -426,6 +439,10 @@ export async function POST(request: NextRequest) {
       } else if (errLower.includes("conflict") || errLower.includes("already") || errStatus === 409) {
         errorCode = "SLOT_UNAVAILABLE";
         userMsg = "O horário selecionado acabou de ser preenchido na agenda do profissional.";
+        httpStatus = 409;
+      } else if (errStatus === 428 || wixErrorCode === "FAILED_VALIDATING_AVAILABILITY") {
+        errorCode = "SLOT_UNAVAILABLE";
+        userMsg = "O horário selecionado não atende à disponibilidade do serviço no Wix ou acabou de ser preenchido.";
         httpStatus = 409;
       } else if (errStatus === 400 || errLower.includes("validation") || errLower.includes("missing argument")) {
         errorCode = "INVALID_DATA";
