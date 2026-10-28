@@ -4,6 +4,12 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PageTitleChanger } from "@/components/PageTitleChanger";
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#080A08",
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://leonunesbarbearia.com.br"),
   title: {

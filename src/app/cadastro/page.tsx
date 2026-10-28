@@ -287,7 +287,7 @@ function CadastroForm() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Seu nome"
-                  className="block w-full pl-10 pr-3.5 py-2.5 bg-[#080B09] border border-white/[0.1] rounded-xl text-white placeholder-[#5E6861] text-sm focus:outline-none focus:ring-2 focus:ring-[#25C440]"
+                  className="block w-full pl-10 pr-3.5 py-2.5 bg-[#080B09] border border-white/[0.1] rounded-xl text-white placeholder-[#5E6861] text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#25C440]"
                 />
               </div>
             </div>
@@ -307,7 +307,7 @@ function CadastroForm() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="seu@email.com"
-                  className="block w-full pl-10 pr-3.5 py-2.5 bg-[#080B09] border border-white/[0.1] rounded-xl text-white placeholder-[#5E6861] text-sm focus:outline-none focus:ring-2 focus:ring-[#25C440]"
+                  className="block w-full pl-10 pr-3.5 py-2.5 bg-[#080B09] border border-white/[0.1] rounded-xl text-white placeholder-[#5E6861] text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#25C440]"
                 />
               </div>
             </div>
@@ -327,7 +327,7 @@ function CadastroForm() {
                   value={phone}
                   onChange={handlePhoneChange}
                   placeholder="(85) 99999-9999"
-                  className="block w-full pl-10 pr-3.5 py-2.5 bg-[#080B09] border border-white/[0.1] rounded-xl text-white placeholder-[#5E6861] text-sm focus:outline-none focus:ring-2 focus:ring-[#25C440]"
+                  className="block w-full pl-10 pr-3.5 py-2.5 bg-[#080B09] border border-white/[0.1] rounded-xl text-white placeholder-[#5E6861] text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#25C440]"
                 />
               </div>
             </div>
@@ -348,7 +348,7 @@ function CadastroForm() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Mín. 6 chars"
-                    className="block w-full pl-10 pr-3.5 py-2.5 bg-[#080B09] border border-white/[0.1] rounded-xl text-white placeholder-[#5E6861] text-sm focus:outline-none focus:ring-2 focus:ring-[#25C440]"
+                    className="block w-full pl-10 pr-3.5 py-2.5 bg-[#080B09] border border-white/[0.1] rounded-xl text-white placeholder-[#5E6861] text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#25C440]"
                   />
                 </div>
               </div>
@@ -368,7 +368,7 @@ function CadastroForm() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Repita a senha"
-                    className="block w-full pl-10 pr-3.5 py-2.5 bg-[#080B09] border border-white/[0.1] rounded-xl text-white placeholder-[#5E6861] text-sm focus:outline-none focus:ring-2 focus:ring-[#25C440]"
+                    className="block w-full pl-10 pr-3.5 py-2.5 bg-[#080B09] border border-white/[0.1] rounded-xl text-white placeholder-[#5E6861] text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#25C440]"
                   />
                 </div>
               </div>

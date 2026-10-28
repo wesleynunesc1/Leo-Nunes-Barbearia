@@ -590,7 +590,7 @@ export function Step5Confirm() {
                 onChange={handleNameChange}
                 placeholder="Ex: Wesley Nunes"
                 required
-                className={`w-full bg-[#0E1510] text-[#FFFFFF] text-xs sm:text-sm px-3.5 py-3 rounded-xl border transition-all focus:outline-none focus:ring-2 focus:ring-[#25C440] ${
+                className={`w-full bg-[#0E1510] text-[#FFFFFF] text-base sm:text-sm px-3.5 py-3 rounded-xl border transition-all focus:outline-none focus:ring-2 focus:ring-[#25C440] ${
                   formErrors.name ? "border-[#E65050]" : "border-[#1E2C20] focus:border-[#25C440]"
                 }`}
               />
@@ -612,7 +612,7 @@ export function Step5Confirm() {
                 onChange={handlePhoneChange}
                 placeholder="(85) 99999-9999"
                 required
-                className={`w-full bg-[#0E1510] text-[#FFFFFF] text-xs sm:text-sm px-3.5 py-3 rounded-xl border transition-all focus:outline-none focus:ring-2 focus:ring-[#25C440] ${
+                className={`w-full bg-[#0E1510] text-[#FFFFFF] text-base sm:text-sm px-3.5 py-3 rounded-xl border transition-all focus:outline-none focus:ring-2 focus:ring-[#25C440] ${
                   formErrors.phone ? "border-[#E65050]" : "border-[#1E2C20] focus:border-[#25C440]"
                 }`}
               />
@@ -632,7 +632,7 @@ export function Step5Confirm() {
               value={customer.email || ""}
               onChange={(e) => updateCustomer({ email: e.target.value })}
               placeholder="seuemail@exemplo.com"
-              className="w-full bg-[#0E1510] text-[#FFFFFF] text-xs sm:text-sm px-3.5 py-3 rounded-xl border border-[#1E2C20] focus:border-[#25C440] focus:outline-none focus:ring-2 focus:ring-[#25C440] transition-all"
+              className="w-full bg-[#0E1510] text-[#FFFFFF] text-base sm:text-sm px-3.5 py-3 rounded-xl border border-[#1E2C20] focus:border-[#25C440] focus:outline-none focus:ring-2 focus:ring-[#25C440] transition-all"
             />
           </div>
 
@@ -646,7 +646,7 @@ export function Step5Confirm() {
               value={customer.notes || ""}
               onChange={(e) => updateCustomer({ notes: e.target.value })}
               placeholder="Alguma preferência ou detalhe?"
-              className="w-full bg-[#0E1510] text-[#FFFFFF] text-xs sm:text-sm px-3.5 py-3 rounded-xl border border-[#1E2C20] focus:border-[#25C440] focus:outline-none focus:ring-2 focus:ring-[#25C440] transition-all"
+              className="w-full bg-[#0E1510] text-[#FFFFFF] text-base sm:text-sm px-3.5 py-3 rounded-xl border border-[#1E2C20] focus:border-[#25C440] focus:outline-none focus:ring-2 focus:ring-[#25C440] transition-all"
             />
           </div>
         </div>

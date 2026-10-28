@@ -6,7 +6,6 @@ import {
   Clock,
   MapPin,
   Phone,
-  ShieldCheck,
   Scissors,
   CheckCircle2,
   ArrowRight,
@@ -182,11 +181,6 @@ export default function HomePage() {
                   subtitle: "Referência desde 2015",
                 },
                 {
-                  icon: ShieldCheck,
-                  title: "100% Lâminas descartáveis",
-                  subtitle: "Biossegurança total",
-                },
-                {
                   icon: Calendar,
                   title: "Agendamento online 24h",
                   subtitle: "Sem filas de espera",
@@ -241,11 +235,6 @@ export default function HomePage() {
                   icon: MapPin,
                   title: "Pacajus — Ceará",
                   subtitle: "Referência desde 2015",
-                },
-                {
-                  icon: ShieldCheck,
-                  title: "100% Lâminas descartáveis",
-                  subtitle: "Biossegurança total",
                 },
                 {
                   icon: Calendar,

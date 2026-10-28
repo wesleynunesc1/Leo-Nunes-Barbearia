@@ -213,7 +213,7 @@ function LoginForm() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="seu@email.com"
-                  className="block w-full pl-10 pr-3.5 py-3 bg-[#080B09] border border-white/[0.1] rounded-xl text-white placeholder-[#5E6861] text-sm focus:outline-none focus:ring-2 focus:ring-[#25C440] focus:border-transparent transition-all"
+                  className="block w-full pl-10 pr-3.5 py-3 bg-[#080B09] border border-white/[0.1] rounded-xl text-white placeholder-[#5E6861] text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#25C440] focus:border-transparent transition-all"
                 />
               </div>
             </div>
@@ -246,7 +246,7 @@ function LoginForm() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="block w-full pl-10 pr-10 py-3 bg-[#080B09] border border-white/[0.1] rounded-xl text-white placeholder-[#5E6861] text-sm focus:outline-none focus:ring-2 focus:ring-[#25C440] focus:border-transparent transition-all"
+                  className="block w-full pl-10 pr-10 py-3 bg-[#080B09] border border-white/[0.1] rounded-xl text-white placeholder-[#5E6861] text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#25C440] focus:border-transparent transition-all"
                 />
                 <button
                   type="button"
@@ -315,7 +315,7 @@ function LoginForm() {
                   value={forgotEmail}
                   onChange={(e) => setForgotEmail(e.target.value)}
                   placeholder="seu@email.com"
-                  className="w-full px-3.5 py-2.5 bg-[#080B09] border border-white/[0.1] rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#25C440]"
+                  className="w-full px-3.5 py-2.5 bg-[#080B09] border border-white/[0.1] rounded-xl text-white text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#25C440]"
                 />
               </div>
 

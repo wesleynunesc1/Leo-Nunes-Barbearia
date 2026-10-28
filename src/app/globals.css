@@ -710,3 +710,29 @@ h1, h2, h3, h4, h5, h6, .font-heading {
     background-color: rgba(8, 11, 9, 0.96);
   }
 }
+
+/* =========================================================================
+   10. PREVENÇÃO DEFINITIVA DE AUTO-ZOOM NO MOBILE (IOS SAFARI / ANDROID)
+   Garante font-size mínimo de 16px em inputs, selects e textareas em telas
+   mobile (< 768px). Isso elimina o comportamento do Safari de aplicar zoom
+   automático ao focar em campos de formulário, mantendo layout e alinhamento
+   100% consistentes e sem deslocamento horizontal.
+   ========================================================================= */
+@media screen and (max-width: 767px) {
+  input,
+  select,
+  textarea,
+  input[type="text"],
+  input[type="password"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="search"],
+  input[type="url"],
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"] {
+    font-size: 16px !important;
+  }
+}
+
