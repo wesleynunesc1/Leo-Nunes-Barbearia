@@ -3,6 +3,7 @@ import {
   getWixOAuthClient,
   generateOAuthData,
   getWixAuthUrl,
+  getRedirectUri,
   OAUTH_COOKIE_NAME,
 } from "@/lib/wixAuth";
 import { LoginState } from "@wix/sdk";
@@ -19,6 +20,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const host = request.headers.get("x-forwarded-host") || request.headers.get("host") || "";
+    const proto = request.headers.get("x-forwarded-proto") || "http";
+    const origin = host ? `${proto}://${host}` : request.nextUrl.origin;
+    const redirectUri = getRedirectUri(origin);
+
     const client = getWixOAuthClient();
     const loginResult = await client.auth.login({
       email: email.trim().toLowerCase(),
@@ -29,7 +35,7 @@ export async function POST(request: NextRequest) {
       const sessionToken = (loginResult as any).data?.sessionToken;
 
       // Gera PKCE oficial e URL com sessionToken e prompt='none' para troca full-page
-      const oauthData = generateOAuthData(returnUrl);
+      const oauthData = generateOAuthData(returnUrl, redirectUri);
       const authUrl = await getWixAuthUrl(oauthData, "login", sessionToken);
 
       const response = NextResponse.json({

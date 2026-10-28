@@ -12,8 +12,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const host = request.headers.get("x-forwarded-host") || request.headers.get("host") || "";
+    const proto = request.headers.get("x-forwarded-proto") || "http";
+    const origin = host ? `${proto}://${host}` : request.nextUrl.origin;
+    const redirectUri = `${origin}/login`;
+
     const client = getWixOAuthClient();
-    const redirectUri = "http://localhost:3000/login";
 
     try {
       await client.auth.sendPasswordResetEmail(email.trim().toLowerCase(), redirectUri);

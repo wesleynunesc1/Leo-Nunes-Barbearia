@@ -59,14 +59,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           `/api/auth/oauth-url?mode=${mode}&returnUrl=${encodeURIComponent(returnUrl)}`
         );
         const data = await res.json();
-        if (data.authUrl) {
+        if (res.ok && data.authUrl) {
           window.location.href = data.authUrl;
         } else {
-          alert("Não foi possível iniciar o login no momento. Tente novamente.");
+          throw new Error(data.error || "Não foi possível iniciar o login no momento. Tente novamente.");
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error("[INITIATE OAUTH ERROR]", err);
-        alert("Erro de conexão ao iniciar login.");
+        throw err;
       }
     },
     []

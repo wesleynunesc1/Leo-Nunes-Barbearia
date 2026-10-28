@@ -3,6 +3,7 @@ import {
   getWixOAuthClient,
   generateOAuthData,
   getWixAuthUrl,
+  getRedirectUri,
   OAUTH_COOKIE_NAME,
 } from "@/lib/wixAuth";
 import { LoginState } from "@wix/sdk";
@@ -33,6 +34,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const host = request.headers.get("x-forwarded-host") || request.headers.get("host") || "";
+    const proto = request.headers.get("x-forwarded-proto") || "http";
+    const origin = host ? `${proto}://${host}` : request.nextUrl.origin;
+    const redirectUri = getRedirectUri(origin);
+
     const client = getWixOAuthClient();
     const regResult = await client.auth.register({
       email: email.trim().toLowerCase(),
@@ -49,7 +55,7 @@ export async function POST(request: NextRequest) {
 
     if (regResult.loginState === LoginState.SUCCESS) {
       const sessionToken = (regResult as any).data?.sessionToken;
-      const oauthData = generateOAuthData(returnUrl);
+      const oauthData = generateOAuthData(returnUrl, redirectUri);
       const authUrl = await getWixAuthUrl(oauthData, "signup", sessionToken);
 
       const response = NextResponse.json({
