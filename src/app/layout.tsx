@@ -9,7 +9,7 @@ import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-  "https://barbeariawesley-iota.vercel.app";
+  "https://leonunesbarbearia.vercel.app";
 
 export const viewport = {
   width: "device-width",

@@ -3,7 +3,7 @@ import { getAllBarbers } from "@/data/barbers";
 export default function sitemap() {
   const baseUrl =
     process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-    "https://barbeariawesley-iota.vercel.app";
+    "https://leonunesbarbearia.vercel.app";
 
   const barbers = getAllBarbers();
   const buildDate = new Date().toISOString().split("T")[0];
