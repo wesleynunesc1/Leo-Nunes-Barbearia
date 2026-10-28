@@ -114,11 +114,13 @@ export const WIX_RECAPTCHA_SITE_KEY = "6Ld0J8IcAAAAANyrnxzrRlX1xrrdXsOmsepUYosy"
 
 /**
  * Gera a URL oficial de autorização do Wix para redirecionamento
+ * Com idp: "google", o Wix redireciona diretamente ao Google OAuth sem passar pela tela intermediária de login do Wix
  */
 export async function getWixAuthUrl(
   storedOAuth: StoredOAuthData,
   mode: "login" | "signup" = "login",
-  sessionToken?: string
+  sessionToken?: string,
+  idp: "google" | "facebook" = "google"
 ): Promise<string> {
   const client = getWixOAuthClient();
   const oauthData = {
@@ -132,6 +134,7 @@ export async function getWixAuthUrl(
   const { authUrl } = await client.auth.getAuthUrl(oauthData, {
     prompt: sessionToken ? "none" : (mode === "signup" ? "login" : "login"),
     responseMode: "query",
+    ...(!sessionToken && idp && { idp }),
     ...(sessionToken && { sessionToken }),
   });
 

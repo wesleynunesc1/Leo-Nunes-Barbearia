@@ -668,3 +668,55 @@ export async function finalizeIdempotency(params: {
     console.warn("[FINALIZE IDEMPOTENCY WARNING]", err?.message || err);
   }
 }
+
+/**
+ * Adquire trava exclusiva para cancelamento ou reagendamento de uma reserva específica.
+ * Evita duplo clique, cliques múltiplos ou processamento concorrente no mesmo agendamento.
+ */
+export async function acquireBookingMutationLock(
+  bookingId: string,
+  action: "cancel" | "reschedule",
+  ttlSeconds = 25
+): Promise<{ acquired: boolean; lockKey: string; ownerToken: string; message?: string }> {
+  const adapter = getStorageAdapter();
+  const ownerToken = crypto.randomUUID();
+  const lockKey = formatStorageKey("lock", `mutation_${action}_${bookingId}`);
+
+  try {
+    const acquired = await adapter.acquireLock(lockKey, ttlSeconds, ownerToken);
+    if (!acquired) {
+      return {
+        acquired: false,
+        lockKey,
+        ownerToken,
+        message: `Uma operação de ${action === "cancel" ? "cancelamento" : "reagendamento"} já está em andamento para este agendamento. Aguarde alguns instantes.`,
+      };
+    }
+
+    return { acquired: true, lockKey, ownerToken };
+  } catch (err: any) {
+    console.error("[MUTATION LOCK ERROR]", err?.message || err);
+    return {
+      acquired: false,
+      lockKey,
+      ownerToken,
+      message: "Falha temporária no sistema de validação de concorrência. Tente novamente.",
+    };
+  }
+}
+
+/**
+ * Libera a trava exclusiva da mutação da reserva apenas se o ownerToken conferir.
+ */
+export async function releaseBookingMutationLock(
+  lockKey: string,
+  ownerToken: string
+): Promise<void> {
+  const adapter = getStorageAdapter();
+  try {
+    await adapter.releaseLock(lockKey, ownerToken);
+  } catch (err: any) {
+    console.warn("[RELEASE MUTATION LOCK WARNING]", err?.message || err);
+  }
+}
+

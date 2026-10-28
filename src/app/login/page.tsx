@@ -4,30 +4,42 @@ import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Lock, Mail, Eye, EyeOff, Loader2, ArrowRight, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { Loader2, ShieldCheck, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+
+function GoogleIcon({ className = "w-5 h-5 shrink-0" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24">
+      <path
+        fill="#4285F4"
+        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+      />
+      <path
+        fill="#34A853"
+        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+      />
+      <path
+        fill="#EA4335"
+        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+      />
+    </svg>
+  );
+}
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { member, loading: authLoading, refreshMember, initiateOAuth } = useAuth();
+  const { member, loading: authLoading, initiateOAuth } = useAuth();
 
   const redirectUrl = searchParams.get("redirect") || "/minha-conta";
   const errorParam = searchParams.get("error");
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOAuthLoading, setIsOAuthLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(errorParam);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
-  // Modal de esqueci a senha
-  const [isForgotOpen, setIsForgotOpen] = useState(false);
-  const [forgotEmail, setForgotEmail] = useState("");
-  const [isForgotLoading, setIsForgotLoading] = useState(false);
-  const [forgotFeedback, setForgotFeedback] = useState<string | null>(null);
 
   // Se já estiver logado, redireciona para a página de destino
   useEffect(() => {
@@ -36,85 +48,24 @@ function LoginForm() {
     }
   }, [member, authLoading, redirectUrl, router]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (isSubmitting) return;
-
-    setErrorMessage(null);
-    setSuccessMessage(null);
-
-    if (!email.trim() || !password) {
-      setErrorMessage("Por favor, preencha o e-mail e a senha.");
-      return;
+  // Atualiza erro se a URL mudar
+  useEffect(() => {
+    if (errorParam) {
+      setErrorMessage(decodeURIComponent(errorParam));
     }
+  }, [errorParam]);
 
-    setIsSubmitting(true);
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), password, returnUrl: redirectUrl }),
-      });
-
-      const data = await res.json();
-
-      if (res.ok && data.success) {
-        setSuccessMessage("Autenticação autorizada! Conectando sua sessão...");
-        if (data.redirectUrl) {
-          window.location.href = data.redirectUrl;
-          return;
-        }
-        await refreshMember();
-        router.replace(redirectUrl);
-      } else {
-        if (data.requiresCaptcha) {
-          setErrorMessage(
-            "O Wix exigiu verificação de segurança. Clique no botão 'Entrar com Wix ID' abaixo para acessar com segurança."
-          );
-        } else {
-          setErrorMessage(data.error || "E-mail ou senha incorretos.");
-        }
-      }
-    } catch (err: any) {
-      console.error("[LOGIN SUBMIT ERROR]", err);
-      setErrorMessage("Erro de conexão ao autenticar. Tente novamente.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleOAuthLogin = async () => {
+  const handleGoogleLogin = async () => {
     if (isOAuthLoading) return;
     setIsOAuthLoading(true);
+    setErrorMessage(null);
+
     try {
       await initiateOAuth("login", redirectUrl);
-    } catch {
+    } catch (err: any) {
+      console.error("[GOOGLE LOGIN TRIGGER ERROR]", err);
+      setErrorMessage("Erro de conexão ao iniciar autenticação com o Google. Tente novamente.");
       setIsOAuthLoading(false);
-    }
-  };
-
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (isForgotLoading || !forgotEmail.trim()) return;
-
-    setIsForgotLoading(true);
-    setForgotFeedback(null);
-
-    try {
-      const res = await fetch("/api/auth/password-reset", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: forgotEmail.trim() }),
-      });
-      const data = await res.json();
-      setForgotFeedback(
-        data.message ||
-          "Se o e-mail estiver cadastrado, as instruções de recuperação foram enviadas."
-      );
-    } catch {
-      setForgotFeedback("Erro ao enviar solicitação. Tente novamente mais tarde.");
-    } finally {
-      setIsForgotLoading(false);
     }
   };
 
@@ -135,7 +86,7 @@ function LoginForm() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 px-4">
         {/* Logo */}
         <div className="flex justify-center mb-6">
-          <Link href="/" className="inline-block relative h-12 w-48">
+          <Link href="/" className="inline-block relative h-12 w-48 hover:opacity-90 transition-opacity">
             <Image
               src="/images/logo.png"
               alt="Léo Nunes Barbearia"
@@ -156,190 +107,65 @@ function LoginForm() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10 px-4">
         <div className="bg-[#0D120E] border border-white/[0.08] py-8 px-6 sm:px-8 rounded-2xl shadow-2xl relative">
-          {/* Mensagens de Feedback */}
+          {/* Mensagens de Erro */}
           {errorMessage && (
-            <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-sm flex items-start gap-3">
+            <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-sm flex items-start gap-3 animate-in fade-in">
               <span className="text-red-400 font-bold shrink-0">✕</span>
-              <span>{errorMessage}</span>
+              <span className="leading-relaxed">{errorMessage}</span>
             </div>
           )}
 
-          {successMessage && (
-            <div className="mb-6 p-4 rounded-xl bg-[#25C440]/10 border border-[#25C440]/30 text-[#25C440] text-sm flex items-center gap-3">
-              <CheckCircle2 className="w-5 h-5 shrink-0" />
-              <span>{successMessage}</span>
-            </div>
-          )}
-
-          {/* Botão Oficial OAuth Wix */}
+          {/* Botão Oficial Google OAuth */}
           <button
             type="button"
-            onClick={handleOAuthLogin}
-            disabled={isOAuthLoading || isSubmitting}
-            className="w-full flex items-center justify-center gap-3 py-3.5 px-4 rounded-xl bg-[#141C16] hover:bg-[#1A261D] border border-[#25C440]/30 hover:border-[#25C440]/60 text-white font-semibold text-sm transition-all duration-200 shadow-md hover:shadow-[#25C440]/10 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed mb-6"
+            id="btn-google-login"
+            onClick={handleGoogleLogin}
+            disabled={isOAuthLoading}
+            className="w-full flex items-center justify-center gap-3 py-4 px-5 rounded-xl bg-[#141C16] hover:bg-[#1A261D] border border-[#25C440]/35 hover:border-[#25C440]/70 text-white font-semibold text-base transition-all duration-200 shadow-lg hover:shadow-[#25C440]/15 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed group"
           >
             {isOAuthLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin text-[#25C440]" />
+              <>
+                <Loader2 className="w-5 h-5 animate-spin text-[#25C440]" />
+                <span className="text-[#A6AEA8]">Conectando ao Google...</span>
+              </>
             ) : (
-              <ShieldCheck className="w-5 h-5 text-[#25C440]" />
+              <>
+                <GoogleIcon className="w-5 h-5 shrink-0 transition-transform group-hover:scale-110" />
+                <span>Continuar com Google</span>
+              </>
             )}
-            <span>Entrar com Wix ID / Google</span>
           </button>
 
-          <div className="relative mb-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-white/[0.08]" />
+          {/* Garantias de Segurança & Informações */}
+          <div className="mt-6 pt-6 border-t border-white/[0.08] space-y-3.5">
+            <div className="flex items-start gap-3 text-xs text-[#A6AEA8]">
+              <ShieldCheck className="w-4 h-4 text-[#25C440] shrink-0 mt-0.5" />
+              <span>
+                <strong className="text-white font-medium">Acesso Direto e Seguro:</strong> Login autenticado diretamente pelo Google sem formulários ou senhas adicionais.
+              </span>
             </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-[#0D120E] px-3 text-[#7B857E]">ou acesse com e-mail e senha</span>
+            <div className="flex items-start gap-3 text-xs text-[#A6AEA8]">
+              <div className="w-4 h-4 rounded-full bg-[#25C440]/20 text-[#25C440] flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
+                ✓
+              </div>
+              <span>
+                <strong className="text-white font-medium">Wix Members Oficial:</strong> Seus agendamentos e histórico ficam vinculados com segurança ao seu perfil.
+              </span>
             </div>
           </div>
 
-          {/* Formulário com E-mail e Senha */}
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label htmlFor="email" className="block text-xs font-semibold uppercase tracking-wider text-[#A6AEA8] mb-1.5">
-                E-mail
-              </label>
-              <div className="relative rounded-xl shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#7B857E]">
-                  <Mail className="h-4 w-4" />
-                </div>
-                <input
-                  id="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="seu@email.com"
-                  className="block w-full pl-10 pr-3.5 py-3 bg-[#080B09] border border-white/[0.1] rounded-xl text-white placeholder-[#5E6861] text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#25C440] focus:border-transparent transition-all"
-                />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label htmlFor="password" className="block text-xs font-semibold uppercase tracking-wider text-[#A6AEA8]">
-                  Senha
-                </label>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setForgotEmail(email);
-                    setIsForgotOpen(true);
-                  }}
-                  className="text-xs text-[#25C440] hover:text-[#2CD64A] transition-colors"
-                >
-                  Esqueceu a senha?
-                </button>
-              </div>
-              <div className="relative rounded-xl shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#7B857E]">
-                  <Lock className="h-4 w-4" />
-                </div>
-                <input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  autoComplete="current-password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="block w-full pl-10 pr-10 py-3 bg-[#080B09] border border-white/[0.1] rounded-xl text-white placeholder-[#5E6861] text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#25C440] focus:border-transparent transition-all"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#7B857E] hover:text-white transition-colors"
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isSubmitting || isOAuthLoading}
-              className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-sm transition-all duration-200 shadow-[0_0_20px_rgba(37,196,64,0.25)] hover:scale-[1.01] active:scale-[0.99] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+          {/* Voltar ao Início */}
+          <div className="mt-8 pt-4 border-t border-white/[0.06] text-center">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1.5 text-xs text-[#7B857E] hover:text-[#25C440] transition-colors"
             >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Autenticando...</span>
-                </>
-              ) : (
-                <>
-                  <span>Entrar na Minha Conta</span>
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              )}
-            </button>
-          </form>
-
-          {/* Link para Cadastro */}
-          <div className="mt-6 pt-6 border-t border-white/[0.08] text-center">
-            <p className="text-sm text-[#A6AEA8]">
-              Ainda não tem conta?{" "}
-              <Link
-                href={`/cadastro${redirectUrl !== "/minha-conta" ? `?redirect=${encodeURIComponent(redirectUrl)}` : ""}`}
-                className="font-bold text-[#25C440] hover:text-[#2CD64A] transition-colors"
-              >
-                Cadastre-se gratuitamente
-              </Link>
-            </p>
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Voltar para o início</span>
+            </Link>
           </div>
         </div>
       </div>
-
-      {/* Modal de Recuperação de Senha */}
-      {isForgotOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-[#0D120E] border border-white/[0.1] rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative">
-            <h2 className="text-lg font-bold text-white mb-2">Recuperar Senha</h2>
-            <p className="text-xs text-[#A6AEA8] mb-4">
-              Informe seu e-mail cadastrado. Enviaremos um link de recuperação oficial do Wix para definir uma nova senha.
-            </p>
-
-            {forgotFeedback ? (
-              <div className="mb-4 p-3.5 rounded-xl bg-[#25C440]/10 border border-[#25C440]/30 text-[#25C440] text-xs">
-                {forgotFeedback}
-              </div>
-            ) : null}
-
-            <form onSubmit={handleForgotPassword} className="space-y-4">
-              <div>
-                <input
-                  type="email"
-                  required
-                  value={forgotEmail}
-                  onChange={(e) => setForgotEmail(e.target.value)}
-                  placeholder="seu@email.com"
-                  className="w-full px-3.5 py-2.5 bg-[#080B09] border border-white/[0.1] rounded-xl text-white text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#25C440]"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setIsForgotOpen(false)}
-                  className="px-4 py-2 text-xs font-semibold text-[#A6AEA8] hover:text-white transition-colors"
-                >
-                  Fechar
-                </button>
-                <button
-                  type="submit"
-                  disabled={isForgotLoading}
-                  className="px-5 py-2 rounded-xl bg-[#25C440] text-[#080B09] font-bold text-xs hover:bg-[#2CD64A] transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
-                >
-                  {isForgotLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
-                  <span>Enviar Instruções</span>
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

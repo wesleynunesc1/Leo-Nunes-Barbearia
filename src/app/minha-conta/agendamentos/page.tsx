@@ -19,6 +19,7 @@ import {
   History,
   ShieldCheck,
   Info,
+  Settings,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useBooking } from "@/context/BookingContext";
@@ -302,6 +303,20 @@ export default function MeusAgendamentosPage() {
                       <span>{item.locationName || "Rua Joaquim Nogueira Lopes, 180, Pacajus - CE"}</span>
                     </p>
                   </div>
+
+                  {/* Ações da Reserva */}
+                  {item.isUpcoming && item.status !== "CANCELED" && item.status !== "DECLINED" && (
+                    <div className="flex sm:flex-col items-center sm:items-end justify-end gap-2 pt-3 sm:pt-0 border-t sm:border-t-0 border-white/[0.06] shrink-0">
+                      <Link
+                        href={`/minha-conta/agendamentos/${item.id}`}
+                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#142618] hover:bg-[#1a3320] border border-[#25C440]/30 hover:border-[#25C440]/60 text-[#25C440] hover:text-white font-bold text-xs transition-all shadow-sm hover:shadow-[#25C440]/10 cursor-pointer"
+                        id={`btn-gerenciar-${item.id}`}
+                      >
+                        <Settings className="w-3.5 h-3.5" />
+                        <span>Gerenciar Reserva</span>
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

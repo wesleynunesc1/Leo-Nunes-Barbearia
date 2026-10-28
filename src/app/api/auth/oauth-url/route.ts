@@ -6,6 +6,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const mode = (searchParams.get("mode") as "login" | "signup") || "login";
     const returnUrl = searchParams.get("returnUrl") || "/minha-conta";
+    const idp = (searchParams.get("idp") as "google" | "facebook") || "google";
 
     // Detecta origem da requisição sem misturar ambientes entre Vercel e Localhost
     const host = request.headers.get("x-forwarded-host") || request.headers.get("host") || "";
@@ -14,7 +15,7 @@ export async function GET(request: NextRequest) {
 
     const redirectUri = getRedirectUri(origin);
     const oauthData = generateOAuthData(returnUrl, redirectUri);
-    const authUrl = await getWixAuthUrl(oauthData, mode);
+    const authUrl = await getWixAuthUrl(oauthData, mode, undefined, idp);
 
     const response = NextResponse.json({ authUrl, redirectUri });
 
