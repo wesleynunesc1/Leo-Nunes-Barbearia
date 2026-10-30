@@ -233,16 +233,52 @@ function ServiceCards({
   session,
   dispatch,
   onProceed,
+  scrollContainerRef,
 }: {
   session: ChatbotSession;
   dispatch: React.Dispatch<ChatbotAction>;
   onProceed: () => void;
+  scrollContainerRef?: React.RefObject<HTMLDivElement | null>;
 }) {
   const barber = BARBERS.find((b) => b.id === session.selectedBarberId);
   const services = barber?.services || [];
   const selectedIds = session.selectedServiceIds || [];
   const totalPrice = parseTotalPrice(session);
   const totalDuration = parseTotalDuration(session);
+
+  // Ref do botão "Escolher Data" para scroll automático
+  const proceedBtnRef = useRef<HTMLButtonElement>(null);
+
+  // Rola suavemente até o botão "Escolher Data" sempre que a seleção muda e há ao menos 1 serviço
+  useEffect(() => {
+    if (selectedIds.length === 0) return;
+    const btn = proceedBtnRef.current;
+    if (!btn) return;
+
+    // Respeita prefers-reduced-motion
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const behavior: ScrollBehavior = prefersReduced ? "auto" : "smooth";
+
+    // Pequeno delay para aguardar re-render após TOGGLE_SERVICE
+    const timer = setTimeout(() => {
+      // Prioriza scroll dentro do container do chat para não mover a página principal
+      const container = scrollContainerRef?.current;
+      if (container) {
+        const btnRect = btn.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        const isAlreadyVisible =
+          btnRect.top >= containerRect.top && btnRect.bottom <= containerRect.bottom;
+        if (!isAlreadyVisible) {
+          btn.scrollIntoView({ behavior, block: "nearest" });
+        }
+      } else {
+        btn.scrollIntoView({ behavior, block: "nearest" });
+      }
+    }, 80);
+
+    return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedIds.length]);
 
   return (
     <div className="pl-0 sm:pl-8 flex flex-col gap-2">
@@ -305,6 +341,7 @@ function ServiceCards({
 
       {selectedIds.length > 0 && (
         <button
+          ref={proceedBtnRef}
           onClick={onProceed}
           className="w-full py-3 rounded-xl bg-[#25C440] text-[#080B09] font-bold text-sm hover:bg-[#2CD64A] active:scale-[0.98] transition-all"
         >
@@ -2433,6 +2470,7 @@ export function ChatbotWidget() {
                     <ServiceCards
                       session={session}
                       dispatch={dispatch}
+                      scrollContainerRef={messagesContainerRef}
                       onProceed={() => {
                         setShowDatePicker(true);
                         dispatch({

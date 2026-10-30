@@ -165,19 +165,6 @@ function LoginForm() {
       <div className="absolute -bottom-20 right-10 w-72 h-72 bg-[#122A17]/30 rounded-full blur-2xl pointer-events-none" />
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 px-4">
-        {/* Logo */}
-        <div className="flex justify-center mb-6">
-          <Link href="/" className="inline-block relative h-12 w-48 hover:opacity-90 transition-opacity">
-            <Image
-              src="/images/logo.png"
-              alt="Léo Nunes Barbearia"
-              fill
-              priority
-              className="object-contain"
-            />
-          </Link>
-        </div>
-
         <h1 className="text-center text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
           Área do Cliente
         </h1>
