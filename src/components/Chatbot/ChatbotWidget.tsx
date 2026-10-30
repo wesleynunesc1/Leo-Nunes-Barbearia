@@ -1245,6 +1245,7 @@ export function ChatbotWidget() {
         MAIN_MENU: { type: "MAIN_MENU" },
         RESTART: { type: "RESTART" },
         SHOW_SERVICES_MENU: { type: "SHOW_SERVICES_MENU" },
+        SHOW_OPENING_HOURS: { type: "SHOW_OPENING_HOURS" },
         SHOW_MY_BOOKINGS: { type: "SHOW_MY_BOOKINGS" },
         GOTO_WHATSAPP: { type: "GOTO_WHATSAPP" },
         CONFIRM_CANCEL: { type: "CONFIRM_CANCEL" },
@@ -1298,18 +1299,19 @@ export function ChatbotWidget() {
       <button
         onClick={() => setIsOpen((v) => !v)}
         aria-label={isOpen ? "Fechar atendimento" : "Abrir atendimento automático"}
-        className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-2xl transition-all duration-300 flex items-center justify-center ${
+        title={isOpen ? "Fechar atendimento" : "Abrir atendimento automático"}
+        className={`fixed bottom-6 right-6 z-[60] w-14 h-14 rounded-full shadow-2xl transition-all duration-300 flex items-center justify-center ${
           isOpen
-            ? "bg-[#0D1410] border-2 border-[#25C440]/50 rotate-0 scale-100"
-            : "bg-[#25C440] hover:bg-[#2CD64A] hover:scale-110 active:scale-95"
+            ? "bg-[#101712] border-2 border-[#25C440] hover:border-[#EF4444] text-[#25C440] hover:text-[#EF4444] hover:bg-[#1A0E0E] rotate-0 scale-100 hidden sm:flex"
+            : "bg-[#25C440] hover:bg-[#2CD64A] hover:scale-110 active:scale-95 text-[#080B09]"
         }`}
-        style={{ bottom: "calc(1.5rem + 60px)" }} // acima do WhatsApp float se existir
+        style={{ bottom: "calc(1.5rem + 60px)" }} // acima do WhatsApp float
       >
         {isOpen ? (
-          <X className="w-5 h-5 text-[#25C440]" />
+          <X className="w-6 h-6 stroke-[2.5]" />
         ) : (
           <>
-            <MessageCircle className="w-6 h-6 text-[#080B09]" />
+            <MessageCircle className="w-6 h-6" />
             {hasUnread && (
               <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#EF4444] rounded-full text-[9px] text-white font-bold flex items-center justify-center">
                 !
@@ -1355,17 +1357,19 @@ export function ChatbotWidget() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => dispatch({ type: "RESTART" })}
-                title="Recomeçar"
-                className="p-1.5 rounded-lg text-[#9BA59E] hover:text-[#E8EDE9] hover:bg-[#111712] transition-all"
+                title="Recomeçar atendimento"
+                className="p-2 rounded-xl text-[#9BA59E] hover:text-[#E8EDE9] hover:bg-[#111712] transition-all cursor-pointer"
               >
-                <RotateCcw className="w-3.5 h-3.5" />
+                <RotateCcw className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setIsOpen(false)}
-                aria-label="Fechar chat"
-                className="p-1.5 rounded-lg text-[#9BA59E] hover:text-[#E8EDE9] hover:bg-[#111712] transition-all"
+                aria-label="Fechar janela de atendimento"
+                title="Fechar"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#162219] hover:bg-[#EF4444] text-[#E8EDE9] hover:text-white border border-[#25C440]/40 hover:border-[#EF4444] transition-all duration-200 text-xs font-bold shadow-sm active:scale-95 cursor-pointer shrink-0"
               >
-                <X className="w-4 h-4" />
+                <X className="w-4 h-4 stroke-[2.5]" />
+                <span className="inline">Fechar</span>
               </button>
             </div>
           </div>

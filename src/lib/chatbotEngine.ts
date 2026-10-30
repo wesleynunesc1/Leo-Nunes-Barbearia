@@ -79,6 +79,7 @@ function buildMainMenu(): ChatMessage {
     buttons: [
       { id: "GOTO_STEP:BOOK_BARBER", label: "✂️ Agendar Horário", variant: "primary" },
       { id: "SHOW_SERVICES_MENU", label: "💈 Serviços e Preços", variant: "secondary" },
+      { id: "SHOW_OPENING_HOURS", label: "⏰ Horário de Funcionamento", variant: "secondary" },
       { id: "SHOW_MY_BOOKINGS", label: "📅 Meus Agendamentos", variant: "secondary" },
       { id: "GOTO_WHATSAPP", label: "💬 Falar no WhatsApp", variant: "ghost" },
     ],
@@ -122,6 +123,29 @@ export function chatbotReducer(
         ),
       ];
       return { ...session, step: "SERVICES_MENU", messages: msgs };
+    }
+
+    case "SHOW_OPENING_HOURS": {
+      const msgs = [
+        ...session.messages,
+        userText("⏰ Horário de Funcionamento"),
+        botText(
+          "⏰ **Horários de Atendimento da Léo Nunes Barbearia**\n\n" +
+          "• **Segunda a Sexta**: 08h às 19h\n" +
+          "• **Sábado**: 08h às 18h\n" +
+          "• **Domingo**: Fechado\n\n" +
+          "📍 **Endereço**: Rua Joaquim Nogueira Lopes, 180 — Centro, Pacajus - CE\n" +
+          "📞 **WhatsApp**: (85) 99222-7064\n\n" +
+          "Deseja agendar um horário com nossa equipe?",
+          [
+            BTN_BOOK,
+            BTN_SERVICES,
+            BTN_WHATSAPP,
+            BTN_MAIN_MENU,
+          ]
+        ),
+      ];
+      return { ...session, step: "OPENING_HOURS", messages: msgs };
     }
 
     case "SHOW_MY_BOOKINGS": {

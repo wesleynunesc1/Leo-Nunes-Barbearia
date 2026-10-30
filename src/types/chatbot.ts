@@ -8,6 +8,7 @@ export type ChatbotStepId =
   | "MAIN_MENU"
   | "SERVICES_MENU"
   | "SERVICES_LIST"
+  | "OPENING_HOURS"
   | "BOOK_BARBER"
   | "BOOK_SERVICE"
   | "BOOK_DATE"
@@ -183,6 +184,7 @@ export type ChatbotAction =
   | { type: "MAIN_MENU" }
   | { type: "RESTART" }
   | { type: "SHOW_SERVICES_MENU" }
+  | { type: "SHOW_OPENING_HOURS" }
   | { type: "SHOW_MY_BOOKINGS" }
   | { type: "SELECT_BOOKING"; booking: MemberBookingItem }
   | { type: "CONFIRM_CANCEL" }
