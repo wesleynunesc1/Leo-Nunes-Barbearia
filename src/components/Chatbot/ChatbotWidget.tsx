@@ -12,6 +12,12 @@ import Image from "next/image";
 const WHATSAPP_NUMBER = "5585992227064";
 const WHATSAPP_TEXT = encodeURIComponent("Olá! Vim pelo site da Léo Nunes Barbearia e gostaria de informações.");
 
+// ─── Constantes do Microbalão Recorrente ──────────────────────────────────────
+const INITIAL_DELAY_MS = 5000;
+const REPEAT_INTERVAL_MS = 10000;
+const VISIBLE_DURATION_MS = 3000;
+const MAX_BUBBLE_DISPLAYS = 3;
+
 // ─── Utilitários ───────────────────────────────────────────────────────────────
 function formatDateBR(dateStr: string) {
   if (!dateStr) return "";
@@ -979,51 +985,107 @@ export function ChatbotWidget() {
   const [hasUnread, setHasUnread] = useState(false);
   const [isCanceling, setIsCanceling] = useState(false);
 
-  // Estados do Balão de Boas-Vindas e Pulso do Robô
-  const [showWelcomeBubble, setShowWelcomeBubble] = useState(false);
+  // Estados do Microbalão Recorrente e Pulso do Robô
+  const [showMicroBubble, setShowMicroBubble] = useState(false);
+  const [microBubbleKey, setMicroBubbleKey] = useState(0);
   const [hasPulsed, setHasPulsed] = useState(false);
+  const bubbleDismissedRef = useRef(false);
 
   const prevMemberRef = useRef(member);
 
-  // Efeito coordenado: exibe balão de boas-vindas e pulso elegante após ~4 segundos
-  useEffect(() => {
-    // Se o chat já estiver aberto ou já foi interagido nesta sessão, não exibir
-    try {
-      const alreadyDismissed = sessionStorage.getItem("leo_chatbot_bubble_seen");
-      if (alreadyDismissed) return;
-    } catch {
-      // sessionStorage não disponível
-    }
-
-    const timer = setTimeout(() => {
-      // Confere se o modal ou login não está aberto, ou se o chat não foi aberto antes dos 4s
-      setShowWelcomeBubble((current) => {
-        if (isOpen) return false;
-        try {
-          if (sessionStorage.getItem("leo_chatbot_bubble_seen")) return false;
-        } catch {}
-        return true;
-      });
-      setHasPulsed(true);
-    }, 4000);
-
-    return () => clearTimeout(timer);
-  }, [isOpen]);
-
   const handleDismissBubble = useCallback(() => {
-    setShowWelcomeBubble(false);
+    bubbleDismissedRef.current = true;
+    setShowMicroBubble(false);
+    setHasPulsed(false);
     try {
-      sessionStorage.setItem("leo_chatbot_bubble_seen", "true");
+      sessionStorage.setItem("leo_chatbot_bubble_dismissed", "true");
     } catch {}
   }, []);
 
-  const handleOpenFromBubble = useCallback((targetAction?: "FIND_NEXT_SLOT") => {
+  const handleOpenFromBubble = useCallback(() => {
     handleDismissBubble();
     setIsOpen(true);
-    if (targetAction === "FIND_NEXT_SLOT") {
-      dispatch({ type: "GOTO_STEP", step: "FIND_NEXT_SLOT" });
-    }
   }, [handleDismissBubble]);
+
+  // Ciclo recorrente do microbalão: delay inicial 5s, repetição a cada 10s, duração 3s, máx 3 vezes
+  useEffect(() => {
+    try {
+      if (sessionStorage.getItem("leo_chatbot_bubble_dismissed")) {
+        bubbleDismissedRef.current = true;
+        return;
+      }
+      const count = parseInt(sessionStorage.getItem("leo_chatbot_bubble_count") || "0", 10);
+      if (count >= MAX_BUBBLE_DISPLAYS) {
+        bubbleDismissedRef.current = true;
+        return;
+      }
+    } catch {}
+
+    if (isOpen) return;
+
+    let hideTimer: NodeJS.Timeout | null = null;
+    let intervalTimer: NodeJS.Timeout | null = null;
+
+    const triggerBubble = () => {
+      if (bubbleDismissedRef.current || document.hidden) return;
+
+      let currentCount = 0;
+      try {
+        currentCount = parseInt(sessionStorage.getItem("leo_chatbot_bubble_count") || "0", 10);
+        if (currentCount >= MAX_BUBBLE_DISPLAYS) {
+          handleDismissBubble();
+          return;
+        }
+        sessionStorage.setItem("leo_chatbot_bubble_count", String(currentCount + 1));
+      } catch {}
+
+      // Ativa microbalão e pulso com nova chave para reiniciar as animações CSS
+      setMicroBubbleKey((k) => k + 1);
+      setShowMicroBubble(true);
+      setHasPulsed(true);
+
+      // Desativa após VISIBLE_DURATION_MS (3 segundos)
+      hideTimer = setTimeout(() => {
+        setShowMicroBubble(false);
+        setHasPulsed(false);
+      }, VISIBLE_DURATION_MS);
+    };
+
+    // 1. Primeira aparição após INITIAL_DELAY_MS (5s)
+    const initialTimer = setTimeout(() => {
+      triggerBubble();
+
+      // 2. Repetições a cada REPEAT_INTERVAL_MS (10s)
+      intervalTimer = setInterval(() => {
+        let currentCount = 0;
+        try {
+          currentCount = parseInt(sessionStorage.getItem("leo_chatbot_bubble_count") || "0", 10);
+          if (currentCount >= MAX_BUBBLE_DISPLAYS || bubbleDismissedRef.current) {
+            if (intervalTimer) clearInterval(intervalTimer);
+            return;
+          }
+        } catch {}
+
+        triggerBubble();
+      }, REPEAT_INTERVAL_MS);
+    }, INITIAL_DELAY_MS);
+
+    // Pausar/retomar ao trocar de aba para evitar timers fora de sincronia
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        setShowMicroBubble(false);
+        setHasPulsed(false);
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      clearTimeout(initialTimer);
+      if (hideTimer) clearTimeout(hideTimer);
+      if (intervalTimer) clearInterval(intervalTimer);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [isOpen, handleDismissBubble]);
 
   // Sincronização dinâmica de autenticação (login / logout)
   useEffect(() => {
@@ -1092,9 +1154,11 @@ export function ChatbotWidget() {
   useEffect(() => {
     if (isOpen) {
       setHasUnread(false);
-      setShowWelcomeBubble(false);
+      setShowMicroBubble(false);
+      setHasPulsed(false);
+      bubbleDismissedRef.current = true;
       try {
-        sessionStorage.setItem("leo_chatbot_bubble_seen", "true");
+        sessionStorage.setItem("leo_chatbot_bubble_dismissed", "true");
       } catch {}
     }
   }, [isOpen]);
@@ -2361,64 +2425,46 @@ export function ChatbotWidget() {
   const isInBookTimeStep = session.step === "BOOK_TIME";
   const isInRescheduleTimeStep = session.step === "RESCHEDULE_TIME";
 
-  // Nome do cliente autenticado (apenas primeiro nome) para personalizar mensagem do balão
-  const clientFirstName = member?.name
-    ? member.name.trim().split(" ")[0]
-    : member?.nickname
-    ? member.nickname.trim().split(" ")[0]
-    : "";
-
   return (
     <>
-      {/* Balão de Boas-Vindas Automático (Discreto e Premium) */}
-      {!isOpen && showWelcomeBubble && (
+      {/* Microbalão Animado Saindo do Botão Flutuante */}
+      {!isOpen && showMicroBubble && (
         <div
+          key={`micro-bubble-${microBubbleKey}`}
           role="status"
           aria-live="polite"
-          className="bot-welcome-bubble fixed z-[58] flex flex-col gap-2 p-3 sm:p-3.5 bg-[#0C120E] text-[#E8EDE9] border border-[#25C440]/30 rounded-2xl shadow-[0_10px_35px_rgba(0,0,0,0.85)]
-            /* Posicionamento Mobile: ancorado acima do botão com margem segura */
-            right-4 sm:right-6 max-w-[280px] xs:max-w-[310px] sm:max-w-[320px]
-          "
-          style={{ bottom: "calc(1.5rem + 60px + 64px)" }}
+          onClick={handleOpenFromBubble}
+          className="bot-micro-bubble fixed z-[58] flex items-center gap-2 pl-3.5 pr-2.5 py-2 bg-[#0B120D]/95 hover:bg-[#121E15] text-[#FFFFFF] border border-[#25C440]/40 rounded-full shadow-[0_8px_25px_rgba(0,0,0,0.85)] cursor-pointer backdrop-blur-md select-none group transition-colors"
+          style={{
+            bottom: "calc(1.5rem + 60px + 7px)", // perfeitamente centralizado verticalmente com o botão de 56px (w-14 h-14)
+            right: "calc(1.5rem + 56px + 12px)", // posicionado imediatamente à esquerda do botão
+          }}
+          title="Clique para agendar com o assistente"
         >
-          {/* Botão de Fechar Balão */}
+          {/* Indicador de Status Online */}
+          <span className="w-1.5 h-1.5 rounded-full bg-[#25C440] shadow-[0_0_6px_#25C440] shrink-0" />
+
+          {/* Texto do Microbalão */}
+          <span className="text-xs font-bold tracking-tight text-[#E8EDE9] whitespace-nowrap">
+            Agende por aqui!{" "}
+            <span className="wave-hand-icon" aria-hidden="true">
+              👋
+            </span>
+          </span>
+
+          {/* Botão de Fechar Discreto */}
           <button
+            type="button"
             onClick={(e) => {
               e.stopPropagation();
               handleDismissBubble();
             }}
-            aria-label="Fechar mensagem de boas-vindas"
-            className="absolute top-2.5 right-2.5 p-1 rounded-lg text-[#8A968D] hover:text-[#FFFFFF] hover:bg-[#18241B] transition-colors cursor-pointer"
+            aria-label="Fechar aviso"
+            title="Fechar aviso"
+            className="p-1 -mr-0.5 rounded-full text-[#8A968D] hover:text-[#FFFFFF] hover:bg-white/10 transition-colors cursor-pointer"
           >
-            <X className="w-3.5 h-3.5" />
+            <X className="w-3 h-3 stroke-[2.5]" />
           </button>
-
-          {/* Cabeçalho do Balão */}
-          <div className="flex items-center gap-2 pr-6">
-            <span className="w-2 h-2 rounded-full bg-[#25C440] animate-pulse shrink-0" />
-            <span className="text-[11px] font-mono uppercase tracking-wider text-[#25C440] font-bold">
-              Atendimento Online
-            </span>
-          </div>
-
-          {/* Mensagem Personalizada */}
-          <p className="text-xs text-[#D8E2DA] leading-snug font-medium">
-            {clientFirstName
-              ? `Olá, ${clientFirstName}! 👋 Quer agendar seu próximo corte?`
-              : "Olá! 👋 Posso encontrar o próximo horário disponível para você?"}
-          </p>
-
-          {/* Ação Rápida */}
-          <button
-            onClick={() => handleOpenFromBubble(clientFirstName ? undefined : "FIND_NEXT_SLOT")}
-            className="mt-0.5 inline-flex items-center justify-between gap-2 px-3 py-1.5 rounded-xl bg-[#142017] hover:bg-[#1C2C20] border border-[#25C440]/40 text-[#25C440] hover:text-[#42E55F] text-[11px] font-bold transition-all cursor-pointer group"
-          >
-            <span>{clientFirstName ? "Agendar Horário →" : "Consultar Horários →"}</span>
-            <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
-          </button>
-
-          {/* Seta indicadora apontando para o botão */}
-          <div className="absolute -bottom-1.5 right-6 w-3 h-3 bg-[#0C120E] border-b border-r border-[#25C440]/30 rotate-45 pointer-events-none" />
         </div>
       )}
 
@@ -2427,9 +2473,10 @@ export function ChatbotWidget() {
         className="fixed bottom-6 right-6 z-[60]"
         style={{ bottom: "calc(1.5rem + 60px)" }} // acima do WhatsApp float
       >
-        {/* Anel de Pulso Elegante (Executa apenas 2-3 vezes e cessa) */}
+        {/* Anel de Pulso Elegante (Executa sincronizado com o surgimento do microbalão) */}
         {!isOpen && hasPulsed && (
           <span
+            key={`pulse-${microBubbleKey}`}
             className="bot-pulse-ring absolute inset-0 rounded-full border-2 border-[#25C440] pointer-events-none"
             aria-hidden="true"
           />

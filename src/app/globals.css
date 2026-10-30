@@ -743,7 +743,7 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 }
 
 /* =========================================================================
-   11. ANIMAÇÕES DO ROBÔ DE ATENDIMENTO (PULSO DISCRETO & BALÃO DE BOAS-VINDAS)
+   11. ANIMAÇÕES DO ROBÔ DE ATENDIMENTO (PULSO DISCRETO & MICROBALÃO ANIMADO)
    ========================================================================= */
 @keyframes botPulseRing {
   0% {
@@ -761,22 +761,59 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 }
 
 .bot-pulse-ring {
-  animation: botPulseRing 2.2s cubic-bezier(0.24, 0, 0.38, 1) 3 forwards;
+  animation: botPulseRing 1.8s cubic-bezier(0.24, 0, 0.38, 1) 2 forwards;
 }
 
-@keyframes bubbleFadeSlideIn {
-  from {
+/* Microbalão animado deslizando da direita para a esquerda saindo do botão */
+@keyframes microBubbleSlideInOut {
+  0% {
     opacity: 0;
-    transform: translateY(8px) scale(0.96);
+    transform: translateX(18px) scale(0.85);
   }
-  to {
+  14% {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateX(0) scale(1);
+  }
+  84% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(14px) scale(0.88);
   }
 }
 
-.bot-welcome-bubble {
-  animation: bubbleFadeSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.bot-micro-bubble {
+  animation: microBubbleSlideInOut 3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Animação de aceno da mãozinha 👋 (duas oscilações suaves) */
+@keyframes waveHand {
+  0% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(14deg);
+  }
+  40% {
+    transform: rotate(-10deg);
+  }
+  60% {
+    transform: rotate(12deg);
+  }
+  80% {
+    transform: rotate(-4deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.wave-hand-icon {
+  display: inline-block;
+  transform-origin: 70% 70%;
+  animation: waveHand 1.2s ease-in-out 0.2s 1;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -784,7 +821,10 @@ h1, h2, h3, h4, h5, h6, .font-heading {
     animation: none !important;
     display: none !important;
   }
-  .bot-welcome-bubble {
+  .bot-micro-bubble {
+    animation: none !important;
+  }
+  .wave-hand-icon {
     animation: none !important;
   }
 }
