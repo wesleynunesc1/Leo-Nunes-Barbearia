@@ -4,6 +4,7 @@ import {
   getCurrentMemberProfile,
   renewMemberTokenIfNeeded,
 } from "@/lib/wixAuth";
+import { isOwnerEmail } from "@/lib/adminAuth";
 import { Tokens } from "@wix/sdk";
 
 export async function GET(request: NextRequest) {
@@ -39,9 +40,16 @@ export async function GET(request: NextRequest) {
       return res;
     }
 
+    // Atribui flag isOwner apenas com validação de backend contra e-mail oficial
+    const isOwner = Boolean(member.email && isOwnerEmail(member.email));
+    const memberWithRole = {
+      ...member,
+      isOwner,
+    };
+
     const res = NextResponse.json({
       authenticated: true,
-      member,
+      member: memberWithRole,
     });
 
     // Se o token foi renovado, atualiza o cookie

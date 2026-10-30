@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, Calendar, MapPin, Phone, User, LogOut } from "lucide-react";
+import { Menu, X, Calendar, MapPin, Phone, User, LogOut, ShieldCheck } from "lucide-react";
 import { useBooking } from "@/context/BookingContext";
 import { useAuth } from "@/context/AuthContext";
 
@@ -167,6 +167,16 @@ export function Header() {
                 </Link>
               );
             })}
+            {/* Opção Área Administrativa exclusiva do OWNER no menu Desktop */}
+            {member?.isOwner && (
+              <Link
+                href="/admin"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-[#25C440] bg-[#112316]/90 hover:bg-[#183320] border border-[#25C440]/40 transition-all shadow-sm"
+              >
+                <ShieldCheck className="w-3.5 h-3.5 text-[#25C440]" />
+                <span>Área Administrativa</span>
+              </Link>
+            )}
           </nav>
 
           {/* Desktop CTA with Shimmer Beam + Minha Conta */}
@@ -310,6 +320,17 @@ export function Header() {
 
           {/* Opções organizadas */}
           <div className="pt-1 space-y-0.5">
+            {member.isOwner && (
+              <Link
+                href="/admin"
+                onClick={() => setProfileMenuOpen(false)}
+                className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-[#25C440] bg-[#112316]/60 hover:bg-[#183320] border border-[#25C440]/30 transition-colors group cursor-pointer mb-1"
+              >
+                <ShieldCheck className="w-3.5 h-3.5 text-[#25C440] group-hover:scale-110 transition-transform" />
+                <span>Área Administrativa</span>
+              </Link>
+            )}
+
             <Link
               href="/minha-conta"
               onClick={() => setProfileMenuOpen(false)}
@@ -456,6 +477,22 @@ export function Header() {
                 <span className="text-[#25C440]/60 group-hover:text-[#25C440] group-hover:translate-x-0.5 text-xs transition-all">→</span>
               </Link>
             ))}
+
+            {/* Opção Área Administrativa exclusiva do OWNER no menu mobile */}
+            {member?.isOwner && (
+              <Link
+                href="/admin"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{ animationDelay: `${(navLinks.length + 2) * 35}ms` }}
+                className="mobile-menu-item-stagger text-sm font-bold text-[#25C440] py-2.5 px-3.5 rounded-xl bg-[#112316]/90 border border-[#25C440]/40 hover:bg-[#183320] transition-colors flex items-center justify-between mt-1 shadow-sm"
+              >
+                <span className="flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-[#25C440]" />
+                  <span>Área Administrativa</span>
+                </span>
+                <span className="text-[#25C440] text-xs">→</span>
+              </Link>
+            )}
           </div>
 
           <div

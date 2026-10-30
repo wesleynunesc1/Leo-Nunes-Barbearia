@@ -55,6 +55,7 @@ export interface WixMemberProfile {
   phone?: string;
   avatarUrl?: string;
   status?: string;
+  isOwner?: boolean;
 }
 
 export interface MemberBookingItem {
