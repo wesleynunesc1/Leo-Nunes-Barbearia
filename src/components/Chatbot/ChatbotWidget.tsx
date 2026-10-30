@@ -84,7 +84,7 @@ function MessageBubble({ message }: { message: ChatMessage; onAction?: (action: 
 
 function ActionButtons({ buttons, onAction }: { buttons: ChatButton[]; onAction: (id: string) => void }) {
   return (
-    <div className="flex flex-col gap-2 pl-9">
+    <div className="flex flex-col gap-2 pl-0 sm:pl-8">
       {buttons.map((btn) => (
         <button
           key={btn.id}
@@ -120,7 +120,7 @@ function BarberCards({ dispatch }: { dispatch: React.Dispatch<ChatbotAction> }) 
   }));
 
   return (
-    <div className="pl-9 grid grid-cols-2 gap-2">
+    <div className="pl-0 sm:pl-8 grid grid-cols-2 gap-2">
       {barbers.map((barber) => (
         <button
           key={barber.id}
@@ -170,7 +170,7 @@ function ServiceCards({
   const totalDuration = parseTotalDuration(session);
 
   return (
-    <div className="pl-9 flex flex-col gap-2">
+    <div className="pl-0 sm:pl-8 flex flex-col gap-2">
       <div className="grid grid-cols-1 gap-2">
         {services.map((svc) => {
           const isSelected = selectedIds.includes(svc.id);
@@ -286,7 +286,7 @@ function DatePicker({ onSelect }: { onSelect: (date: string) => void }) {
     (viewMonth.year === today.getFullYear() && viewMonth.month <= today.getMonth());
 
   return (
-    <div className="pl-9">
+    <div className="pl-0 sm:pl-8">
       <div className="bg-[#0D1410] border border-[#1E2720] rounded-2xl p-3">
         {/* Header do calendário */}
         <div className="flex items-center justify-between mb-3">
@@ -367,10 +367,10 @@ function TimeSlots({
   isLoading: boolean;
   error?: string;
 }) {
-  if (isLoading) return <div className="pl-9"><TypingIndicator /></div>;
+  if (isLoading) return <div className="pl-0 sm:pl-8"><TypingIndicator /></div>;
   if (error) {
     return (
-      <div className="pl-9 p-3 bg-[#1A0D0D] border border-[#EF4444]/20 rounded-xl text-xs text-[#EF4444]">
+      <div className="pl-0 sm:pl-8 p-3 bg-[#1A0D0D] border border-[#EF4444]/20 rounded-xl text-xs text-[#EF4444]">
         {error}
       </div>
     );
@@ -378,15 +378,15 @@ function TimeSlots({
   const available = slots.filter((s) => s.available);
   if (!available.length) {
     return (
-      <div className="pl-9 p-3 bg-[#111712] border border-[#1E2720] rounded-xl text-xs text-[#9BA59E]">
+      <div className="pl-0 sm:pl-8 p-3 bg-[#111712] border border-[#1E2720] rounded-xl text-xs text-[#9BA59E]">
         😕 Nenhum horário disponível nesta data. Tente outro dia!
       </div>
     );
   }
 
   return (
-    <div className="pl-9">
-      <div className="grid grid-cols-3 gap-1.5">
+    <div className="pl-0 sm:pl-8">
+      <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
         {available.map((slot) => (
           <button
             key={slot.time}
@@ -404,7 +404,7 @@ function TimeSlots({
 // Booking Summary Card
 function BookingSummaryCard({ summary }: { summary: NonNullable<ChatMessage["bookingSummary"]> }) {
   return (
-    <div className="pl-9">
+    <div className="pl-0 sm:pl-8">
       <div className="bg-[#0D1410] border border-[#25C440]/30 rounded-2xl overflow-hidden">
         <div className="px-4 py-3 bg-[#111E13] border-b border-[#1A2D1D]">
           <p className="text-[10px] font-mono uppercase tracking-widest text-[#25C440] font-bold">
@@ -472,7 +472,7 @@ function BookingSummaryCard({ summary }: { summary: NonNullable<ChatMessage["boo
 function BookingResultCard({ result }: { result: NonNullable<ChatMessage["bookingResult"]> }) {
   const success = result.success && result.status !== "ERROR";
   return (
-    <div className="pl-9">
+    <div className="pl-0 sm:pl-8">
       <div className={`rounded-2xl border p-4 ${success ? "bg-[#0B1A0D] border-[#25C440]/40" : "bg-[#1A0D0D] border-[#EF4444]/30"}`}>
         <div className="flex items-start gap-3 mb-3">
           {success ? (
@@ -517,7 +517,7 @@ function BookingResultCard({ result }: { result: NonNullable<ChatMessage["bookin
 function BookingsListCard({ bookings, onSelect }: { bookings: MemberBookingItem[]; onSelect: (b: MemberBookingItem) => void }) {
   if (!bookings.length) {
     return (
-      <div className="pl-9 p-4 bg-[#111712] border border-[#1E2720] rounded-2xl text-xs text-[#9BA59E] text-center">
+      <div className="pl-0 sm:pl-8 p-4 bg-[#111712] border border-[#1E2720] rounded-2xl text-xs text-[#9BA59E] text-center">
         📅 Nenhum agendamento encontrado no sistema.
       </div>
     );
@@ -527,7 +527,7 @@ function BookingsListCard({ bookings, onSelect }: { bookings: MemberBookingItem[
   const past = bookings.filter((b) => b.status === "CANCELED" || b.status === "DECLINED");
 
   return (
-    <div className="pl-9 flex flex-col gap-2">
+    <div className="pl-0 sm:pl-8 flex flex-col gap-2">
       {upcoming.length > 0 && (
         <>
           <p className="text-[10px] text-[#25C440] font-bold uppercase tracking-wider">Próximos</p>
@@ -594,7 +594,7 @@ function BookingDetailCard({
   const isReschedulable = booking.canReschedule && booking.status !== "CANCELED";
 
   return (
-    <div className="pl-9">
+    <div className="pl-0 sm:pl-8">
       <div className="bg-[#0D1410] border border-[#1E2720] rounded-2xl overflow-hidden">
         <div className="px-4 py-3 border-b border-[#1A2D1D] flex justify-between items-center">
           <p className="text-[10px] font-mono uppercase tracking-wider text-[#25C440] font-bold">
@@ -1319,18 +1319,30 @@ export function ChatbotWidget() {
         )}
       </button>
 
+      {/* Backdrop para mobile (toque fora para fechar) */}
+      {isOpen && (
+        <div
+          onClick={() => setIsOpen(false)}
+          className="fixed inset-0 bg-black/60 backdrop-blur-xs z-40 sm:hidden transition-opacity"
+          aria-hidden="true"
+        />
+      )}
+
       {/* Widget do Chat */}
       {isOpen && (
         <div
-          className={`fixed z-40 bg-[#080B09] border border-[#1E2720] shadow-2xl shadow-black/50 flex flex-col overflow-hidden
-            /* Desktop */ rounded-2xl
-            /* Mobile: full screen */
-            bottom-0 right-0 left-0 top-0
-            md:bottom-[calc(1.5rem+60px+1rem)] md:right-6 md:left-auto md:top-auto
-            md:w-[390px] md:h-[580px] md:max-h-[85vh]
+          className={`fixed z-50 bg-[#080B09] border border-[#1E2720] shadow-[0_12px_45px_rgba(0,0,0,0.85)] flex flex-col overflow-hidden
+            /* Mobile: painel flutuante responsivo, não tela cheia */
+            inset-x-3 bottom-3 top-auto h-[82vh] max-h-[580px] rounded-3xl
+            /* Tablet / Desktop */
+            sm:inset-x-auto sm:right-6 sm:bottom-[calc(1.5rem+60px+1rem)]
+            sm:w-[390px] sm:h-[580px] sm:max-h-[85vh] sm:rounded-2xl
           `}
           style={{ animation: "slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1)" }}
         >
+          {/* Alça tátil visual para Mobile */}
+          <div className="w-10 h-1 bg-[#27342A] rounded-full mx-auto mt-2 -mb-1 sm:hidden shrink-0" />
+
           {/* Header */}
           <div className="px-4 py-3 bg-[#0B100C] border-b border-[#1A261D] flex items-center gap-3 shrink-0">
             <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#25C440] to-[#1A942E] flex items-center justify-center shadow-lg shadow-[#25C440]/20">
@@ -1359,7 +1371,7 @@ export function ChatbotWidget() {
           </div>
 
           {/* Mensagens */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 overscroll-contain">
+          <div className="flex-1 overflow-y-auto p-3.5 sm:p-4 space-y-3 sm:space-y-4 overscroll-contain">
             {session.messages.map((msg, idx) => {
               // Remove mensagens de loading duplicadas (só a última conta)
               if (msg.type === "loading") {
@@ -1422,7 +1434,7 @@ export function ChatbotWidget() {
               if (msg.type === "service_cards") {
                 // Lista de serviços por categoria (modo informativo)
                 return (
-                  <div key={msg.id} className="pl-9 flex flex-col gap-1.5">
+                  <div key={msg.id} className="pl-0 sm:pl-8 flex flex-col gap-1.5">
                     {msg.text && <MessageBubble message={{ ...msg, type: "text" }} />}
                     {(msg.serviceCards || []).map((svc) => (
                       <div
@@ -1456,7 +1468,7 @@ export function ChatbotWidget() {
                       bookings={msg.bookingsList || memberBookings}
                       onSelect={(b) => dispatch({ type: "SELECT_BOOKING", booking: b })}
                     />
-                    <div className="pl-9">
+                    <div className="pl-0 sm:pl-8">
                       <button
                         onClick={() => dispatch({ type: "MAIN_MENU" })}
                         className="text-xs text-[#9BA59E] hover:text-[#E8EDE9] transition-colors"
@@ -1500,7 +1512,7 @@ export function ChatbotWidget() {
 
             {/* Date Picker para reagendamento */}
             {session.step === "RESCHEDULE_DATE" && (
-              <div className="pl-9">
+              <div className="pl-0 sm:pl-8">
                 <DatePicker
                   onSelect={(date) => dispatch({ type: "SELECT_RESCHEDULE_DATE", date })}
                 />
@@ -1545,7 +1557,7 @@ export function ChatbotWidget() {
                   onChange={(e) => { setInputValue(e.target.value); setInputError(""); }}
                   onKeyDown={(e) => { if (e.key === "Enter") handleInputSubmit(); }}
                   placeholder={currentInput?.inputRequest?.placeholder || "Digite aqui..."}
-                  className="flex-1 bg-[#111712] border border-[#1E2720] rounded-xl px-3 py-2.5 text-sm text-[#E8EDE9] placeholder-[#47544A] outline-none focus:border-[#25C440]/50 focus:ring-1 focus:ring-[#25C440]/20 transition-all"
+                  className="flex-1 bg-[#111712] border border-[#1E2720] rounded-xl px-3 py-2.5 text-base sm:text-sm text-[#E8EDE9] placeholder-[#47544A] outline-none focus:border-[#25C440]/50 focus:ring-1 focus:ring-[#25C440]/20 transition-all"
                   autoFocus
                 />
                 <button
