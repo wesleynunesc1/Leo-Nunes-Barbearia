@@ -672,11 +672,47 @@ export function ChatbotWidget() {
   const [hasUnread, setHasUnread] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const prevMessagesLengthRef = useRef(session.messages.length);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Auto-scroll
+  // Auto-scroll inteligente: alinha a partir do início da mensagem de atendimento do robô
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    if (session.messages.length <= 2) {
+      container.scrollTo({ top: 0, behavior: "smooth" });
+      prevMessagesLengthRef.current = session.messages.length;
+      return;
+    }
+
+    if (session.messages.length > prevMessagesLengthRef.current) {
+      const prevCount = prevMessagesLengthRef.current;
+      const newMessages = session.messages.slice(prevCount);
+      // Encontra a primeira mensagem do bot na nova rodada (mensagem de atendimento)
+      const firstNewBotMsg = newMessages.find((m) => m.role === "bot" && m.type !== "loading");
+
+      const timer = setTimeout(() => {
+        if (firstNewBotMsg) {
+          const targetEl = document.getElementById(`chat-msg-${firstNewBotMsg.id}`);
+          if (targetEl && container) {
+            const targetTop = targetEl.offsetTop;
+            container.scrollTo({
+              top: Math.max(0, targetTop - 12),
+              behavior: "smooth",
+            });
+            return;
+          }
+        }
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 70);
+
+      prevMessagesLengthRef.current = session.messages.length;
+      return () => clearTimeout(timer);
+    }
+
+    prevMessagesLengthRef.current = session.messages.length;
   }, [session.messages]);
 
   // Marcar unread quando fechado
@@ -1375,14 +1411,14 @@ export function ChatbotWidget() {
           </div>
 
           {/* Mensagens */}
-          <div className="flex-1 overflow-y-auto p-3.5 sm:p-4 space-y-3 sm:space-y-4 overscroll-contain">
+          <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-3.5 sm:p-4 space-y-3 sm:space-y-4 overscroll-contain">
             {session.messages.map((msg, idx) => {
               // Remove mensagens de loading duplicadas (só a última conta)
               if (msg.type === "loading") {
                 const isLastLoading = session.messages.slice(idx + 1).every((m) => m.type !== "loading");
                 if (!isLastLoading) return null;
                 return (
-                  <div key={msg.id} className="flex gap-2">
+                  <div key={msg.id} id={`chat-msg-${msg.id}`} className="flex gap-2">
                     <BotAvatar />
                     <TypingIndicator />
                   </div>
@@ -1391,7 +1427,7 @@ export function ChatbotWidget() {
 
               if (msg.type === "text" || msg.type === "buttons") {
                 return (
-                  <div key={msg.id} className="flex flex-col gap-2">
+                  <div key={msg.id} id={`chat-msg-${msg.id}`} className="flex flex-col gap-2">
                     <MessageBubble message={msg} />
                     {msg.buttons && (
                       <ActionButtons buttons={msg.buttons} onAction={handleButtonAction} />
@@ -1402,7 +1438,7 @@ export function ChatbotWidget() {
 
               if (msg.type === "barber_cards") {
                 return (
-                  <div key={msg.id} className="flex flex-col gap-2">
+                  <div key={msg.id} id={`chat-msg-${msg.id}`} className="flex flex-col gap-2">
                     <MessageBubble message={{ ...msg, type: "text" }} />
                     <BarberCards dispatch={dispatch} />
                   </div>
@@ -1411,7 +1447,7 @@ export function ChatbotWidget() {
 
               if (msg.type === "service_cards" && session.step === "BOOK_SERVICE") {
                 return (
-                  <div key={msg.id} className="flex flex-col gap-2">
+                  <div key={msg.id} id={`chat-msg-${msg.id}`} className="flex flex-col gap-2">
                     <MessageBubble message={{ ...msg, type: "text", text: msg.text }} />
                     <ServiceCards
                       session={session}
@@ -1438,7 +1474,7 @@ export function ChatbotWidget() {
               if (msg.type === "service_cards") {
                 // Lista de serviços por categoria (modo informativo)
                 return (
-                  <div key={msg.id} className="pl-0 sm:pl-8 flex flex-col gap-1.5">
+                  <div key={msg.id} id={`chat-msg-${msg.id}`} className="pl-0 sm:pl-8 flex flex-col gap-1.5">
                     {msg.text && <MessageBubble message={{ ...msg, type: "text" }} />}
                     {(msg.serviceCards || []).map((svc) => (
                       <div
@@ -1457,16 +1493,24 @@ export function ChatbotWidget() {
               }
 
               if (msg.type === "booking_summary" && msg.bookingSummary) {
-                return <BookingSummaryCard key={msg.id} summary={msg.bookingSummary} />;
+                return (
+                  <div key={msg.id} id={`chat-msg-${msg.id}`}>
+                    <BookingSummaryCard summary={msg.bookingSummary} />
+                  </div>
+                );
               }
 
               if (msg.type === "booking_result" && msg.bookingResult) {
-                return <BookingResultCard key={msg.id} result={msg.bookingResult} />;
+                return (
+                  <div key={msg.id} id={`chat-msg-${msg.id}`}>
+                    <BookingResultCard result={msg.bookingResult} />
+                  </div>
+                );
               }
 
               if (msg.type === "bookings_list") {
                 return (
-                  <div key={msg.id} className="flex flex-col gap-2">
+                  <div key={msg.id} id={`chat-msg-${msg.id}`} className="flex flex-col gap-2">
                     {msg.text && <MessageBubble message={{ ...msg, type: "text" }} />}
                     <BookingsListCard
                       bookings={msg.bookingsList || memberBookings}
@@ -1486,13 +1530,14 @@ export function ChatbotWidget() {
 
               if (msg.type === "booking_detail" && msg.bookingDetail) {
                 return (
-                  <BookingDetailCard
-                    key={msg.id}
-                    booking={msg.bookingDetail}
-                    onCancel={() => dispatch({ type: "CONFIRM_CANCEL" })}
-                    onReschedule={() => handleButtonAction("RESCHEDULE")}
-                    onBack={() => dispatch({ type: "SHOW_MY_BOOKINGS" })}
-                  />
+                  <div key={msg.id} id={`chat-msg-${msg.id}`}>
+                    <BookingDetailCard
+                      booking={msg.bookingDetail}
+                      onCancel={() => dispatch({ type: "CONFIRM_CANCEL" })}
+                      onReschedule={() => handleButtonAction("RESCHEDULE")}
+                      onBack={() => dispatch({ type: "SHOW_MY_BOOKINGS" })}
+                    />
+                  </div>
                 );
               }
 
@@ -1501,7 +1546,7 @@ export function ChatbotWidget() {
               }
 
               return (
-                <div key={msg.id}>
+                <div key={msg.id} id={`chat-msg-${msg.id}`}>
                   <MessageBubble message={msg} />
                 </div>
               );
