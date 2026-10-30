@@ -979,7 +979,51 @@ export function ChatbotWidget() {
   const [hasUnread, setHasUnread] = useState(false);
   const [isCanceling, setIsCanceling] = useState(false);
 
+  // Estados do Balão de Boas-Vindas e Pulso do Robô
+  const [showWelcomeBubble, setShowWelcomeBubble] = useState(false);
+  const [hasPulsed, setHasPulsed] = useState(false);
+
   const prevMemberRef = useRef(member);
+
+  // Efeito coordenado: exibe balão de boas-vindas e pulso elegante após ~4 segundos
+  useEffect(() => {
+    // Se o chat já estiver aberto ou já foi interagido nesta sessão, não exibir
+    try {
+      const alreadyDismissed = sessionStorage.getItem("leo_chatbot_bubble_seen");
+      if (alreadyDismissed) return;
+    } catch {
+      // sessionStorage não disponível
+    }
+
+    const timer = setTimeout(() => {
+      // Confere se o modal ou login não está aberto, ou se o chat não foi aberto antes dos 4s
+      setShowWelcomeBubble((current) => {
+        if (isOpen) return false;
+        try {
+          if (sessionStorage.getItem("leo_chatbot_bubble_seen")) return false;
+        } catch {}
+        return true;
+      });
+      setHasPulsed(true);
+    }, 4000);
+
+    return () => clearTimeout(timer);
+  }, [isOpen]);
+
+  const handleDismissBubble = useCallback(() => {
+    setShowWelcomeBubble(false);
+    try {
+      sessionStorage.setItem("leo_chatbot_bubble_seen", "true");
+    } catch {}
+  }, []);
+
+  const handleOpenFromBubble = useCallback((targetAction?: "FIND_NEXT_SLOT") => {
+    handleDismissBubble();
+    setIsOpen(true);
+    if (targetAction === "FIND_NEXT_SLOT") {
+      dispatch({ type: "GOTO_STEP", step: "FIND_NEXT_SLOT" });
+    }
+  }, [handleDismissBubble]);
 
   // Sincronização dinâmica de autenticação (login / logout)
   useEffect(() => {
@@ -1046,7 +1090,13 @@ export function ChatbotWidget() {
   }, [session.messages.length, isOpen]);
 
   useEffect(() => {
-    if (isOpen) setHasUnread(false);
+    if (isOpen) {
+      setHasUnread(false);
+      setShowWelcomeBubble(false);
+      try {
+        sessionStorage.setItem("leo_chatbot_bubble_seen", "true");
+      } catch {}
+    }
   }, [isOpen]);
 
   // Mostrar date picker ao entrar no step
@@ -2311,33 +2361,104 @@ export function ChatbotWidget() {
   const isInBookTimeStep = session.step === "BOOK_TIME";
   const isInRescheduleTimeStep = session.step === "RESCHEDULE_TIME";
 
+  // Nome do cliente autenticado (apenas primeiro nome) para personalizar mensagem do balão
+  const clientFirstName = member?.name
+    ? member.name.trim().split(" ")[0]
+    : member?.nickname
+    ? member.nickname.trim().split(" ")[0]
+    : "";
+
   return (
     <>
+      {/* Balão de Boas-Vindas Automático (Discreto e Premium) */}
+      {!isOpen && showWelcomeBubble && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="bot-welcome-bubble fixed z-[58] flex flex-col gap-2 p-3 sm:p-3.5 bg-[#0C120E] text-[#E8EDE9] border border-[#25C440]/30 rounded-2xl shadow-[0_10px_35px_rgba(0,0,0,0.85)]
+            /* Posicionamento Mobile: ancorado acima do botão com margem segura */
+            right-4 sm:right-6 max-w-[280px] xs:max-w-[310px] sm:max-w-[320px]
+          "
+          style={{ bottom: "calc(1.5rem + 60px + 64px)" }}
+        >
+          {/* Botão de Fechar Balão */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDismissBubble();
+            }}
+            aria-label="Fechar mensagem de boas-vindas"
+            className="absolute top-2.5 right-2.5 p-1 rounded-lg text-[#8A968D] hover:text-[#FFFFFF] hover:bg-[#18241B] transition-colors cursor-pointer"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+
+          {/* Cabeçalho do Balão */}
+          <div className="flex items-center gap-2 pr-6">
+            <span className="w-2 h-2 rounded-full bg-[#25C440] animate-pulse shrink-0" />
+            <span className="text-[11px] font-mono uppercase tracking-wider text-[#25C440] font-bold">
+              Atendimento Online
+            </span>
+          </div>
+
+          {/* Mensagem Personalizada */}
+          <p className="text-xs text-[#D8E2DA] leading-snug font-medium">
+            {clientFirstName
+              ? `Olá, ${clientFirstName}! 👋 Quer agendar seu próximo corte?`
+              : "Olá! 👋 Posso encontrar o próximo horário disponível para você?"}
+          </p>
+
+          {/* Ação Rápida */}
+          <button
+            onClick={() => handleOpenFromBubble(clientFirstName ? undefined : "FIND_NEXT_SLOT")}
+            className="mt-0.5 inline-flex items-center justify-between gap-2 px-3 py-1.5 rounded-xl bg-[#142017] hover:bg-[#1C2C20] border border-[#25C440]/40 text-[#25C440] hover:text-[#42E55F] text-[11px] font-bold transition-all cursor-pointer group"
+          >
+            <span>{clientFirstName ? "Agendar Horário →" : "Consultar Horários →"}</span>
+            <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+          </button>
+
+          {/* Seta indicadora apontando para o botão */}
+          <div className="absolute -bottom-1.5 right-6 w-3 h-3 bg-[#0C120E] border-b border-r border-[#25C440]/30 rotate-45 pointer-events-none" />
+        </div>
+      )}
+
       {/* Botão flutuante */}
-      <button
-        onClick={() => setIsOpen((v) => !v)}
-        aria-label={isOpen ? "Fechar atendimento" : "Abrir atendimento automático"}
-        title={isOpen ? "Fechar atendimento" : "Abrir atendimento automático"}
-        className={`fixed bottom-6 right-6 z-[60] w-14 h-14 rounded-full shadow-2xl transition-all duration-300 flex items-center justify-center ${
-          isOpen
-            ? "bg-[#101712] border-2 border-[#25C440] hover:border-[#EF4444] text-[#25C440] hover:text-[#EF4444] hover:bg-[#1A0E0E] rotate-0 scale-100 hidden sm:flex"
-            : "bg-[#25C440] hover:bg-[#2CD64A] hover:scale-110 active:scale-95 text-[#080B09]"
-        }`}
+      <div
+        className="fixed bottom-6 right-6 z-[60]"
         style={{ bottom: "calc(1.5rem + 60px)" }} // acima do WhatsApp float
       >
-        {isOpen ? (
-          <X className="w-6 h-6 stroke-[2.5]" />
-        ) : (
-          <>
-            <MessageCircle className="w-6 h-6" />
-            {hasUnread && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#EF4444] rounded-full text-[9px] text-white font-bold flex items-center justify-center">
-                !
-              </span>
-            )}
-          </>
+        {/* Anel de Pulso Elegante (Executa apenas 2-3 vezes e cessa) */}
+        {!isOpen && hasPulsed && (
+          <span
+            className="bot-pulse-ring absolute inset-0 rounded-full border-2 border-[#25C440] pointer-events-none"
+            aria-hidden="true"
+          />
         )}
-      </button>
+
+        <button
+          onClick={() => setIsOpen((v) => !v)}
+          aria-label={isOpen ? "Fechar atendimento" : "Abrir atendimento automático"}
+          title={isOpen ? "Fechar atendimento" : "Abrir atendimento automático"}
+          className={`relative w-14 h-14 rounded-full shadow-2xl transition-all duration-300 flex items-center justify-center ${
+            isOpen
+              ? "bg-[#101712] border-2 border-[#25C440] hover:border-[#EF4444] text-[#25C440] hover:text-[#EF4444] hover:bg-[#1A0E0E] rotate-0 scale-100 hidden sm:flex"
+              : "bg-[#25C440] hover:bg-[#2CD64A] hover:scale-110 active:scale-95 text-[#080B09]"
+          }`}
+        >
+          {isOpen ? (
+            <X className="w-6 h-6 stroke-[2.5]" />
+          ) : (
+            <>
+              <MessageCircle className="w-6 h-6" />
+              {hasUnread && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#EF4444] rounded-full text-[9px] text-white font-bold flex items-center justify-center">
+                  !
+                </span>
+              )}
+            </>
+          )}
+        </button>
+      </div>
 
       {/* Backdrop para mobile (toque fora para fechar) */}
       {isOpen && (

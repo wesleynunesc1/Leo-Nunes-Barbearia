@@ -742,3 +742,51 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   }
 }
 
+/* =========================================================================
+   11. ANIMAÇÕES DO ROBÔ DE ATENDIMENTO (PULSO DISCRETO & BALÃO DE BOAS-VINDAS)
+   ========================================================================= */
+@keyframes botPulseRing {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+.bot-pulse-ring {
+  animation: botPulseRing 2.2s cubic-bezier(0.24, 0, 0.38, 1) 3 forwards;
+}
+
+@keyframes bubbleFadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.bot-welcome-bubble {
+  animation: bubbleFadeSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bot-pulse-ring {
+    animation: none !important;
+    display: none !important;
+  }
+  .bot-welcome-bubble {
+    animation: none !important;
+  }
+}
+
+
