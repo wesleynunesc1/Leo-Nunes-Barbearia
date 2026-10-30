@@ -159,12 +159,12 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen bg-[#080B09] flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="min-h-screen bg-[#080B09] flex flex-col justify-center pt-24 pb-12 sm:py-12 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Background Lighting Elements */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#25C440]/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-20 right-10 w-72 h-72 bg-[#122A17]/30 rounded-full blur-2xl pointer-events-none" />
 
-      <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 px-4">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 px-4 mt-4 sm:mt-0">
         <h1 className="text-center text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
           Área do Cliente
         </h1>
