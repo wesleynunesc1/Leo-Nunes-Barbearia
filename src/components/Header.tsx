@@ -48,11 +48,17 @@ export function Header() {
   useEffect(() => {
     if (mobileMenuOpen) {
       document.body.style.overflow = "hidden";
+      document.body.setAttribute("data-mobile-menu-open", "true");
+      window.dispatchEvent(new CustomEvent("mobileMenuStateChange", { detail: { open: true } }));
     } else {
       document.body.style.overflow = "";
+      document.body.removeAttribute("data-mobile-menu-open");
+      window.dispatchEvent(new CustomEvent("mobileMenuStateChange", { detail: { open: false } }));
     }
     return () => {
       document.body.style.overflow = "";
+      document.body.removeAttribute("data-mobile-menu-open");
+      window.dispatchEvent(new CustomEvent("mobileMenuStateChange", { detail: { open: false } }));
     };
   }, [mobileMenuOpen]);
 
@@ -343,24 +349,40 @@ export function Header() {
       {mobileMenuOpen && (
         <div
           onClick={() => setMobileMenuOpen(false)}
-          className="sm:hidden fixed inset-0 z-40 bg-black/40 backdrop-blur-[2px] transition-opacity duration-300"
+          className="sm:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-[3px] transition-opacity duration-300"
           aria-hidden="true"
         />
       )}
 
-      {/* Novo Menu Mobile Flutuante e Compacto (Expansão de cima para baixo com cantos arredondados) */}
+      {/* Novo Menu Mobile Flutuante e Compacto Glassmorphism */}
       {mobileMenuOpen && (
         <div
           ref={mobileMenuRef}
           role="dialog"
           aria-label="Menu de navegação mobile"
-          className="mobile-menu-floating sm:hidden absolute inset-x-3.5 top-full mt-2 bg-[#090E0B]/98 backdrop-blur-2xl border border-white/[0.1] rounded-3xl shadow-[0_16px_50px_rgba(0,0,0,0.92),0_0_1px_rgba(37,196,64,0.4)] p-4 max-h-[calc(100vh-80px)] overflow-y-auto z-50 flex flex-col space-y-3.5"
+          className="mobile-menu-floating sm:hidden absolute inset-x-3.5 top-full mt-2.5 rounded-3xl p-4 max-h-[calc(100vh-84px)] overflow-y-auto z-50 flex flex-col space-y-3.5"
         >
+          {/* Cabeçalho Interno do Menu com Botão Fechar em Evidência */}
+          <div className="flex items-center justify-between pb-1.5 border-b border-white/[0.08]">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#A6AEA8]">
+              Navegação
+            </span>
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(false)}
+              aria-label="Fechar menu"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#112316]/80 hover:bg-[#183320] border border-[#25C440]/30 active:scale-95 transition-all text-xs font-semibold text-white shadow-sm cursor-pointer"
+            >
+              <span>Fechar</span>
+              <X className="w-3.5 h-3.5 text-[#25C440] stroke-[2.5]" />
+            </button>
+          </div>
+
           <div className="flex flex-col space-y-1">
             {member ? (
               <div
                 style={{ animationDelay: "40ms" }}
-                className="mobile-menu-item-stagger bg-[#111713] border border-[#25C440]/25 rounded-2xl p-3 mb-1.5 space-y-2 shadow-inner"
+                className="mobile-menu-item-stagger bg-[#101913]/90 border border-[#25C440]/25 rounded-2xl p-3 mb-1.5 space-y-2 shadow-inner"
               >
                 <div className="flex items-center gap-2.5 pb-2 border-b border-white/[0.08]">
                   {member.avatarUrl ? (
@@ -412,7 +434,7 @@ export function Header() {
                 href="/login"
                 onClick={() => setMobileMenuOpen(false)}
                 style={{ animationDelay: "40ms" }}
-                className="mobile-menu-item-stagger text-sm font-bold text-[#25C440] py-2.5 px-3.5 rounded-xl bg-[#111713] border border-[#25C440]/25 hover:bg-[#162019] transition-colors flex items-center justify-between mb-1 shadow-sm"
+                className="mobile-menu-item-stagger text-sm font-bold text-[#25C440] py-2.5 px-3.5 rounded-xl bg-[#101913]/90 border border-[#25C440]/25 hover:bg-[#16251b] transition-colors flex items-center justify-between mb-1 shadow-sm"
               >
                 <span className="flex items-center gap-2">
                   <User className="w-4 h-4 text-[#25C440]" />
@@ -428,7 +450,7 @@ export function Header() {
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
                 style={{ animationDelay: `${(idx + 2) * 35}ms` }}
-                className="mobile-menu-item-stagger text-sm font-medium text-[#F5F7F3] hover:text-[#25C440] py-2.5 px-3.5 rounded-xl hover:bg-white/[0.04] transition-colors flex items-center justify-between group"
+                className="mobile-menu-item-stagger text-sm font-medium text-[#F5F7F3] hover:text-[#25C440] py-2.5 px-3.5 rounded-xl hover:bg-white/[0.06] transition-colors flex items-center justify-between group"
               >
                 <span>{link.label}</span>
                 <span className="text-[#25C440]/60 group-hover:text-[#25C440] group-hover:translate-x-0.5 text-xs transition-all">→</span>
@@ -453,7 +475,7 @@ export function Header() {
             </button>
 
             {/* Contato direto por telefone (endereço físico removido do menu mobile conforme solicitado) */}
-            <div className="flex items-center justify-center text-xs text-[#A6AEA8] bg-white/[0.02] p-2.5 rounded-xl border border-white/[0.05]">
+            <div className="flex items-center justify-center text-xs text-[#A6AEA8] bg-white/[0.03] p-2.5 rounded-xl border border-white/[0.06]">
               <a
                 href="tel:85992227064"
                 className="flex items-center gap-2 hover:text-[#25C440] transition-colors"

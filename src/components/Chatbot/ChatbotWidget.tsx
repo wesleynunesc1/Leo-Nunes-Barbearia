@@ -989,7 +989,21 @@ export function ChatbotWidget() {
   const [showMicroBubble, setShowMicroBubble] = useState(false);
   const [microBubbleKey, setMicroBubbleKey] = useState(0);
   const [hasPulsed, setHasPulsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const bubbleDismissedRef = useRef(false);
+
+  // Monitorar se o menu mobile está aberto para ocultar o botão temporariamente
+  useEffect(() => {
+    const handleMenuStateChange = (e: Event) => {
+      const customEvent = e as CustomEvent<{ open?: boolean }>;
+      setIsMobileMenuOpen(Boolean(customEvent.detail?.open));
+    };
+
+    window.addEventListener("mobileMenuStateChange", handleMenuStateChange);
+    return () => {
+      window.removeEventListener("mobileMenuStateChange", handleMenuStateChange);
+    };
+  }, []);
 
   const prevMemberRef = useRef(member);
 
@@ -2428,17 +2442,13 @@ export function ChatbotWidget() {
   return (
     <>
       {/* Microbalão Animado Saindo do Botão Flutuante */}
-      {!isOpen && showMicroBubble && (
+      {!isOpen && !isMobileMenuOpen && showMicroBubble && (
         <div
           key={`micro-bubble-${microBubbleKey}`}
           role="status"
           aria-live="polite"
           onClick={handleOpenFromBubble}
-          className="bot-micro-bubble fixed z-[58] flex items-center gap-2 pl-3.5 pr-2.5 py-2 bg-[#0B120D]/95 hover:bg-[#121E15] text-[#FFFFFF] border border-[#25C440]/40 rounded-full shadow-[0_8px_25px_rgba(0,0,0,0.85)] cursor-pointer backdrop-blur-md select-none group transition-colors"
-          style={{
-            bottom: "calc(1.5rem + 60px + 7px)", // perfeitamente centralizado verticalmente com o botão de 56px (w-14 h-14)
-            right: "calc(1.5rem + 56px + 12px)", // posicionado imediatamente à esquerda do botão
-          }}
+          className="bot-micro-bubble fixed z-[58] flex items-center gap-2 pl-3.5 pr-2.5 py-2 bg-[#0B120D]/95 hover:bg-[#121E15] text-[#FFFFFF] border border-[#25C440]/40 rounded-full shadow-[0_8px_25px_rgba(0,0,0,0.85)] cursor-pointer backdrop-blur-md select-none group transition-colors bottom-[calc(env(safe-area-inset-bottom,0px)+1rem+7px)] right-[calc(1rem+56px+10px)] sm:bottom-[calc(1.5rem+60px+7px)] sm:right-[calc(1.5rem+56px+12px)]"
           title="Clique para agendar com o assistente"
         >
           {/* Indicador de Status Online */}
@@ -2468,13 +2478,14 @@ export function ChatbotWidget() {
         </div>
       )}
 
-      {/* Botão flutuante */}
+      {/* Botão flutuante (Oculto temporariamente no mobile quando o menu está aberto para não sobrepor opções) */}
       <div
-        className="fixed bottom-6 right-6 z-[60]"
-        style={{ bottom: "calc(1.5rem + 60px)" }} // acima do WhatsApp float
+        className={`fixed z-[60] bottom-[calc(env(safe-area-inset-bottom,0px)+1rem)] right-4 sm:bottom-[calc(1.5rem+60px)] sm:right-6 transition-opacity duration-200 ${
+          isMobileMenuOpen ? "opacity-0 pointer-events-none scale-90 sm:opacity-100 sm:pointer-events-auto sm:scale-100" : "opacity-100 scale-100"
+        }`}
       >
         {/* Anel de Pulso Elegante (Executa sincronizado com o surgimento do microbalão) */}
-        {!isOpen && hasPulsed && (
+        {!isOpen && !isMobileMenuOpen && hasPulsed && (
           <span
             key={`pulse-${microBubbleKey}`}
             className="bot-pulse-ring absolute inset-0 rounded-full border-2 border-[#25C440] pointer-events-none"
