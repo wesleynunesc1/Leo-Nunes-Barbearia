@@ -48,6 +48,7 @@ next-env.d.ts
 
 # reference files
 /Páginas de Ref/
+/EQUIPE/
 /Home.png
 /Home Mobile.png
 # local runtime locks & subscriptions

@@ -29,7 +29,7 @@ export function BarberCard({
           fill
           priority={priority}
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
-          className="object-cover object-top group-hover:scale-[1.035] transition-transform duration-700 ease-out will-change-transform"
+          className="object-cover object-center group-hover:scale-[1.035] transition-transform duration-700 ease-out will-change-transform"
         />
 
         {/* Gradient Overlay for bottom text legibility */}

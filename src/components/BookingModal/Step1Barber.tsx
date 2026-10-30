@@ -62,7 +62,7 @@ export function Step1Barber() {
                   src={barber.photo}
                   alt={`Barbeiro ${barber.name}`}
                   fill
-                  className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                  className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
                   sizes="(max-width: 640px) 50vw, 25vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#080B09] via-[#080B09]/30 to-transparent" />

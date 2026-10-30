@@ -31,7 +31,7 @@ export function TeamCarousel({ barbers }: TeamCarouselProps) {
                 fill
                 priority={index < 2}
                 sizes="(max-width: 768px) 50vw, 220px"
-                className="object-cover object-top group-hover:scale-105 group-active:scale-105 transition-transform duration-500 ease-out will-change-transform"
+                className="object-cover object-center group-hover:scale-105 group-active:scale-105 transition-transform duration-500 ease-out will-change-transform"
               />
 
               {/* Gradiente para contraste */}
@@ -81,7 +81,7 @@ export function TeamCarousel({ barbers }: TeamCarouselProps) {
                 fill
                 priority={index < 2}
                 sizes="270px"
-                className="object-cover object-top group-hover:scale-105 transition-transform duration-700 ease-out will-change-transform"
+                className="object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out will-change-transform"
               />
 
               {/* Gradiente para máxima legibilidade */}

@@ -140,7 +140,7 @@ function BarberCards({ dispatch }: { dispatch: React.Dispatch<ChatbotAction> }) 
               src={barber.photo}
               alt={barber.name}
               fill
-              className="object-cover object-top group-hover:scale-105 transition-transform duration-300"
+              className="object-cover object-center group-hover:scale-105 transition-transform duration-300"
               sizes="160px"
             />
           </div>
@@ -415,7 +415,7 @@ function BookingSummaryCard({ summary }: { summary: NonNullable<ChatMessage["boo
           <div className="flex gap-3 items-center">
             {summary.barberPhoto && (
               <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0 border-2 border-[#25C440]/40">
-                <Image src={summary.barberPhoto} alt={summary.barberName} fill className="object-cover object-top" sizes="48px" />
+                <Image src={summary.barberPhoto} alt={summary.barberName} fill className="object-cover object-center" sizes="48px" />
               </div>
             )}
             <div>

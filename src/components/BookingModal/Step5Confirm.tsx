@@ -152,7 +152,7 @@ export function Step5Confirm() {
         <div className="p-4 sm:p-5 rounded-2xl bg-[#0B100C] border border-[#1E2E21] max-w-md mx-auto text-left space-y-3">
           <div className="flex items-center gap-3 pb-3 border-b border-white/[0.06]">
             <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-[#25C440]/50 shrink-0">
-              <Image src={selectedBarber.photo} alt={selectedBarber.name} fill className="object-cover object-top" sizes="48px" />
+              <Image src={selectedBarber.photo} alt={selectedBarber.name} fill className="object-cover object-center" sizes="48px" />
             </div>
             <div>
               <p className="text-[10px] font-mono uppercase text-[#25C440] font-bold">Barbeiro</p>
@@ -253,7 +253,7 @@ export function Step5Confirm() {
         <div className="p-4 sm:p-5 rounded-2xl bg-[#0B100C] border border-[#2A2412] max-w-md mx-auto text-left space-y-3">
           <div className="flex items-center gap-3 pb-3 border-b border-white/[0.06]">
             <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-[#E6C650]/50 shrink-0">
-              <Image src={selectedBarber.photo} alt={selectedBarber.name} fill className="object-cover object-top" sizes="48px" />
+              <Image src={selectedBarber.photo} alt={selectedBarber.name} fill className="object-cover object-center" sizes="48px" />
             </div>
             <div>
               <p className="text-[10px] font-mono uppercase text-[#E6C650] font-bold">Barbeiro</p>
@@ -485,7 +485,7 @@ export function Step5Confirm() {
                 src={selectedBarber.photo}
                 alt={selectedBarber.name}
                 fill
-                className="object-cover object-top"
+                className="object-cover object-center"
                 sizes="48px"
               />
             </div>

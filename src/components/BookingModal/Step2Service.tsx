@@ -116,7 +116,7 @@ export function Step2Service() {
               src={selectedBarber.photo}
               alt={selectedBarber.name}
               fill
-              className="object-cover object-top"
+              className="object-cover object-center"
               sizes="48px"
             />
           </div>
