@@ -25,6 +25,7 @@ import {
   PointerAura,
 } from "@/components/MotionSystem";
 import { BookingTriggerButton } from "@/components/BookingTriggerButton";
+import { HeroVideo } from "@/components/HeroVideo";
 
 export default async function HomePage() {
   const [barbers, institutional] = await Promise.all([
@@ -44,73 +45,8 @@ export default async function HomePage() {
         {/* Subtle Ambient Mouse Tracking Glow */}
         <PointerAura />
 
-        {/* Desktop Background (md e superiores - Vídeo hero otimizado com fallback poster) */}
-        <div className="hidden md:block absolute inset-0 z-0 select-none pointer-events-none overflow-hidden">
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
-            poster="/images/hero-barbearia-desktop.webp"
-            className="w-full h-full object-cover object-right lg:object-[82%_center] brightness-[0.92] contrast-[1.05]"
-          >
-            <source src="/hero-video.mp4" type="video/mp4" />
-          </video>
-          {/* Gradiente escuro à esquerda para legibilidade máxima da headline */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#080B09] via-[#080B09]/75 to-transparent z-10" />
-          {/* Vinheta superior suave sob o header */}
-          <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[#080B09]/90 via-[#080B09]/30 to-transparent z-10" />
-          {/* Vinheta inferior para fusão com a barra de destaques */}
-          <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#080B09] via-[#080B09]/60 to-transparent z-10" />
-        </div>
-
-        {/* Mobile Background (abaixo de md - Vídeo com enquadramento aberto e fundo ambiente) */}
-        <div className="block md:hidden absolute inset-0 z-0 select-none pointer-events-none overflow-hidden">
-          {/* 1. Camada de Fundo Complementar (Ambient Atmosphere) - Preenchimento harmônico sem bordas vazias */}
-          <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="none"
-              poster="/images/hero-barbearia-mobile.webp"
-              className="w-full h-full object-cover object-center scale-110 blur-2xl opacity-35 brightness-75"
-            >
-              <source src="/hero-video.mp4" type="video/mp4" />
-            </video>
-          </div>
-
-          {/* 2. Camada Principal Focal com Enquadramento Aberto (Preserva a proporção 16:9 original da cena) */}
-          <div
-            className="absolute inset-x-0 top-0 w-full aspect-video overflow-hidden"
-            style={{
-              WebkitMaskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)',
-              maskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)',
-            }}
-          >
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="auto"
-              poster="/images/hero-barbearia-mobile.webp"
-              className="w-full h-full object-cover object-center brightness-[0.98] contrast-[1.05]"
-            >
-              <source src="/hero-video.mp4" type="video/mp4" />
-            </video>
-            {/* Suave fusão inferior extra como fallback */}
-            <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#080B09]/80 to-transparent pointer-events-none" />
-          </div>
-
-          {/* 3. Vinheta Superior Suave sob o header transparente */}
-          <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#080B09]/85 via-[#080B09]/25 to-transparent z-10 pointer-events-none" />
-
-          {/* 4. Gradiente Inferior Calibrado para contraste dos textos, badges e botões */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#080B09] via-[#080B09]/80 via-40% to-transparent z-10 pointer-events-none" />
-        </div>
+        {/* Hero Video Background - Execução contínua ininterrupta (Desktop e Mobile) */}
+        <HeroVideo />
 
         {/* Main Content Area (Left Column Content + Right Floating Tag) */}
         <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-6 sm:pt-12 lg:pt-12 pb-4 sm:pb-6">
