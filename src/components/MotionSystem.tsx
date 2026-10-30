@@ -213,7 +213,7 @@ export function HeroHeadline() {
       {/* Line 1 */}
       <span className="title-line-mask">
         <span className="title-line-inner title-line-delay-1 font-heading text-3xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-[#FFFFFF] leading-[1.1] block">
-          NA LÉO NUNES
+          NA LEO NUNES
         </span>
       </span>
 

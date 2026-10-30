@@ -54,7 +54,7 @@ export interface DynamicInstitutionalData {
 export const DEFAULT_INSTITUTIONAL_DATA: DynamicInstitutionalData = {
   hero: {
     badge: "BARBEARIA EM PACAJUS",
-    headlineLine1: "NA LÉO NUNES",
+    headlineLine1: "NA LEO NUNES",
     headlineLine2: "VOCÊ SAI COM VISUAL ALINHADO",
     subheadline: "Cortes modernos, barbas alinhadas e atendimento pontual no centro de Pacajus.",
   },

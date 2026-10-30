@@ -5,6 +5,7 @@ import { chatbotReducer, createInitialSession, formatDate, formatPrice, parseTot
 import { ChatbotSession, ChatbotAction, ChatMessage, BarberCardData, ServiceCardData, TimeSlotData, MemberBookingItem, ChatButton, RepeatCardData } from "@/types/chatbot";
 import { BARBERS } from "@/data/barbers";
 import { useAuth } from "@/context/AuthContext";
+import { useBooking } from "@/context/BookingContext";
 import { X, MessageCircle, ChevronDown, RotateCcw, Send, Check, CheckCircle2, XCircle, Clock, Clock3, Calendar, Scissors, User, Phone, Mail, AlertCircle, ExternalLink, ChevronRight, Layers, MapPin, Sparkles, RefreshCw } from "lucide-react";
 import Image from "next/image";
 
@@ -970,6 +971,7 @@ function BookingDetailCard({
 
 export function ChatbotWidget() {
   const { member } = useAuth();
+  const { isModalOpen: isBookingModalOpen } = useBooking();
   const [isOpen, setIsOpen] = useState(false);
   const [session, dispatch] = useReducer(chatbotReducer, member, createInitialSession);
   const [slots, setSlots] = useState<TimeSlotData[]>([]);
@@ -1035,7 +1037,7 @@ export function ChatbotWidget() {
       }
     } catch {}
 
-    if (isOpen) return;
+    if (isOpen || isBookingModalOpen) return;
 
     let hideTimer: NodeJS.Timeout | null = null;
     let intervalTimer: NodeJS.Timeout | null = null;
@@ -1099,7 +1101,7 @@ export function ChatbotWidget() {
       if (intervalTimer) clearInterval(intervalTimer);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [isOpen, handleDismissBubble]);
+  }, [isOpen, isBookingModalOpen, handleDismissBubble]);
 
   // Sincronização dinâmica de autenticação (login / logout)
   useEffect(() => {
@@ -2442,7 +2444,7 @@ export function ChatbotWidget() {
   return (
     <>
       {/* Microbalão Animado Saindo do Botão Flutuante */}
-      {!isOpen && !isMobileMenuOpen && showMicroBubble && (
+      {!isOpen && !isMobileMenuOpen && !isBookingModalOpen && showMicroBubble && (
         <div
           key={`micro-bubble-${microBubbleKey}`}
           role="status"
@@ -2478,14 +2480,18 @@ export function ChatbotWidget() {
         </div>
       )}
 
-      {/* Botão flutuante (Oculto temporariamente no mobile quando o menu está aberto para não sobrepor opções) */}
+      {/* Botão flutuante (Oculto completamente quando o BookingModal está aberto ou temporariamente no mobile quando o menu está aberto) */}
       <div
-        className={`fixed z-[60] bottom-[calc(env(safe-area-inset-bottom,0px)+1rem)] right-4 sm:bottom-[calc(1.5rem+60px)] sm:right-6 transition-opacity duration-200 ${
-          isMobileMenuOpen ? "opacity-0 pointer-events-none scale-90 sm:opacity-100 sm:pointer-events-auto sm:scale-100" : "opacity-100 scale-100"
+        className={`fixed z-[60] bottom-[calc(env(safe-area-inset-bottom,0px)+1rem)] right-4 sm:bottom-[calc(1.5rem+60px)] sm:right-6 transition-all duration-200 ${
+          isBookingModalOpen
+            ? "opacity-0 pointer-events-none scale-0 invisible"
+            : isMobileMenuOpen
+            ? "opacity-0 pointer-events-none scale-90 sm:opacity-100 sm:pointer-events-auto sm:scale-100"
+            : "opacity-100 scale-100 visible"
         }`}
       >
         {/* Anel de Pulso Elegante (Executa sincronizado com o surgimento do microbalão) */}
-        {!isOpen && !isMobileMenuOpen && hasPulsed && (
+        {!isOpen && !isMobileMenuOpen && !isBookingModalOpen && hasPulsed && (
           <span
             key={`pulse-${microBubbleKey}`}
             className="bot-pulse-ring absolute inset-0 rounded-full border-2 border-[#25C440] pointer-events-none"
