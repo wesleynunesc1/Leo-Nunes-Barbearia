@@ -44,16 +44,19 @@ export default async function HomePage() {
         {/* Subtle Ambient Mouse Tracking Glow */}
         <PointerAura />
 
-        {/* Desktop Background (md e superiores) */}
-        <div className="hidden md:block absolute inset-0 z-0 select-none pointer-events-none">
-          <Image
-            src="/images/hero-barbearia-desktop.webp"
-            alt="Atendimento premium na Leo Nunes Barbearia"
-            fill
-            priority
-            className="object-cover object-right lg:object-[82%_center] brightness-[0.92] contrast-[1.05]"
-            sizes="(min-width: 768px) 100vw, 1px"
-          />
+        {/* Desktop Background (md e superiores - Vídeo hero otimizado com fallback poster) */}
+        <div className="hidden md:block absolute inset-0 z-0 select-none pointer-events-none overflow-hidden">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            poster="/images/hero-barbearia-desktop.webp"
+            className="w-full h-full object-cover object-right lg:object-[82%_center] brightness-[0.92] contrast-[1.05]"
+          >
+            <source src="/hero-video.mp4" type="video/mp4" />
+          </video>
           {/* Gradiente escuro à esquerda para legibilidade máxima da headline */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#080B09] via-[#080B09]/75 to-transparent z-10" />
           {/* Vinheta superior suave sob o header */}
@@ -62,16 +65,19 @@ export default async function HomePage() {
           <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#080B09] via-[#080B09]/60 to-transparent z-10" />
         </div>
 
-        {/* Mobile Background (abaixo de md - Fundo com claridade natural e nitidez fotográfica) */}
-        <div className="block md:hidden absolute inset-0 z-0 select-none pointer-events-none">
-          <Image
-            src="/images/hero-barbearia-mobile.webp"
-            alt="Atendimento premium na Leo Nunes Barbearia"
-            fill
-            priority
-            className="object-cover object-[center_28%] brightness-[0.98] contrast-[1.05]"
-            sizes="100vw"
-          />
+        {/* Mobile Background (abaixo de md - Vídeo perfeitamente enquadrado para smartphones) */}
+        <div className="block md:hidden absolute inset-0 z-0 select-none pointer-events-none overflow-hidden">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            poster="/images/hero-barbearia-mobile.webp"
+            className="w-full h-full object-cover object-[center_28%] brightness-[0.98] contrast-[1.05]"
+          >
+            <source src="/hero-video.mp4" type="video/mp4" />
+          </video>
           {/* Suave vinheta superior para destacar header transparente */}
           <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#080B09]/70 via-[#080B09]/20 to-transparent z-10 pointer-events-none" />
           {/* Suave vinheta inferior calibrada para acomodar os textos mantendo os barbeiros e cliente visíveis */}
