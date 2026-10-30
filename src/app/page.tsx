@@ -41,7 +41,8 @@ export default async function HomePage() {
       {/* =========================================================================
           HERO SECTION (Header transparente no topo, texto reposicionado no mobile)
          ========================================================================= */}
-      <section className="relative min-h-[82vh] xs:min-h-[86vh] sm:min-h-[68vh] lg:min-h-[70vh] flex flex-col justify-between pt-20 sm:pt-18 lg:pt-20 pb-0 overflow-hidden bg-[#080B09]">
+      {/* Hero: mobile inalterado, desktop ampliado (86vh nos notebooks, 88vh em telas grandes) */}
+      <section className="relative min-h-[82vh] xs:min-h-[86vh] sm:min-h-[68vh] lg:min-h-[86vh] xl:min-h-[88vh] 2xl:min-h-[90vh] flex flex-col justify-between pt-20 sm:pt-18 lg:pt-20 pb-0 overflow-hidden bg-[#080B09]">
         {/* Subtle Ambient Mouse Tracking Glow */}
         <PointerAura />
 
@@ -49,7 +50,7 @@ export default async function HomePage() {
         <HeroVideo />
 
         {/* Main Content Area (Left Column Content + Right Floating Tag) */}
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-6 sm:pt-12 lg:pt-12 pb-4 sm:pb-6">
+        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-6 sm:pt-12 lg:pt-16 pb-4 sm:pb-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
             {/* Left Content (Columns 1-8) - Reposicionado 75px mais para baixo no mobile */}
             <div className="lg:col-span-8 space-y-3 sm:space-y-3.5 text-left pt-16 xs:pt-20 sm:pt-0">

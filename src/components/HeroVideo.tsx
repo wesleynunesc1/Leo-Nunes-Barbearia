@@ -120,7 +120,7 @@ export function HeroVideo() {
               e.currentTarget.play().catch(() => {});
             }
           }}
-          className="w-full h-full object-cover object-right lg:object-[82%_center] brightness-[0.92] contrast-[1.05]"
+          className="w-full h-full object-cover object-[65%_center] brightness-[0.92] contrast-[1.05]"
         >
           <source src="/hero-video.mp4" type="video/mp4" />
         </video>
@@ -191,3 +191,4 @@ export function HeroVideo() {
     </>
   );
 }
+
