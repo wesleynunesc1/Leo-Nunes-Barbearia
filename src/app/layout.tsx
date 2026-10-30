@@ -6,6 +6,7 @@ import { PageTitleChanger } from "@/components/PageTitleChanger";
 import { Providers } from "@/components/Providers";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
+import { ScissorScrollIndicator } from "@/components/ScissorScrollIndicator";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
@@ -191,6 +192,7 @@ export default function RootLayout({
           <ServiceWorkerRegister />
           <PageTitleChanger />
           <Header />
+          <ScissorScrollIndicator />
           <main className="flex-1">{children}</main>
           <Footer />
           <PWAInstallPrompt />

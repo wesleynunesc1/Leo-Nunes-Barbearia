@@ -67,19 +67,27 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   letter-spacing: -0.025em;
 }
 
-/* Custom Scrollbar */
+/* Custom Scrollbar - Barbearia Theme */
 ::-webkit-scrollbar {
-  width: 7px;
+  width: 8px;
 }
 ::-webkit-scrollbar-track {
   background: #080A08;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1E2720;
-  border-radius: 4px;
+  background: linear-gradient(180deg, #1C271F 0%, #25C440 50%, #1C271F 100%);
+  border-radius: 6px;
+  border: 2px solid #080A08;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #25C440;
+  background: #2CD64A;
+  box-shadow: 0 0 10px rgba(37, 196, 64, 0.5);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #25C440 #080A08;
 }
 
 /* Selection */
