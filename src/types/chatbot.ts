@@ -230,6 +230,7 @@ export type ChatbotAction =
   | { type: "SHOW_MY_BOOKINGS" }
   | { type: "SELECT_BOOKING"; booking: MemberBookingItem }
   | { type: "CONFIRM_CANCEL" }
+  | { type: "CLEAR_LOADING_MESSAGES" }
   | { type: "SELECT_RESCHEDULE_DATE"; date: string }
   | { type: "SELECT_RESCHEDULE_TIME"; time: string; metadata?: any }
   | { type: "CONFIRM_RESCHEDULE" }

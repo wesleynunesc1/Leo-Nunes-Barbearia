@@ -940,6 +940,7 @@ export function ChatbotWidget() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showRescheduleDatePicker, setShowRescheduleDatePicker] = useState(false);
   const [hasUnread, setHasUnread] = useState(false);
+  const [isCanceling, setIsCanceling] = useState(false);
 
   const prevMemberRef = useRef(member);
 
@@ -1518,6 +1519,7 @@ export function ChatbotWidget() {
       const nowMs = Date.now();
       const rawUpcoming: MemberBookingItem[] = (data.upcoming || []).map((b: any) => ({
         id: b.id || b._id,
+        bookingId: b.id || b._id,
         serviceId: b.serviceId || b.bookedEntity?.slot?.serviceId,
         serviceName: b.serviceName || b.bookedEntity?.title || "Atendimento na Barbearia",
         barberName: b.barberName || b.bookedEntity?.slot?.resource?.name || "Profissional da Barbearia",
@@ -1716,24 +1718,81 @@ export function ChatbotWidget() {
   };
 
   const executeCancel = async () => {
-    const bookingId = session.activeBookingId;
-    if (!bookingId) return;
-    try {
-      const res = await fetch(`/api/member/bookings/${bookingId}/cancel`, { method: "POST" });
-      const data = await res.json();
+    const booking = session.activeBookingDetail;
+    const bookingId = session.activeBookingId || booking?.id || booking?.bookingId;
+
+    if (!bookingId) {
+      dispatch({ type: "CLEAR_LOADING_MESSAGES" });
       dispatch({
         type: "ADD_MESSAGE",
         message: {
-          id: `cancel-result-${Date.now()}`,
+          id: `cancel-err-${Date.now()}`,
           role: "bot",
-          type: "text",
-          text: data.success
-            ? "✅ Agendamento cancelado com sucesso no Wix Bookings!"
-            : `❌ ${data.error || "Não foi possível cancelar."}`,
+          type: "buttons",
+          text: "Não foi possível identificar o agendamento para cancelamento. Por favor, volte aos seus agendamentos e tente novamente.",
+          buttons: [
+            { id: "SHOW_MY_BOOKINGS", label: "📅 Ver Meus Agendamentos", variant: "primary" },
+            { id: "MAIN_MENU", label: "🏠 Menu Principal", variant: "ghost" },
+          ],
           timestamp: new Date(),
         },
       });
-      if (data.success) {
+      dispatch({ type: "SET_LOADING", loading: false });
+      return;
+    }
+
+    setIsCanceling(true);
+    dispatch({ type: "SET_LOADING", loading: true });
+
+    const controller = new AbortController();
+    const timeoutTimer = setTimeout(() => controller.abort(), 15000); // 15s timeout
+
+    try {
+      const res = await fetch(`/api/member/bookings/${bookingId}/cancel`, {
+        method: "POST",
+        signal: controller.signal,
+        headers: { "Content-Type": "application/json" },
+      });
+
+      clearTimeout(timeoutTimer);
+      const data = await res.json().catch(() => ({}));
+
+      // Remove mensagens de loading pendentes
+      dispatch({ type: "CLEAR_LOADING_MESSAGES" });
+
+      if (res.ok && data.success) {
+        const successText = data.alreadyCanceled
+          ? "Este agendamento já se encontrava cancelado no sistema. ✅"
+          : "Seu agendamento foi cancelado com sucesso! ✅";
+
+        dispatch({
+          type: "ADD_MESSAGE",
+          message: {
+            id: `cancel-result-${Date.now()}`,
+            role: "bot",
+            type: "text",
+            text: successText,
+            timestamp: new Date(),
+          },
+        });
+
+        // 5. ATUALIZAÇÃO AUTOMÁTICA DOS AGENDAMENTOS:
+        // Remove da lista do robô imediatamente
+        setMemberBookings((prev) =>
+          prev.filter((item) => {
+            if (item.id === bookingId || item.bookingId === bookingId) return false;
+            if (
+              item.multiServiceBookingId &&
+              booking?.multiServiceBookingId &&
+              item.multiServiceBookingId === booking.multiServiceBookingId
+            ) {
+              return false;
+            }
+            return true;
+          })
+        );
+
+        // Opções após cancelamento
         setTimeout(() => {
           dispatch({
             type: "ADD_MESSAGE",
@@ -1741,32 +1800,109 @@ export function ChatbotWidget() {
               id: `post-cancel-${Date.now()}`,
               role: "bot",
               type: "buttons",
-              text: "O que mais posso fazer por você?",
+              text: "O que você gostaria de fazer agora?",
               buttons: [
-                { id: "GOTO_STEP:BOOK_BARBER", label: "✂️ Novo Agendamento", variant: "primary" },
-                { id: "MAIN_MENU", label: "🏠 Menu principal", variant: "ghost" },
+                { id: "SHOW_MY_BOOKINGS", label: "📅 Ver Meus Agendamentos", variant: "secondary" },
+                { id: "GOTO_STEP:BOOK_BARBER", label: "✂️ Fazer Novo Agendamento", variant: "primary" },
+                { id: "MAIN_MENU", label: "🏠 Menu Principal", variant: "ghost" },
               ],
               timestamp: new Date(),
             },
           });
-        }, 1000);
+        }, 800);
+      } else {
+        const errorMsg =
+          data.error ||
+          "Não conseguimos concluir o cancelamento agora. Verifique o estado do seu agendamento ou tente novamente.";
+
+        dispatch({
+          type: "ADD_MESSAGE",
+          message: {
+            id: `cancel-err-${Date.now()}`,
+            role: "bot",
+            type: "buttons",
+            text: `❌ ${errorMsg}`,
+            buttons: [
+              { id: "SHOW_MY_BOOKINGS", label: "📅 Ver Meus Agendamentos", variant: "secondary" },
+              { id: "GOTO_WHATSAPP", label: "💬 Falar com a Equipe", variant: "ghost" },
+              { id: "MAIN_MENU", label: "🏠 Menu Principal", variant: "ghost" },
+            ],
+            timestamp: new Date(),
+          },
+        });
       }
-    } catch {
-      dispatch({
-        type: "ADD_MESSAGE",
-        message: {
-          id: `cancel-err-${Date.now()}`,
-          role: "bot",
-          type: "text",
-          text: "❌ Erro de conexão ao cancelar. Tente novamente.",
-          timestamp: new Date(),
-        },
-      });
+    } catch (err: any) {
+      clearTimeout(timeoutTimer);
+      dispatch({ type: "CLEAR_LOADING_MESSAGES" });
+
+      if (err.name === "AbortError") {
+        // Timeout na requisição: NÃO afirmar automaticamente que falhou!
+        // Consultar o estado oficial da reserva antes de concluir
+        try {
+          const verifyRes = await fetch(`/api/member/bookings/${bookingId}`, {
+            headers: { "Cache-Control": "no-cache" },
+          });
+          const verifyData = await verifyRes.json();
+          if (verifyData?.booking?.status === "CANCELED") {
+            dispatch({
+              type: "ADD_MESSAGE",
+              message: {
+                id: `cancel-timeout-success-${Date.now()}`,
+                role: "bot",
+                type: "text",
+                text: "Seu agendamento foi cancelado com sucesso! ✅",
+                timestamp: new Date(),
+              },
+            });
+            setMemberBookings((prev) =>
+              prev.filter((item) => item.id !== bookingId && item.bookingId !== bookingId)
+            );
+            return;
+          }
+        } catch {
+          // Segue para estado incerto
+        }
+
+        dispatch({
+          type: "ADD_MESSAGE",
+          message: {
+            id: `cancel-timeout-${Date.now()}`,
+            role: "bot",
+            type: "buttons",
+            text: "Estamos verificando se o cancelamento foi concluído. Não é necessário solicitar novamente neste momento.\n\nPor favor, consulte seus agendamentos para conferir o status atualizado.",
+            buttons: [
+              { id: "SHOW_MY_BOOKINGS", label: "🔄 Verificar Meus Agendamentos", variant: "primary" },
+              { id: "MAIN_MENU", label: "🏠 Menu Principal", variant: "ghost" },
+            ],
+            timestamp: new Date(),
+          },
+        });
+      } else {
+        dispatch({
+          type: "ADD_MESSAGE",
+          message: {
+            id: `cancel-conn-err-${Date.now()}`,
+            role: "bot",
+            type: "buttons",
+            text: "Não conseguimos concluir o cancelamento agora devido a uma falha de conexão. Verifique o estado do seu agendamento ou tente novamente.",
+            buttons: [
+              { id: "SHOW_MY_BOOKINGS", label: "🔄 Ver Meus Agendamentos", variant: "primary" },
+              { id: "GOTO_WHATSAPP", label: "💬 Falar com a Equipe", variant: "ghost" },
+              { id: "MAIN_MENU", label: "🏠 Menu Principal", variant: "ghost" },
+            ],
+            timestamp: new Date(),
+          },
+        });
+      }
+    } finally {
+      setIsCanceling(false);
+      dispatch({ type: "SET_LOADING", loading: false });
     }
   };
 
   const executeReschedule = async () => {
-    const bookingId = session.activeBookingId;
+    const booking = session.activeBookingDetail;
+    const bookingId = session.activeBookingId || booking?.id || booking?.bookingId;
     if (!bookingId) return;
     try {
       const res = await fetch(`/api/member/bookings/${bookingId}/reschedule`, {
@@ -1929,9 +2065,37 @@ export function ChatbotWidget() {
         return;
       }
       if (actionId === "DO_CANCEL") {
-        dispatch({ type: "ADD_MESSAGE", message: { id: `user-cancel-${Date.now()}`, role: "user", type: "text", text: "❌ Confirmar cancelamento", timestamp: new Date() } });
-        dispatch({ type: "ADD_MESSAGE", message: { id: `loading-cancel-${Date.now()}`, role: "bot", type: "loading", timestamp: new Date() } });
+        if (isCanceling) return;
+        dispatch({ type: "ADD_MESSAGE", message: { id: `user-cancel-${Date.now()}`, role: "user", type: "text", text: "❌ Sim, Cancelar", timestamp: new Date() } });
+        dispatch({ type: "ADD_MESSAGE", message: { id: `loading-cancel-${Date.now()}`, role: "bot", type: "loading", text: "Estamos verificando o cancelamento do seu agendamento...", timestamp: new Date() } });
         await executeCancel();
+        return;
+      }
+      if (actionId === "KEEP_BOOKING") {
+        dispatch({
+          type: "ADD_MESSAGE",
+          message: {
+            id: `user-keep-${Date.now()}`,
+            role: "user",
+            type: "text",
+            text: "✅ Manter Agendamento",
+            timestamp: new Date(),
+          },
+        });
+        dispatch({
+          type: "ADD_MESSAGE",
+          message: {
+            id: `keep-msg-${Date.now()}`,
+            role: "bot",
+            type: "buttons",
+            text: "Perfeito! Seu agendamento continua confirmado e mantido na barbearia. ✂️\n\nO que mais posso fazer por você?",
+            buttons: [
+              { id: "SHOW_MY_BOOKINGS", label: "📅 Ver Meus Agendamentos", variant: "primary" },
+              { id: "MAIN_MENU", label: "🏠 Menu Principal", variant: "ghost" },
+            ],
+            timestamp: new Date(),
+          },
+        });
         return;
       }
       if (actionId === "CONFIRM_RESCHEDULE") {
@@ -2194,10 +2358,11 @@ export function ChatbotWidget() {
           {/* Mensagens */}
           <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-3.5 sm:p-4 space-y-3 sm:space-y-4 overscroll-contain">
             {session.messages.map((msg, idx) => {
-              // Remove mensagens de loading duplicadas (só a última conta)
+              // Remove mensagens de loading quando houver resposta ou quando não for a última
               if (msg.type === "loading") {
                 const isLastLoading = session.messages.slice(idx + 1).every((m) => m.type !== "loading");
-                if (!isLastLoading) return null;
+                const hasMessagesAfter = session.messages.length - 1 > idx;
+                if (!isLastLoading || hasMessagesAfter) return null;
                 return (
                   <div key={msg.id} id={`chat-msg-${msg.id}`} className="flex gap-2">
                     <BotAvatar />
@@ -2211,7 +2376,12 @@ export function ChatbotWidget() {
                   <div key={msg.id} id={`chat-msg-${msg.id}`} className="flex flex-col gap-2">
                     <MessageBubble message={msg} />
                     {msg.buttons && (
-                      <ActionButtons buttons={msg.buttons} onAction={handleButtonAction} />
+                      <ActionButtons
+                        buttons={msg.buttons.map((b) =>
+                          b.id === "DO_CANCEL" ? { ...b, disabled: isCanceling || b.disabled } : b
+                        )}
+                        onAction={handleButtonAction}
+                      />
                     )}
                   </div>
                 );

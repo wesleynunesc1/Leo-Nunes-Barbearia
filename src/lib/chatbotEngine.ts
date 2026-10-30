@@ -659,24 +659,43 @@ export function chatbotReducer(
         ...session,
         step: "BOOKING_DETAIL",
         messages: msgs,
-        activeBookingId: action.booking.bookingId,
+        activeBookingId: action.booking.id || action.booking.bookingId,
         activeBookingDetail: action.booking,
       };
     }
 
     case "CONFIRM_CANCEL": {
+      const booking = session.activeBookingDetail;
+      const sName = booking?.serviceName || "Atendimento na Barbearia";
+      const bName = booking?.barberName || "Profissional da Barbearia";
+      const dDate = booking?.formattedDate || (booking?.date ? formatDate(booking.date) : "Data confirmada");
+      const dTime = booking?.formattedTime || booking?.time || "";
+
       const msgs = [
         ...session.messages,
         userText("❌ Cancelar agendamento"),
         botText(
-          `⚠️ **Tem certeza que deseja cancelar?**\n\nEsta ação não pode ser desfeita. O agendamento será removido da sua agenda.`,
+          `⚠️ **Tem certeza de que deseja cancelar este agendamento?**\n\n` +
+          `📋 **Serviço:** ${sName}\n` +
+          `✂️ **Barbeiro:** ${bName}\n` +
+          `📅 **Data:** ${dDate}\n` +
+          `⏰ **Horário:** ${dTime}\n\n` +
+          `Esta ação cancelará seu horário na agenda oficial da barbearia.`,
           [
-            { id: "DO_CANCEL", label: "❌ Sim, cancelar", variant: "danger" },
-            { id: "BOOKING_DETAIL_BACK", label: "← Voltar", variant: "ghost" },
+            { id: "DO_CANCEL", label: "Sim, Cancelar", variant: "danger" },
+            { id: "KEEP_BOOKING", label: "Manter Agendamento", variant: "primary" },
           ]
         ),
       ];
       return { ...session, step: "CANCEL_CONFIRM", messages: msgs };
+    }
+
+    case "CLEAR_LOADING_MESSAGES": {
+      return {
+        ...session,
+        messages: session.messages.filter((m) => m.type !== "loading"),
+        isLoading: false,
+      };
     }
 
     case "SELECT_RESCHEDULE_DATE": {
