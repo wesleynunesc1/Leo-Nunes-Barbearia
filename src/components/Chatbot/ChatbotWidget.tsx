@@ -5,7 +5,7 @@ import { chatbotReducer, createInitialSession, formatDate, formatPrice, parseTot
 import { ChatbotSession, ChatbotAction, ChatMessage, BarberCardData, ServiceCardData, TimeSlotData, MemberBookingItem, ChatButton } from "@/types/chatbot";
 import { BARBERS } from "@/data/barbers";
 import { useAuth } from "@/context/AuthContext";
-import { X, MessageCircle, ChevronDown, RotateCcw, Send, Check, CheckCircle2, XCircle, Clock, Calendar, Scissors, User, Phone, Mail, AlertCircle, ExternalLink, ChevronRight } from "lucide-react";
+import { X, MessageCircle, ChevronDown, RotateCcw, Send, Check, CheckCircle2, XCircle, Clock, Clock3, Calendar, Scissors, User, Phone, Mail, AlertCircle, ExternalLink, ChevronRight, Layers, MapPin } from "lucide-react";
 import Image from "next/image";
 
 // ─── Constantes ────────────────────────────────────────────────────────────────
@@ -23,14 +23,61 @@ function formatDateBR(dateStr: string) {
 }
 
 function getStatusLabel(status: string) {
+  const s = (status || "").toUpperCase();
   const map: Record<string, { label: string; color: string }> = {
     CONFIRMED: { label: "Confirmado", color: "#25C440" },
     PENDING: { label: "Pendente", color: "#F59E0B" },
     PENDING_APPROVAL: { label: "Aguardando", color: "#F59E0B" },
     CANCELED: { label: "Cancelado", color: "#EF4444" },
+    CANCELED_BY_ADMIN: { label: "Cancelado", color: "#EF4444" },
+    CANCELED_BY_CUSTOMER: { label: "Cancelado", color: "#EF4444" },
     DECLINED: { label: "Recusado", color: "#EF4444" },
   };
-  return map[status] || { label: status, color: "#9BA59E" };
+  return map[s] || { label: status || "Confirmado", color: "#25C440" };
+}
+
+// Agrupamento seguro de múltiplos serviços sob o identificador oficial do Wix
+function groupMultiServiceBookings(bookings: MemberBookingItem[]): MemberBookingItem[] {
+  const groupsMap = new Map<string, MemberBookingItem[]>();
+  const standalone: MemberBookingItem[] = [];
+
+  for (const b of bookings) {
+    if (b.multiServiceBookingId) {
+      const list = groupsMap.get(b.multiServiceBookingId) || [];
+      list.push(b);
+      groupsMap.set(b.multiServiceBookingId, list);
+    } else {
+      standalone.push(b);
+    }
+  }
+
+  const grouped: MemberBookingItem[] = [];
+
+  for (const [, items] of groupsMap.entries()) {
+    if (items.length === 1) {
+      grouped.push(items[0]);
+      continue;
+    }
+
+    items.sort((a, b) => new Date(a.startDate || 0).getTime() - new Date(b.startDate || 0).getTime());
+    const primary = items[0];
+    const serviceNames = items.map((i) => i.serviceName).filter(Boolean);
+    const totalDuration = items.reduce((acc, curr) => acc + (curr.durationMinutes || 0), 0);
+
+    grouped.push({
+      ...primary,
+      serviceName: serviceNames.join(" + "),
+      groupedServices: serviceNames,
+      durationMinutes: totalDuration > 0 ? totalDuration : primary.durationMinutes,
+      canCancel: items.every((i) => i.canCancel !== false),
+      canReschedule: items.every((i) => i.canReschedule !== false),
+    });
+  }
+
+  const combined = [...grouped, ...standalone];
+  // Ordenar por data e horário crescente (mais próximo primeiro)
+  combined.sort((a, b) => new Date(a.startDate || 0).getTime() - new Date(b.startDate || 0).getTime());
+  return combined;
 }
 
 // ─── Sub-componentes ────────────────────────────────────────────────────────────
@@ -513,66 +560,120 @@ function BookingResultCard({ result }: { result: NonNullable<ChatMessage["bookin
   );
 }
 
-// Bookings List
-function BookingsListCard({ bookings, onSelect }: { bookings: MemberBookingItem[]; onSelect: (b: MemberBookingItem) => void }) {
-  if (!bookings.length) {
+// Bookings List (Exclusivamente Agendamentos Futuros Ordenados)
+function BookingsListCard({
+  bookings,
+  onSelect,
+}: {
+  bookings: MemberBookingItem[];
+  onSelect: (b: MemberBookingItem) => void;
+}) {
+  if (!bookings || bookings.length === 0) {
     return (
       <div className="pl-0 sm:pl-8 p-4 bg-[#111712] border border-[#1E2720] rounded-2xl text-xs text-[#9BA59E] text-center">
-        📅 Nenhum agendamento encontrado no sistema.
+        📅 Nenhum agendamento futuro encontrado no momento.
       </div>
     );
   }
 
-  const upcoming = bookings.filter((b) => b.status !== "CANCELED" && b.status !== "DECLINED");
-  const past = bookings.filter((b) => b.status === "CANCELED" || b.status === "DECLINED");
-
   return (
-    <div className="pl-0 sm:pl-8 flex flex-col gap-2">
-      {upcoming.length > 0 && (
-        <>
-          <p className="text-[10px] text-[#25C440] font-bold uppercase tracking-wider">Próximos</p>
-          {upcoming.map((b) => {
-            const status = getStatusLabel(b.status);
-            return (
-              <button
-                key={b.id}
-                onClick={() => onSelect(b)}
-                className="bg-[#111712] border border-[#1E2720] hover:border-[#25C440]/30 hover:bg-[#172019] rounded-xl p-3 text-left transition-all group"
-              >
-                <div className="flex justify-between items-start mb-1">
-                  <p className="text-xs font-bold text-[#E8EDE9] truncate mr-2">{b.serviceName}</p>
-                  <span className="text-[9px] font-bold shrink-0" style={{ color: status.color }}>
-                    {status.label}
+    <div className="pl-0 sm:pl-8 flex flex-col gap-2.5">
+      {bookings.map((b) => {
+        const status = getStatusLabel(b.status);
+        const isGrouped = Boolean(b.multiServiceBookingId || (b.groupedServices && b.groupedServices.length > 1));
+
+        return (
+          <div
+            key={b.id}
+            className="bg-[#0E1510] border border-[#1E2720] hover:border-[#25C440]/40 rounded-2xl p-3.5 transition-all shadow-sm"
+          >
+            {/* Header: Status + Badge de pacote + Preço */}
+            <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-white/[0.05]">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span
+                  className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                  style={{
+                    backgroundColor: `${status.color}15`,
+                    color: status.color,
+                    border: `1px solid ${status.color}35`,
+                  }}
+                >
+                  {status.label}
+                </span>
+
+                {isGrouped && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-[#25C440]/15 text-[#25C440] border border-[#25C440]/30">
+                    <Layers className="w-2.5 h-2.5" />
+                    Pacote Agrupado
                   </span>
-                </div>
-                <div className="flex gap-2 text-[10px] text-[#9BA59E]">
-                  <span>{formatDateBR(b.date)}</span>
-                  <span>•</span>
-                  <span>{b.time}</span>
-                </div>
-                {b.barberName && <p className="text-[10px] text-[#9BA59E] mt-0.5">✂️ {b.barberName}</p>}
-              </button>
-            );
-          })}
-        </>
-      )}
-      {past.length > 0 && (
-        <>
-          <p className="text-[10px] text-[#9BA59E] font-bold uppercase tracking-wider mt-1">Anteriores</p>
-          {past.slice(0, 3).map((b) => {
-            const status = getStatusLabel(b.status);
-            return (
-              <div key={b.id} className="bg-[#0A0E0B] border border-[#161E17] rounded-xl p-3">
-                <div className="flex justify-between items-start mb-1">
-                  <p className="text-xs text-[#6F7B72] truncate mr-2">{b.serviceName}</p>
-                  <span className="text-[9px]" style={{ color: status.color }}>{status.label}</span>
-                </div>
-                <div className="text-[10px] text-[#4A5849]">{formatDateBR(b.date)} • {b.time}</div>
+                )}
               </div>
-            );
-          })}
-        </>
-      )}
+
+              {b.formattedPrice && (
+                <span className="text-[11px] font-bold text-white bg-white/[0.05] px-2 py-0.5 rounded-md border border-white/[0.08]">
+                  {b.formattedPrice}
+                </span>
+              )}
+            </div>
+
+            {/* Informações Principais */}
+            <div className="space-y-1.5">
+              <div>
+                <p className="text-xs font-bold text-white leading-snug">
+                  {b.serviceName}
+                </p>
+                {b.groupedServices && b.groupedServices.length > 1 && (
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {b.groupedServices.map((svc, idx) => (
+                      <span
+                        key={idx}
+                        className="text-[9px] px-1.5 py-0.5 rounded bg-white/[0.04] text-[#A6AEA8] border border-white/[0.06]"
+                      >
+                        {svc}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 text-[11px] text-[#A6AEA8] pt-1">
+                {b.barberName && (
+                  <div className="flex items-center gap-1.5 truncate">
+                    <Scissors className="w-3 h-3 text-[#25C440] shrink-0" />
+                    <span className="truncate">Barbeiro: <strong className="text-[#E8EDE9]">{b.barberName}</strong></span>
+                  </div>
+                )}
+                {b.durationMinutes ? (
+                  <div className="flex items-center gap-1.5">
+                    <Clock className="w-3 h-3 text-[#25C440] shrink-0" />
+                    <span>Duração: <strong className="text-[#E8EDE9]">{b.durationMinutes} min</strong></span>
+                  </div>
+                ) : null}
+                <div className="flex items-center gap-1.5">
+                  <Calendar className="w-3 h-3 text-[#25C440] shrink-0" />
+                  <span className="capitalize">{b.formattedDate || (b.date ? formatDateBR(b.date) : "Data confirmada")}</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Clock3 className="w-3 h-3 text-[#25C440] shrink-0" />
+                  <span>Horário: <strong className="text-[#25C440] font-bold">{b.formattedTime || b.time}</strong></span>
+                </div>
+              </div>
+            </div>
+
+            {/* Botão para visualizar detalhes */}
+            <div className="mt-3 pt-2 border-t border-white/[0.05] flex items-center justify-end">
+              <button
+                type="button"
+                onClick={() => onSelect(b)}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#142618] hover:bg-[#1B3520] border border-[#25C440]/30 hover:border-[#25C440]/60 text-[#25C440] hover:text-white text-xs font-bold transition-all shadow-sm cursor-pointer"
+              >
+                <span>Visualizar Detalhes</span>
+                <span className="text-[10px]">›</span>
+              </button>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -592,60 +693,92 @@ function BookingDetailCard({
   const status = getStatusLabel(booking.status);
   const isCancelable = booking.canCancel && booking.status !== "CANCELED";
   const isReschedulable = booking.canReschedule && booking.status !== "CANCELED";
+  const isGrouped = Boolean(booking.multiServiceBookingId || (booking.groupedServices && booking.groupedServices.length > 1));
 
   return (
     <div className="pl-0 sm:pl-8">
-      <div className="bg-[#0D1410] border border-[#1E2720] rounded-2xl overflow-hidden">
+      <div className="bg-[#0D1410] border border-[#1E2720] rounded-2xl overflow-hidden shadow-md">
         <div className="px-4 py-3 border-b border-[#1A2D1D] flex justify-between items-center">
-          <p className="text-[10px] font-mono uppercase tracking-wider text-[#25C440] font-bold">
-            Detalhe do Agendamento
-          </p>
+          <div className="flex items-center gap-2">
+            <p className="text-[10px] font-mono uppercase tracking-wider text-[#25C440] font-bold">
+              Detalhe do Agendamento
+            </p>
+            {isGrouped && (
+              <span className="text-[9px] px-1.5 py-0.5 rounded bg-[#25C440]/15 text-[#25C440] font-bold">
+                Pacote
+              </span>
+            )}
+          </div>
           <span className="text-[10px] font-bold" style={{ color: status.color }}>{status.label}</span>
         </div>
         <div className="p-4 space-y-3">
           <div>
             <p className="text-xs font-bold text-[#E8EDE9]">{booking.serviceName}</p>
-            {booking.barberName && <p className="text-[10px] text-[#9BA59E]">✂️ {booking.barberName}</p>}
+            {booking.groupedServices && booking.groupedServices.length > 1 && (
+              <div className="flex flex-wrap gap-1 mt-1.5">
+                {booking.groupedServices.map((svc, i) => (
+                  <span key={i} className="text-[10px] px-2 py-0.5 rounded-md bg-white/[0.05] text-[#A6AEA8] border border-white/[0.08]">
+                    {svc}
+                  </span>
+                ))}
+              </div>
+            )}
+            {booking.barberName && <p className="text-[10px] text-[#9BA59E] mt-1">✂️ Barbeiro: <strong className="text-white">{booking.barberName}</strong></p>}
           </div>
-          <div className="grid grid-cols-2 gap-2 text-[11px]">
+
+          <div className="grid grid-cols-2 gap-2 text-[11px] pt-1 border-t border-white/[0.05]">
             <div className="flex items-center gap-1.5">
-              <Calendar className="w-3 h-3 text-[#25C440]" />
-              <span className="text-[#C8D5CA]">{formatDateBR(booking.date)}</span>
+              <Calendar className="w-3.5 h-3.5 text-[#25C440] shrink-0" />
+              <span className="text-[#C8D5CA] capitalize">{booking.formattedDate || (booking.date ? formatDateBR(booking.date) : "Data confirmada")}</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <Clock className="w-3 h-3 text-[#25C440]" />
-              <span className="text-[#C8D5CA]">{booking.time}</span>
+              <Clock3 className="w-3.5 h-3.5 text-[#25C440] shrink-0" />
+              <span className="text-[#25C440] font-bold">{booking.formattedTime || booking.time} (Fuso Fortaleza)</span>
             </div>
+            {booking.durationMinutes ? (
+              <div className="flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-[#25C440] shrink-0" />
+                <span className="text-[#C8D5CA]">{booking.durationMinutes} minutos</span>
+              </div>
+            ) : null}
+            {booking.formattedPrice || booking.price ? (
+              <div className="flex items-center gap-1.5">
+                <span className="text-[#9BA59E]">Valor:</span>
+                <span className="text-[#25C440] font-bold">{booking.formattedPrice || booking.price}</span>
+              </div>
+            ) : null}
           </div>
-          {booking.price && (
-            <div className="flex items-center gap-1.5 text-[11px]">
-              <span className="text-[#9BA59E]">Valor:</span>
-              <span className="text-[#25C440] font-bold">{booking.price}</span>
-            </div>
+
+          {booking.locationName && (
+            <p className="text-[10px] text-[#7B857E] flex items-center gap-1.5 pt-1">
+              <MapPin className="w-3 h-3 text-[#25C440] shrink-0" />
+              <span>{booking.locationName}</span>
+            </p>
           )}
         </div>
+
         <div className="px-4 pb-4 flex flex-col gap-2">
           {isReschedulable && (
             <button
               onClick={onReschedule}
-              className="w-full py-2.5 rounded-xl bg-[#111712] border border-[#25C440]/30 text-[#25C440] text-xs font-bold hover:bg-[#172019] transition-all"
+              className="w-full py-2.5 rounded-xl bg-[#111712] border border-[#25C440]/30 text-[#25C440] text-xs font-bold hover:bg-[#172019] transition-all cursor-pointer"
             >
-              📅 Reagendar
+              📅 Reagendar Horário
             </button>
           )}
           {isCancelable && (
             <button
               onClick={onCancel}
-              className="w-full py-2.5 rounded-xl bg-transparent border border-[#EF4444]/30 text-[#EF4444] text-xs font-bold hover:bg-[#EF4444]/10 transition-all"
+              className="w-full py-2.5 rounded-xl bg-transparent border border-[#EF4444]/30 text-[#EF4444] text-xs font-bold hover:bg-[#EF4444]/10 transition-all cursor-pointer"
             >
               ❌ Cancelar Agendamento
             </button>
           )}
           <button
             onClick={onBack}
-            className="w-full py-2 rounded-xl text-[#9BA59E] text-xs hover:text-[#E8EDE9] transition-all"
+            className="w-full py-2 rounded-xl text-[#9BA59E] text-xs hover:text-[#E8EDE9] transition-all cursor-pointer text-center"
           >
-            ← Voltar à lista
+            ← Voltar à lista de agendamentos
           </button>
         </div>
       </div>
@@ -852,19 +985,18 @@ export function ChatbotWidget() {
   const fetchMemberBookings = async () => {
     try {
       const res = await fetch("/api/member/bookings");
-      const data = await res.json();
 
-      if (res.status === 401 || !data.success) {
-        // Remove loading
+      // 1. Cliente não autenticado
+      if (res.status === 401) {
         dispatch({
           type: "ADD_MESSAGE",
           message: {
             id: `mb-auth-${Date.now()}`,
             role: "bot",
             type: "buttons",
-            text: "🔒 Para consultar seus agendamentos, você precisa estar logado no Wix Members.\n\nFaça login e volte aqui!",
+            text: "Para consultar seus agendamentos, você precisa entrar na sua conta.",
             buttons: [
-              { id: "GOTO_LOGIN", label: "🔑 Fazer Login", variant: "primary" },
+              { id: "GOTO_LOGIN", label: "🔑 Entrar na Minha Conta", variant: "primary" },
               { id: "MAIN_MENU", label: "← Voltar ao Menu", variant: "ghost" },
             ],
             timestamp: new Date(),
@@ -874,35 +1006,124 @@ export function ChatbotWidget() {
         return;
       }
 
-      const allBookings: MemberBookingItem[] = [
-        ...(data.upcoming || []),
-        ...(data.past || []),
-      ].map((b: any) => ({
-        id: b._id || b.id,
-        bookingId: b._id || b.id,
-        serviceName: b.bookedEntity?.title || b.serviceName || "Serviço",
-        barberName: b.bookedEntity?.staffMember?.name || b.barberName || "",
-        date: b.startDate?.split("T")[0] || b.date || "",
-        time: b.startDate ? new Date(b.startDate).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : b.time || "",
+      // 2. Falha de comunicação ou resposta de erro do servidor
+      if (!res.ok) {
+        dispatch({
+          type: "ADD_MESSAGE",
+          message: {
+            id: `mb-err-${Date.now()}`,
+            role: "bot",
+            type: "buttons",
+            text: "Não foi possível carregar seus agendamentos no momento. Por favor, tente novamente.",
+            buttons: [
+              { id: "SHOW_MY_BOOKINGS", label: "🔄 Tentar Novamente", variant: "primary" },
+              { id: "MAIN_MENU", label: "← Voltar ao Menu", variant: "ghost" },
+            ],
+            timestamp: new Date(),
+          },
+        });
+        dispatch({ type: "SET_LOADING", loading: false });
+        return;
+      }
+
+      const data = await res.json();
+      if (!data.success && !Array.isArray(data.upcoming)) {
+        dispatch({
+          type: "ADD_MESSAGE",
+          message: {
+            id: `mb-err-${Date.now()}`,
+            role: "bot",
+            type: "buttons",
+            text: "Não foi possível carregar seus agendamentos no momento. Por favor, tente novamente.",
+            buttons: [
+              { id: "SHOW_MY_BOOKINGS", label: "🔄 Tentar Novamente", variant: "primary" },
+              { id: "MAIN_MENU", label: "← Voltar ao Menu", variant: "ghost" },
+            ],
+            timestamp: new Date(),
+          },
+        });
+        dispatch({ type: "SET_LOADING", loading: false });
+        return;
+      }
+
+      // 3. Regras estritas de filtragem:
+      // - Somente agendamentos futuros (início estritamente posterior ao horário atual: data e hora completas)
+      // - Excluir realizados
+      // - Excluir cancelados e recusados
+      // - Excluir horário já passado hoje
+      // - Preservar agendamentos futuros confirmados e solicitações pendentes futuras
+      const nowMs = Date.now();
+      const rawUpcoming: MemberBookingItem[] = (data.upcoming || []).map((b: any) => ({
+        id: b.id || b._id,
+        serviceId: b.serviceId || b.bookedEntity?.slot?.serviceId,
+        serviceName: b.serviceName || b.bookedEntity?.title || "Atendimento na Barbearia",
+        barberName: b.barberName || b.bookedEntity?.slot?.resource?.name || "Profissional da Barbearia",
+        barberResourceId: b.barberResourceId || b.bookedEntity?.slot?.resource?._id,
+        startDate: b.startDate,
+        endDate: b.endDate || b.startDate,
+        localDate: b.localDate || (b.startDate ? b.startDate.split("T")[0] : ""),
+        localTime: b.localTime || b.formattedTime || (b.startDate ? new Date(b.startDate).toLocaleTimeString("pt-BR", { timeZone: "America/Fortaleza", hour: "2-digit", minute: "2-digit" }) : ""),
+        formattedDate: b.formattedDate || (b.startDate ? formatDateBR(b.startDate.split("T")[0]) : ""),
+        formattedTime: b.formattedTime || b.localTime || (b.startDate ? new Date(b.startDate).toLocaleTimeString("pt-BR", { timeZone: "America/Fortaleza", hour: "2-digit", minute: "2-digit" }) : ""),
+        durationMinutes: b.durationMinutes || 40,
+        formattedPrice: b.formattedPrice || (b.price ? (typeof b.price === "string" ? b.price : `R$ ${b.price}`) : undefined),
         status: b.status || "CONFIRMED",
-        price: b.payment?.price?.formattedAmount || b.price || "",
-        canCancel: b.allowedActions?.cancel !== false,
-        canReschedule: b.allowedActions?.reschedule !== false,
+        paymentStatus: b.paymentStatus,
+        isUpcoming: true,
+        locationName: b.locationName || "Rua Joaquim Nogueira Lopes, 180, Pacajus - CE",
+        multiServiceBookingId:
+          b.multiServiceBookingId ||
+          b.multiServiceBookingInfo?._id ||
+          b.multiServiceBookingInfo?.multiServiceBookingId ||
+          b.multiServiceBooking?.id,
+        canCancel: b.canCancel !== false && b.allowedActions?.cancel !== false,
+        canReschedule: b.canReschedule !== false && b.allowedActions?.reschedule !== false,
       }));
 
-      setMemberBookings(allBookings);
+      const futureList = rawUpcoming.filter((b) => {
+        const startMs = b.startDate ? new Date(b.startDate).getTime() : 0;
+        const statusUpper = (b.status || "").toUpperCase();
+        const isCanceled = ["CANCELED", "DECLINED", "CANCELED_BY_ADMIN", "CANCELED_BY_CUSTOMER"].includes(statusUpper);
+        return startMs > 0 && startMs > nowMs && !isCanceled;
+      });
+
+      // 4. Agrupamento seguro para agendamentos com múltiplos serviços (pacotes do Wix)
+      const groupedList = groupMultiServiceBookings(futureList);
+
+      // Ordenar por data e horário crescente (mais próximo primeiro)
+      groupedList.sort((a, b) => new Date(a.startDate || 0).getTime() - new Date(b.startDate || 0).getTime());
+
+      setMemberBookings(groupedList);
       dispatch({ type: "SET_LOADING", loading: false });
 
+      // 5. Quando não houver agendamentos futuros
+      if (groupedList.length === 0) {
+        dispatch({
+          type: "ADD_MESSAGE",
+          message: {
+            id: `mb-empty-${Date.now()}`,
+            role: "bot",
+            type: "buttons",
+            text: "Você não possui agendamentos futuros no momento. ✂️\n\nQue tal reservar seu próximo horário?",
+            buttons: [
+              { id: "START_BOOKING", label: "✂️ Agendar Horário", variant: "primary" },
+              { id: "MAIN_MENU", label: "← Voltar ao Menu", variant: "ghost" },
+            ],
+            timestamp: new Date(),
+          },
+        });
+        return;
+      }
+
+      // 6. Exibição dos cards compactos dos agendamentos futuros
       dispatch({
         type: "ADD_MESSAGE",
         message: {
           id: `mb-list-${Date.now()}`,
           role: "bot",
           type: "bookings_list",
-          text: allBookings.length > 0
-            ? `📋 Encontrei **${allBookings.length} agendamento(s)**. Toque em um para ver detalhes:`
-            : "📭 Você ainda não possui agendamentos registrados.",
-          bookingsList: allBookings,
+          text: `📋 Encontrei **${groupedList.length} agendamento(s) futuro(s)** na sua conta:`,
+          bookingsList: groupedList,
           timestamp: new Date(),
         },
       });
@@ -912,8 +1133,12 @@ export function ChatbotWidget() {
         message: {
           id: `mb-err-${Date.now()}`,
           role: "bot",
-          type: "text",
-          text: "❌ Não foi possível consultar seus agendamentos. Tente novamente.",
+          type: "buttons",
+          text: "Não foi possível consultar seus agendamentos no momento. Por favor, tente novamente.",
+          buttons: [
+            { id: "SHOW_MY_BOOKINGS", label: "🔄 Tentar Novamente", variant: "primary" },
+            { id: "MAIN_MENU", label: "← Voltar ao Menu", variant: "ghost" },
+          ],
           timestamp: new Date(),
         },
       });
@@ -1144,7 +1369,11 @@ export function ChatbotWidget() {
         return;
       }
       if (actionId === "GOTO_LOGIN") {
-        window.location.href = "/login";
+        window.location.href = "/login?redirect=/minha-conta/agendamentos";
+        return;
+      }
+      if (actionId === "START_BOOKING" || actionId === "BOOK_AGAIN") {
+        dispatch({ type: "GOTO_STEP", step: "BOOK_BARBER" });
         return;
       }
       if (actionId === "DO_CANCEL") {

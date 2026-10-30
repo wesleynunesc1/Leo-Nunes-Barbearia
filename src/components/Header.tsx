@@ -1,17 +1,21 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, Calendar, MapPin, Phone, User } from "lucide-react";
+import { Menu, X, Calendar, MapPin, Phone, User, LogOut } from "lucide-react";
 import { useBooking } from "@/context/BookingContext";
 import { useAuth } from "@/context/AuthContext";
 
 export function Header() {
   const { openBooking } = useBooking();
-  const { member } = useAuth();
+  const { member, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
+  const profileMobileTriggerRef = useRef<HTMLButtonElement>(null);
+  const profileDesktopTriggerRef = useRef<HTMLButtonElement>(null);
   const navLinks = [
     { href: "/#inicio", label: "Início" },
     { href: "/#servicos", label: "Serviços" },
@@ -49,6 +53,48 @@ export function Header() {
       document.body.style.overflow = "";
     };
   }, [mobileMenuOpen]);
+
+  // Fechar menu de perfil ao clicar fora ou pressionar ESC
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent | TouchEvent) {
+      const target = event.target as Node;
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(target) &&
+        !profileMobileTriggerRef.current?.contains(target) &&
+        !profileDesktopTriggerRef.current?.contains(target)
+      ) {
+        setProfileMenuOpen(false);
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setProfileMenuOpen(false);
+      }
+    }
+
+    if (profileMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("touchstart", handleClickOutside, { passive: true });
+      document.addEventListener("keydown", handleKeyDown);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [profileMenuOpen]);
+
+  const memberInitials = member?.name
+    ? member.name
+        .split(" ")
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+    : "LN";
 
   return (
     <header
@@ -108,14 +154,37 @@ export function Header() {
 
           {/* Desktop CTA with Shimmer Beam + Minha Conta */}
           <div className="hidden sm:flex items-center gap-3">
-            <Link
-              href={member ? "/minha-conta" : "/login"}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-[#0D1810]/90 hover:bg-[#142618] border border-white/[0.08] hover:border-[#25C440]/40 text-[#A6AEA8] hover:text-white text-xs font-semibold transition-all shadow-sm"
-              id="header-cta-minha-conta"
-            >
-              <User className="w-3.5 h-3.5 text-[#25C440]" />
-              <span>{member ? member.name.split(" ")[0] : "Minha Conta"}</span>
-            </Link>
+            {member ? (
+              <button
+                ref={profileDesktopTriggerRef}
+                type="button"
+                onClick={() => setProfileMenuOpen((prev) => !prev)}
+                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all shadow-sm cursor-pointer border ${
+                  profileMenuOpen
+                    ? "bg-[#142618] border-[#25C440]/50 text-white shadow-[#25C440]/10"
+                    : "bg-[#0D1810]/90 hover:bg-[#142618] border-white/[0.08] hover:border-[#25C440]/40 text-[#A6AEA8] hover:text-white"
+                }`}
+                id="header-cta-minha-conta"
+                aria-expanded={profileMenuOpen}
+                aria-haspopup="true"
+                aria-label="Menu do Usuário"
+              >
+                <User className="w-3.5 h-3.5 text-[#25C440]" />
+                <span>{member.name.split(" ")[0]}</span>
+                <span className={`text-[8px] text-[#A6AEA8] transition-transform duration-200 ${profileMenuOpen ? "rotate-180" : ""}`}>
+                  ▼
+                </span>
+              </button>
+            ) : (
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-[#0D1810]/90 hover:bg-[#142618] border border-white/[0.08] hover:border-[#25C440]/40 text-[#A6AEA8] hover:text-white text-xs font-semibold transition-all shadow-sm"
+                id="header-cta-minha-conta"
+              >
+                <User className="w-3.5 h-3.5 text-[#25C440]" />
+                <span>Minha Conta</span>
+              </Link>
+            )}
 
             <button
               type="button"
@@ -130,25 +199,50 @@ export function Header() {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="flex sm:hidden items-center gap-2">
-            <Link
-              href={member ? "/minha-conta" : "/login"}
-              className="p-2 text-[#A6AEA8] hover:text-white rounded-lg"
-              aria-label="Minha Conta"
-            >
-              <User className="w-5 h-5 text-[#25C440]" />
-            </Link>
+          <div className="flex sm:hidden items-center gap-1.5">
+            {member ? (
+              <button
+                ref={profileMobileTriggerRef}
+                type="button"
+                onClick={() => {
+                  setProfileMenuOpen((prev) => !prev);
+                  if (mobileMenuOpen) setMobileMenuOpen(false);
+                }}
+                className={`p-2 rounded-xl transition-all active:scale-95 cursor-pointer ${
+                  profileMenuOpen
+                    ? "bg-[#142618] text-[#25C440] ring-1 ring-[#25C440]/50"
+                    : "text-[#A6AEA8] hover:text-white"
+                }`}
+                aria-expanded={profileMenuOpen}
+                aria-haspopup="true"
+                aria-label="Abrir menu do perfil"
+                id="mobile-profile-trigger"
+              >
+                <User className="w-5 h-5 text-[#25C440]" />
+              </button>
+            ) : (
+              <Link
+                href="/login"
+                className="p-2 text-[#A6AEA8] hover:text-white rounded-xl active:scale-95"
+                aria-label="Entrar na Minha Conta"
+              >
+                <User className="w-5 h-5 text-[#25C440]" />
+              </Link>
+            )}
             <button
               type="button"
               onClick={() => openBooking()}
-              className="bg-[#25C440] text-[#080B09] font-bold text-xs px-3 py-2 rounded-md active:scale-95 transition-transform cursor-pointer"
+              className="bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-xs px-3 py-2 rounded-xl active:scale-95 transition-transform cursor-pointer shadow-sm"
             >
               Agendar
             </button>
             <button
               type="button"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-[#A6AEA8] hover:text-[#F5F7F3] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#25C440]"
+              onClick={() => {
+                setMobileMenuOpen(!mobileMenuOpen);
+                if (profileMenuOpen) setProfileMenuOpen(false);
+              }}
+              className="p-2 text-[#A6AEA8] hover:text-[#F5F7F3] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#25C440]"
               aria-expanded={mobileMenuOpen}
               aria-label="Abrir menu de navegação"
               id="mobile-menu-trigger"
@@ -159,21 +253,144 @@ export function Header() {
         </div>
       </div>
 
+      {/* Menu de Perfil Compacto (Mobile & Desktop) */}
+      {profileMenuOpen && member && (
+        <div
+          ref={profileMenuRef}
+          className="absolute right-3 sm:right-6 lg:right-8 top-full mt-1.5 w-[calc(100vw-24px)] max-w-[270px] bg-[#0A0F0C]/98 backdrop-blur-2xl border border-white/[0.1] rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.9),0_0_1px_rgba(37,196,64,0.4)] p-2 z-50 animate-in fade-in slide-in-from-top-1 duration-150"
+          role="menu"
+          aria-label="Menu do Usuário"
+        >
+          {/* Top: Avatar compacto + Nome + Email */}
+          <div className="flex items-center gap-2.5 px-2.5 py-2 border-b border-white/[0.06]">
+            {member.avatarUrl ? (
+              <div className="relative w-8 h-8 rounded-full overflow-hidden ring-1 ring-[#25C440]/40 shrink-0">
+                <Image
+                  src={member.avatarUrl}
+                  alt={member.name}
+                  fill
+                  className="object-cover"
+                  sizes="32px"
+                />
+              </div>
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#25C440]/25 to-[#122517] border border-[#25C440]/40 flex items-center justify-center text-[#25C440] font-bold text-xs shrink-0 shadow-inner">
+                {memberInitials}
+              </div>
+            )}
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-bold text-white truncate leading-tight">
+                {member.name}
+              </p>
+              {member.email && (
+                <p className="text-[10px] text-[#A6AEA8] truncate leading-tight mt-0.5">
+                  {member.email}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Opções organizadas */}
+          <div className="pt-1 space-y-0.5">
+            <Link
+              href="/minha-conta"
+              onClick={() => setProfileMenuOpen(false)}
+              className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-[#C8D5CA] hover:text-white hover:bg-white/[0.05] active:bg-white/[0.08] transition-colors group cursor-pointer"
+            >
+              <User className="w-3.5 h-3.5 text-[#25C440] group-hover:scale-110 transition-transform" />
+              <span>Minha Conta</span>
+            </Link>
+
+            <Link
+              href="/minha-conta/agendamentos"
+              onClick={() => setProfileMenuOpen(false)}
+              className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-[#C8D5CA] hover:text-white hover:bg-white/[0.05] active:bg-white/[0.08] transition-colors group cursor-pointer"
+            >
+              <Calendar className="w-3.5 h-3.5 text-[#25C440] group-hover:scale-110 transition-transform" />
+              <span>Meus Agendamentos</span>
+            </Link>
+
+            <div className="pt-1 mt-1 border-t border-white/[0.06]">
+              <button
+                type="button"
+                onClick={async () => {
+                  setProfileMenuOpen(false);
+                  await logout();
+                }}
+                className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-red-400/90 hover:text-red-300 hover:bg-red-500/10 active:bg-red-500/15 transition-colors group text-left cursor-pointer"
+              >
+                <LogOut className="w-3.5 h-3.5 text-red-400 group-hover:scale-110 transition-transform" />
+                <span>Sair da Conta</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="sm:hidden absolute inset-x-0 top-full max-h-[calc(100vh-100%)] overflow-y-auto bg-[#080B09] border-b border-white/[0.08] px-5 pt-4 pb-8 space-y-4 shadow-2xl animate-in slide-in-from-top duration-200 z-50">
           <div className="flex flex-col space-y-1">
-            <Link
-              href={member ? "/minha-conta" : "/login"}
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-base font-bold text-[#25C440] py-3 px-3.5 rounded-xl bg-[#121813] border border-[#25C440]/25 transition-colors flex items-center justify-between mb-1"
-            >
-              <span className="flex items-center gap-2">
-                <User className="w-4 h-4" />
-                <span>{member ? `Minha Conta (${member.name.split(" ")[0]})` : "Área do Cliente (Entrar / Cadastrar)"}</span>
-              </span>
-              <span className="text-[#25C440] text-xs">→</span>
-            </Link>
+            {member ? (
+              <div className="bg-[#121813] border border-[#25C440]/25 rounded-2xl p-3 mb-2 space-y-2">
+                <div className="flex items-center gap-2.5 pb-2 border-b border-white/[0.08]">
+                  {member.avatarUrl ? (
+                    <div className="relative w-7 h-7 rounded-full overflow-hidden ring-1 ring-[#25C440]/40 shrink-0">
+                      <Image src={member.avatarUrl} alt={member.name} fill className="object-cover" sizes="28px" />
+                    </div>
+                  ) : (
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#25C440]/25 to-[#122517] border border-[#25C440]/40 flex items-center justify-center text-[#25C440] font-bold text-[10px] shrink-0">
+                      {memberInitials}
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-bold text-white truncate">{member.name}</p>
+                    {member.email && <p className="text-[10px] text-[#A6AEA8] truncate">{member.email}</p>}
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-1.5 pt-0.5">
+                  <Link
+                    href="/minha-conta"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="px-2.5 py-1.5 rounded-lg bg-white/[0.04] text-xs font-medium text-[#C8D5CA] hover:text-white flex items-center gap-1.5 justify-center"
+                  >
+                    <User className="w-3 h-3 text-[#25C440]" />
+                    <span>Minha Conta</span>
+                  </Link>
+                  <Link
+                    href="/minha-conta/agendamentos"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="px-2.5 py-1.5 rounded-lg bg-white/[0.04] text-xs font-medium text-[#C8D5CA] hover:text-white flex items-center gap-1.5 justify-center"
+                  >
+                    <Calendar className="w-3 h-3 text-[#25C440]" />
+                    <span>Agendamentos</span>
+                  </Link>
+                </div>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setMobileMenuOpen(false);
+                    await logout();
+                  }}
+                  className="w-full text-center text-[11px] text-red-400 hover:text-red-300 pt-1 border-t border-white/[0.06] flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <LogOut className="w-3 h-3" />
+                  <span>Sair da Conta</span>
+                </button>
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-base font-bold text-[#25C440] py-3 px-3.5 rounded-xl bg-[#121813] border border-[#25C440]/25 transition-colors flex items-center justify-between mb-1"
+              >
+                <span className="flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  <span>Área do Cliente (Entrar / Cadastrar)</span>
+                </span>
+                <span className="text-[#25C440] text-xs">→</span>
+              </Link>
+            )}
 
             {navLinks.map((link) => (
               <Link

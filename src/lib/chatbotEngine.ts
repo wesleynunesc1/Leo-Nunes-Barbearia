@@ -156,7 +156,7 @@ export function chatbotReducer(
           id: msgId(),
           role: "bot" as const,
           type: "loading" as const,
-          text: "Consultando seus agendamentos...",
+          text: "Consultando seus agendamentos futuros...",
           timestamp: new Date(),
         },
       ];

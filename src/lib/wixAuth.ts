@@ -76,6 +76,9 @@ export interface MemberBookingItem {
   isUpcoming: boolean;
   locationName?: string;
   multiServiceBookingId?: string;
+  canCancel?: boolean;
+  canReschedule?: boolean;
+  groupedServices?: string[];
 }
 
 /**
@@ -262,7 +265,15 @@ export async function getMemberBookings(contactId: string): Promise<{
 
       const startDateObj = new Date(b.startDate);
       const endDateObj = b.endDate ? new Date(b.endDate) : startDateObj;
-      const isUpcoming = startDateObj >= now && b.status !== "CANCELED" && b.status !== "DECLINED";
+      const statusUpper = (b.status || "").toUpperCase();
+      const isCanceled =
+        statusUpper === "CANCELED" ||
+        statusUpper === "DECLINED" ||
+        statusUpper === "CANCELED_BY_ADMIN" ||
+        statusUpper === "CANCELED_BY_CUSTOMER";
+
+      // Comparação estrita de data e hora completas com o momento atual (estritamente posterior e não cancelado)
+      const isUpcoming = startDateObj.getTime() > now.getTime() && !isCanceled;
 
       // Formatação no fuso oficial America/Fortaleza
       const dateParts = new Intl.DateTimeFormat("pt-BR", {
@@ -323,6 +334,8 @@ export async function getMemberBookings(contactId: string): Promise<{
           b.multiServiceBookingId ||
           b.multiServiceBooking?.id ||
           undefined,
+        canCancel: b.allowedActions?.cancel !== false && isUpcoming,
+        canReschedule: b.allowedActions?.reschedule !== false && isUpcoming,
       });
     }
 

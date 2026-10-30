@@ -98,15 +98,30 @@ export interface BookingSummaryData {
 
 export interface MemberBookingItem {
   id: string;
-  bookingId: string;
+  bookingId?: string;
+  serviceId?: string;
   serviceName: string;
   barberName?: string;
-  date: string;
-  time: string;
-  status: string;
+  barberResourceId?: string;
+  startDate?: string;
+  endDate?: string;
+  localDate?: string;
+  localTime?: string;
+  formattedDate?: string;
+  formattedTime?: string;
+  date?: string;
+  time?: string;
+  durationMinutes?: number;
+  formattedPrice?: string;
   price?: string;
+  status: string;
+  paymentStatus?: string;
+  isUpcoming?: boolean;
+  locationName?: string;
+  multiServiceBookingId?: string;
   canCancel?: boolean;
   canReschedule?: boolean;
+  groupedServices?: string[];
 }
 
 export interface ChatMessage {
