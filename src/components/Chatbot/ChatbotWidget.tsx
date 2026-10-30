@@ -2,10 +2,10 @@
 
 import React, { useReducer, useCallback, useRef, useEffect, useState } from "react";
 import { chatbotReducer, createInitialSession, formatDate, formatPrice, parseTotalPrice, parseTotalDuration } from "@/lib/chatbotEngine";
-import { ChatbotSession, ChatbotAction, ChatMessage, BarberCardData, ServiceCardData, TimeSlotData, MemberBookingItem, ChatButton } from "@/types/chatbot";
+import { ChatbotSession, ChatbotAction, ChatMessage, BarberCardData, ServiceCardData, TimeSlotData, MemberBookingItem, ChatButton, RepeatCardData } from "@/types/chatbot";
 import { BARBERS } from "@/data/barbers";
 import { useAuth } from "@/context/AuthContext";
-import { X, MessageCircle, ChevronDown, RotateCcw, Send, Check, CheckCircle2, XCircle, Clock, Clock3, Calendar, Scissors, User, Phone, Mail, AlertCircle, ExternalLink, ChevronRight, Layers, MapPin } from "lucide-react";
+import { X, MessageCircle, ChevronDown, RotateCcw, Send, Check, CheckCircle2, XCircle, Clock, Clock3, Calendar, Scissors, User, Phone, Mail, AlertCircle, ExternalLink, ChevronRight, Layers, MapPin, Sparkles, RefreshCw } from "lucide-react";
 import Image from "next/image";
 
 // ─── Constantes ────────────────────────────────────────────────────────────────
@@ -20,6 +20,24 @@ function formatDateBR(dateStr: string) {
   const months = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
   const dt = new Date(y, m - 1, d);
   return `${days[dt.getDay()]}, ${d} de ${months[m - 1]}`;
+}
+
+function getFortalezaDate(offsetDays = 0): string {
+  const now = new Date();
+  const tzDateStr = now.toLocaleString("en-US", { timeZone: "America/Fortaleza" });
+  const tzDate = new Date(tzDateStr);
+  tzDate.setDate(tzDate.getDate() + offsetDays);
+  const year = tzDate.getFullYear();
+  const month = String(tzDate.getMonth() + 1).padStart(2, "0");
+  const day = String(tzDate.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function isSundayDate(dateStr: string): boolean {
+  if (!dateStr) return false;
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const dt = new Date(y, m - 1, d);
+  return dt.getDay() === 0;
 }
 
 function getStatusLabel(status: string) {
@@ -155,7 +173,13 @@ function ActionButtons({ buttons, onAction }: { buttons: ChatButton[]; onAction:
 }
 
 // Cards de Barbeiros
-function BarberCards({ dispatch }: { dispatch: React.Dispatch<ChatbotAction> }) {
+function BarberCards({
+  dispatch,
+  onSelect,
+}: {
+  dispatch: React.Dispatch<ChatbotAction>;
+  onSelect?: (barber: BarberCardData) => void;
+}) {
   const barbers: BarberCardData[] = BARBERS.map((b) => ({
     id: b.id,
     slug: b.slug,
@@ -171,16 +195,20 @@ function BarberCards({ dispatch }: { dispatch: React.Dispatch<ChatbotAction> }) 
       {barbers.map((barber) => (
         <button
           key={barber.id}
-          onClick={() =>
-            dispatch({
-              type: "SELECT_BARBER",
-              barberId: barber.id,
-              barberSlug: barber.slug,
-              barberName: barber.name,
-              barberPhoto: barber.photo,
-            })
-          }
-          className="bg-[#111712] border border-[#1E2720] hover:border-[#25C440]/40 hover:bg-[#172019] rounded-2xl p-3 text-left transition-all duration-150 active:scale-[0.97] group"
+          onClick={() => {
+            if (onSelect) {
+              onSelect(barber);
+            } else {
+              dispatch({
+                type: "SELECT_BARBER",
+                barberId: barber.id,
+                barberSlug: barber.slug,
+                barberName: barber.name,
+                barberPhoto: barber.photo,
+              });
+            }
+          }}
+          className="bg-[#111712] border border-[#1E2720] hover:border-[#25C440]/40 hover:bg-[#172019] rounded-2xl p-3 text-left transition-all duration-150 active:scale-[0.97] group cursor-pointer"
         >
           <div className="relative w-full aspect-square rounded-xl overflow-hidden mb-2 bg-[#0D1410]">
             <Image
@@ -450,13 +478,20 @@ function TimeSlots({
 
 // Booking Summary Card
 function BookingSummaryCard({ summary }: { summary: NonNullable<ChatMessage["bookingSummary"]> }) {
+  const isMulti = summary.services.length > 1;
+
   return (
     <div className="pl-0 sm:pl-8">
-      <div className="bg-[#0D1410] border border-[#25C440]/30 rounded-2xl overflow-hidden">
-        <div className="px-4 py-3 bg-[#111E13] border-b border-[#1A2D1D]">
+      <div className="bg-[#0D1410] border border-[#25C440]/30 rounded-2xl overflow-hidden shadow-lg">
+        <div className="px-4 py-3 bg-[#111E13] border-b border-[#1A2D1D] flex items-center justify-between">
           <p className="text-[10px] font-mono uppercase tracking-widest text-[#25C440] font-bold">
             Resumo do Agendamento
           </p>
+          {isMulti && (
+            <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#25C440]/15 text-[#25C440] font-bold border border-[#25C440]/30 flex items-center gap-1">
+              <Layers className="w-2.5 h-2.5" /> Pacote
+            </span>
+          )}
         </div>
         <div className="p-4 space-y-3">
           <div className="flex gap-3 items-center">
@@ -467,15 +502,15 @@ function BookingSummaryCard({ summary }: { summary: NonNullable<ChatMessage["boo
             )}
             <div>
               <p className="text-xs font-bold text-[#E8EDE9]">{summary.barberName}</p>
-              <p className="text-[10px] text-[#9BA59E]">Profissional</p>
+              <p className="text-[10px] text-[#25C440]">Profissional da barbearia</p>
             </div>
           </div>
 
           <div className="space-y-1.5">
             {summary.services.map((svc, i) => (
-              <div key={i} className="flex justify-between items-center text-xs">
-                <span className="text-[#C8D5CA] truncate mr-2">{svc.name}</span>
-                <span className="text-[#9BA59E] shrink-0">{svc.formattedPrice}</span>
+              <div key={i} className="flex justify-between items-center text-xs bg-[#111712] border border-[#1E2720] rounded-xl px-3 py-2">
+                <span className="text-[#C8D5CA] font-medium truncate mr-2">{svc.name}</span>
+                <span className="text-[#25C440] font-bold shrink-0">{svc.formattedPrice}</span>
               </div>
             ))}
           </div>
@@ -487,7 +522,7 @@ function BookingSummaryCard({ summary }: { summary: NonNullable<ChatMessage["boo
             </div>
             <div className="flex items-center gap-1.5">
               <Clock className="w-3 h-3 text-[#25C440]" />
-              <span className="text-[11px] text-[#E8EDE9]">{summary.time}</span>
+              <span className="text-[11px] text-[#E8EDE9]">{summary.time} (Fortaleza)</span>
             </div>
             <div className="flex items-center gap-1.5">
               <User className="w-3 h-3 text-[#25C440]" />
@@ -499,15 +534,117 @@ function BookingSummaryCard({ summary }: { summary: NonNullable<ChatMessage["boo
             </div>
           </div>
 
+          <div className="pt-2 border-t border-[#1E2720] flex items-center justify-between text-xs">
+            <span className="text-[#9BA59E] text-[10px]">Forma de pagamento:</span>
+            <span className="text-[#25C440] text-[11px] font-bold">Na barbearia ao finalizar</span>
+          </div>
+
           <div className="pt-2 border-t border-[#1E2720] flex justify-between items-center">
             <div>
               <p className="text-[10px] text-[#9BA59E]">Duração estimada</p>
               <p className="text-xs font-bold text-[#E8EDE9]">{summary.totalDuration} minutos</p>
             </div>
             <div className="text-right">
-              <p className="text-[10px] text-[#9BA59E]">Total</p>
+              <p className="text-[10px] text-[#9BA59E]">Total atualizado</p>
               <p className="text-lg font-black text-[#25C440]">{formatPrice(summary.totalPrice)}</p>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Card de Repetição do Último Atendimento
+function RepeatCard({
+  data,
+  onRepeat,
+  onChangeBarber,
+  onChangeServices,
+}: {
+  data: RepeatCardData;
+  onRepeat: () => void;
+  onChangeBarber: () => void;
+  onChangeServices: () => void;
+}) {
+  return (
+    <div className="pl-0 sm:pl-8">
+      <div className="bg-[#0D1410] border border-[#25C440]/30 rounded-2xl overflow-hidden shadow-lg">
+        <div className="px-4 py-3 bg-[#111E13] border-b border-[#1A2D1D] flex items-center justify-between">
+          <p className="text-[10px] font-mono uppercase tracking-widest text-[#25C440] font-bold">
+            Atendimento Anterior Encontrado
+          </p>
+          {data.lastDate && (
+            <span className="text-[10px] text-[#9BA59E]">{formatDateBR(data.lastDate)}</span>
+          )}
+        </div>
+
+        <div className="p-4 space-y-3">
+          {/* Barbeiro */}
+          <div className="flex gap-3 items-center">
+            {data.barberPhoto && (
+              <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0 border-2 border-[#25C440]/40">
+                <Image src={data.barberPhoto} alt={data.barberName} fill className="object-cover object-center" sizes="48px" />
+              </div>
+            )}
+            <div>
+              <p className="text-xs font-bold text-[#E8EDE9]">{data.barberName}</p>
+              <p className="text-[10px] text-[#25C440]">Profissional da barbearia</p>
+            </div>
+          </div>
+
+          {/* Serviços */}
+          <div className="space-y-1.5 pt-1">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[#9BA59E]">Serviço(s) Realizado(s)</p>
+            {data.services.map((svc, i) => (
+              <div key={i} className="flex justify-between items-center text-xs bg-[#111712] border border-[#1E2720] rounded-xl px-3 py-2">
+                <div>
+                  <span className="text-[#E8EDE9] font-medium">{svc.name}</span>
+                  <span className="text-[10px] text-[#9BA59E] block">{svc.durationMinutes} min</span>
+                </div>
+                <span className="text-xs font-bold text-[#25C440]">{svc.formattedPrice}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Total & Duração */}
+          <div className="pt-2 border-t border-[#1E2720] flex justify-between items-center">
+            <div>
+              <p className="text-[10px] text-[#9BA59E]">Duração Total Estimada</p>
+              <p className="text-xs font-bold text-[#E8EDE9]">{data.totalDuration} min</p>
+            </div>
+            <div className="text-right">
+              <p className="text-[10px] text-[#9BA59E]">Valor Atualizado</p>
+              <p className="text-base font-black text-[#25C440]">{data.formattedTotalPrice}</p>
+            </div>
+          </div>
+
+          <div className="text-[9px] text-[#7B857E] bg-white/[0.02] p-2 rounded-lg border border-white/[0.04]">
+            ℹ️ Valores e disponibilidade verificados com base na tabela atual da barbearia.
+          </div>
+        </div>
+
+        {/* Ações */}
+        <div className="px-4 pb-4 flex flex-col gap-2">
+          <button
+            onClick={onRepeat}
+            className="w-full py-2.5 px-4 rounded-xl bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-bold text-xs transition-all active:scale-[0.98] cursor-pointer"
+          >
+            ✂️ Repetir Agendamento
+          </button>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={onChangeBarber}
+              className="py-2 px-3 rounded-xl bg-[#111712] border border-[#1E2720] hover:border-[#25C440]/30 text-[#C8D5CA] hover:text-white text-[11px] font-semibold transition-all cursor-pointer text-center"
+            >
+              Outro Barbeiro
+            </button>
+            <button
+              onClick={onChangeServices}
+              className="py-2 px-3 rounded-xl bg-[#111712] border border-[#1E2720] hover:border-[#25C440]/30 text-[#C8D5CA] hover:text-white text-[11px] font-semibold transition-all cursor-pointer text-center"
+            >
+              Alterar Serviços
+            </button>
           </div>
         </div>
       </div>
@@ -791,7 +928,7 @@ function BookingDetailCard({
 export function ChatbotWidget() {
   const { member } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const [session, dispatch] = useReducer(chatbotReducer, undefined, createInitialSession);
+  const [session, dispatch] = useReducer(chatbotReducer, member, createInitialSession);
   const [slots, setSlots] = useState<TimeSlotData[]>([]);
   const [slotsLoading, setSlotsLoading] = useState(false);
   const [slotsError, setSlotsError] = useState<string>("");
@@ -803,6 +940,21 @@ export function ChatbotWidget() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showRescheduleDatePicker, setShowRescheduleDatePicker] = useState(false);
   const [hasUnread, setHasUnread] = useState(false);
+
+  const prevMemberRef = useRef(member);
+
+  // Sincronização dinâmica de autenticação (login / logout)
+  useEffect(() => {
+    if (prevMemberRef.current && !member) {
+      // Logout: limpa dados cadastrais do estado e reseta para menu convencional
+      dispatch({ type: "SYNC_MEMBER", member: null });
+      dispatch({ type: "MAIN_MENU" });
+    } else if (!prevMemberRef.current && member) {
+      // Login: sincroniza sessão e dados
+      dispatch({ type: "SYNC_MEMBER", member });
+    }
+    prevMemberRef.current = member;
+  }, [member]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -899,6 +1051,317 @@ export function ChatbotWidget() {
       fetchMemberBookings();
     }
   }, [session.step]);
+
+  const findAndShowNextSlots = async (barberSlug: string, serviceWixIds?: string[], barberName?: string) => {
+    setSlotsLoading(true);
+    setSlotsError("");
+    setSlots([]);
+
+    dispatch({
+      type: "ADD_MESSAGE",
+      message: {
+        id: `searching-slots-${Date.now()}`,
+        role: "bot",
+        type: "loading",
+        timestamp: new Date(),
+      },
+    });
+
+    const bName = barberName || BARBERS.find((b) => b.slug === barberSlug)?.name || "Barbeiro";
+    const daysToScan = 7;
+    let foundDate: string | null = null;
+    let foundSlots: TimeSlotData[] = [];
+
+    try {
+      for (let i = 0; i < daysToScan; i++) {
+        const candidateDate = getFortalezaDate(i);
+        if (isSundayDate(candidateDate)) continue;
+
+        const serviceParam = serviceWixIds && serviceWixIds.length > 1
+          ? `serviceIds=${serviceWixIds.join(",")}`
+          : serviceWixIds?.[0]
+          ? `serviceId=${serviceWixIds[0]}`
+          : "";
+
+        try {
+          const res = await fetch(`/api/bookings/slots?date=${candidateDate}&barberSlug=${barberSlug}${serviceParam ? `&${serviceParam}` : ""}`, {
+            headers: { "Cache-Control": "no-cache" },
+          });
+          const data = await res.json();
+          if (data.success && Array.isArray(data.slots)) {
+            const available: TimeSlotData[] = data.slots
+              .filter((s: any) => s.bookable !== false)
+              .map((s: any) => ({
+                time: s.startTime || s.time,
+                available: true,
+                metadata: s,
+              }));
+
+            if (available.length > 0) {
+              foundDate = candidateDate;
+              foundSlots = available;
+              break;
+            }
+          }
+        } catch {
+          // ignora falha pontual do dia e continua a busca
+        }
+      }
+
+      if (foundDate && foundSlots.length > 0) {
+        setSlots(foundSlots);
+        dispatch({ type: "SELECT_DATE", date: foundDate });
+        dispatch({
+          type: "ADD_MESSAGE",
+          message: {
+            id: `next-slots-found-${Date.now()}`,
+            role: "bot",
+            type: "text",
+            text: `⚡ Encontrei os próximos horários disponíveis para **${bName}** em **${formatDateBR(foundDate)}**:\n\nEscolha o melhor horário:`,
+            timestamp: new Date(),
+          },
+        });
+        dispatch({
+          type: "ADD_MESSAGE",
+          message: {
+            id: `choose-other-date-btn-${Date.now()}`,
+            role: "bot",
+            type: "buttons",
+            text: "Prefere escolher outra data no calendário?",
+            buttons: [
+              { id: "SHOW_CUSTOM_DATE_PICKER", label: "📅 Escolher Outra Data", variant: "ghost" },
+              { id: "MAIN_MENU", label: "← Voltar ao Menu", variant: "ghost" },
+            ],
+            timestamp: new Date(),
+          },
+        });
+      } else {
+        dispatch({
+          type: "ADD_MESSAGE",
+          message: {
+            id: `next-slots-empty-${Date.now()}`,
+            role: "bot",
+            type: "buttons",
+            text: `Não encontrei horários disponíveis para **${bName}** nos próximos 7 dias.\n\nVocê pode consultar outra data no calendário:`,
+            buttons: [
+              { id: "SHOW_CUSTOM_DATE_PICKER", label: "📅 Abrir Calendário", variant: "primary" },
+              { id: "MAIN_MENU", label: "← Voltar ao Menu", variant: "ghost" },
+            ],
+            timestamp: new Date(),
+          },
+        });
+      }
+    } catch {
+      setSlotsError("Erro de conexão ao buscar próximos horários.");
+    } finally {
+      setSlotsLoading(false);
+      dispatch({ type: "SET_LOADING", loading: false });
+    }
+  };
+
+  const fetchRepeatLastBooking = async () => {
+    if (!member) {
+      dispatch({
+        type: "ADD_MESSAGE",
+        message: {
+          id: `repeat-auth-${Date.now()}`,
+          role: "bot",
+          type: "buttons",
+          text: "Para repetir seu último agendamento, você precisa entrar na sua conta.",
+          buttons: [
+            { id: "GOTO_LOGIN", label: "🔑 Entrar na Minha Conta", variant: "primary" },
+            { id: "MAIN_MENU", label: "← Voltar ao Menu", variant: "ghost" },
+          ],
+          timestamp: new Date(),
+        },
+      });
+      return;
+    }
+
+    dispatch({
+      type: "ADD_MESSAGE",
+      message: { id: `rep-load-${Date.now()}`, role: "bot", type: "loading", timestamp: new Date() },
+    });
+
+    try {
+      const res = await fetch("/api/member/bookings");
+      if (res.status === 401) {
+        dispatch({
+          type: "ADD_MESSAGE",
+          message: {
+            id: `repeat-auth-${Date.now()}`,
+            role: "bot",
+            type: "buttons",
+            text: "Para repetir seu último agendamento, você precisa entrar na sua conta.",
+            buttons: [
+              { id: "GOTO_LOGIN", label: "🔑 Entrar na Minha Conta", variant: "primary" },
+              { id: "MAIN_MENU", label: "← Voltar ao Menu", variant: "ghost" },
+            ],
+            timestamp: new Date(),
+          },
+        });
+        return;
+      }
+
+      if (!res.ok) {
+        throw new Error("Erro na resposta");
+      }
+
+      const data = await res.json();
+      const pastRaw: any[] = data.past || [];
+      const nowMs = Date.now();
+
+      // Filtra agendamentos passados não cancelados
+      const pastValid = pastRaw.filter((b: any) => {
+        const startMs = b.startDate ? new Date(b.startDate).getTime() : 0;
+        const statusUpper = (b.status || "").toUpperCase();
+        const isCanceled = ["CANCELED", "DECLINED", "CANCELED_BY_ADMIN", "CANCELED_BY_CUSTOMER"].includes(statusUpper);
+        return startMs > 0 && startMs < nowMs && !isCanceled;
+      });
+
+      if (pastValid.length === 0) {
+        dispatch({
+          type: "ADD_MESSAGE",
+          message: {
+            id: `rep-empty-${Date.now()}`,
+            role: "bot",
+            type: "buttons",
+            text: "Você ainda não possui atendimentos anteriores registrados. Vamos agendar seu primeiro horário?",
+            buttons: [
+              { id: "START_BOOKING", label: "✂️ Agendar Agora", variant: "primary" },
+              { id: "MAIN_MENU", label: "← Voltar ao Menu", variant: "ghost" },
+            ],
+            timestamp: new Date(),
+          },
+        });
+        return;
+      }
+
+      // Ordena decrescente (mais recente primeiro)
+      pastValid.sort((a: any, b: any) => new Date(b.startDate || 0).getTime() - new Date(a.startDate || 0).getTime());
+      const latest = pastValid[0];
+
+      // Se fizer parte de um pacote multi-serviço, busca todos os itens desse pacote
+      const multiId = latest.multiServiceBookingId ||
+        latest.multiServiceBookingInfo?._id ||
+        latest.multiServiceBookingInfo?.multiServiceBookingId ||
+        latest.multiServiceBooking?.id;
+
+      let targetBookings = [latest];
+      if (multiId) {
+        targetBookings = pastValid.filter((b: any) => {
+          const itemMultiId = b.multiServiceBookingId ||
+            b.multiServiceBookingInfo?._id ||
+            b.multiServiceBookingInfo?.multiServiceBookingId ||
+            b.multiServiceBooking?.id;
+          return itemMultiId === multiId;
+        });
+      }
+
+      // Identificar barbeiro
+      const rawBarberName = latest.barberName || latest.bookedEntity?.slot?.resource?.name || "";
+      const activeBarber = BARBERS.find((b) =>
+        b.name.toLowerCase().trim() === rawBarberName.toLowerCase().trim() ||
+        b.slug.toLowerCase() === rawBarberName.toLowerCase()
+      );
+
+      if (!activeBarber) {
+        dispatch({
+          type: "ADD_MESSAGE",
+          message: {
+            id: `rep-barber-inactive-${Date.now()}`,
+            role: "bot",
+            type: "buttons",
+            text: `Encontrei seu último atendimento com **${rawBarberName || "Barbeiro"}**, mas este profissional não está disponível no momento.\n\nGostaria de escolher outro barbeiro para realizar o seu atendimento?`,
+            buttons: [
+              { id: "GOTO_STEP:BOOK_BARBER", label: "✂️ Escolher Outro Barbeiro", variant: "primary" },
+              { id: "MAIN_MENU", label: "← Voltar ao Menu", variant: "ghost" },
+            ],
+            timestamp: new Date(),
+          },
+        });
+        return;
+      }
+
+      // Mapear serviços do atendimento anterior para o catálogo atual do barbeiro ativo
+      const activeServices: typeof activeBarber.services = [];
+      for (const b of targetBookings) {
+        const sName = (b.serviceName || b.bookedEntity?.title || "").toLowerCase().trim();
+        const sWixId = b.serviceId || b.bookedEntity?.slot?.serviceId;
+
+        const foundService = activeBarber.services.find(
+          (s) => (sWixId && s.wixServiceId === sWixId) || s.name.toLowerCase().trim() === sName
+        );
+        if (foundService && !activeServices.some((s) => s.id === foundService.id)) {
+          activeServices.push(foundService);
+        }
+      }
+
+      if (activeServices.length === 0) {
+        dispatch({
+          type: "ADD_MESSAGE",
+          message: {
+            id: `rep-svc-inactive-${Date.now()}`,
+            role: "bot",
+            type: "buttons",
+            text: `Os serviços do seu último atendimento com **${activeBarber.name}** foram alterados ou atualizados em nosso catálogo.\n\nPor favor, escolha os serviços desejados na lista atualizada:`,
+            buttons: [
+              { id: "GOTO_STEP:BOOK_SERVICE", label: "✂️ Escolher Serviços", variant: "primary" },
+              { id: "MAIN_MENU", label: "← Voltar ao Menu", variant: "ghost" },
+            ],
+            timestamp: new Date(),
+          },
+        });
+        return;
+      }
+
+      // Calcular valores e durações ATUALIZADOS
+      const totalPrice = activeServices.reduce((sum, s) => sum + s.price, 0);
+      const totalDuration = activeServices.reduce((sum, s) => sum + s.durationMinutes, 0);
+
+      const repeatCard: RepeatCardData = {
+        barberId: activeBarber.id,
+        barberSlug: activeBarber.slug,
+        barberName: activeBarber.name,
+        barberPhoto: activeBarber.photo,
+        services: activeServices.map((s) => ({
+          id: s.id,
+          wixServiceId: s.wixServiceId,
+          name: s.name,
+          price: s.price,
+          formattedPrice: s.formattedPrice,
+          durationMinutes: s.durationMinutes,
+        })),
+        totalPrice,
+        formattedTotalPrice: formatPrice(totalPrice),
+        totalDuration,
+        isMultiService: activeServices.length > 1,
+        lastDate: latest.startDate ? latest.startDate.split("T")[0] : undefined,
+      };
+
+      dispatch({
+        type: "SHOW_REPEAT_CARD",
+        data: repeatCard,
+      });
+    } catch {
+      dispatch({
+        type: "ADD_MESSAGE",
+        message: {
+          id: `rep-err-${Date.now()}`,
+          role: "bot",
+          type: "buttons",
+          text: "Não foi possível carregar seu histórico de agendamentos no momento. Deseja iniciar um novo agendamento?",
+          buttons: [
+            { id: "START_BOOKING", label: "✂️ Iniciar Agendamento", variant: "primary" },
+            { id: "MAIN_MENU", label: "← Voltar ao Menu", variant: "ghost" },
+          ],
+          timestamp: new Date(),
+        },
+      });
+    } finally {
+      dispatch({ type: "SET_LOADING", loading: false });
+    }
+  };
 
   const fetchSlots = async (barberSlug: string, date: string, serviceWixIds?: string[]) => {
     setSlotsLoading(true);
@@ -1376,6 +1839,95 @@ export function ChatbotWidget() {
         dispatch({ type: "GOTO_STEP", step: "BOOK_BARBER" });
         return;
       }
+      if (actionId === "REPEAT_LAST_BOOKING") {
+        await fetchRepeatLastBooking();
+        return;
+      }
+      if (actionId === "FIND_NEXT_SLOT") {
+        dispatch({ type: "FIND_NEXT_SLOT" });
+        return;
+      }
+      if (actionId === "EDIT_CUSTOMER_DATA") {
+        dispatch({ type: "EDIT_CUSTOMER_DATA" });
+        return;
+      }
+      if (actionId === "CONFIRM_REPEAT_SLOTS") {
+        const repeatData = session.repeatCardData;
+        if (!repeatData) return;
+        dispatch({
+          type: "SELECT_BARBER",
+          barberId: repeatData.barberId,
+          barberSlug: repeatData.barberSlug,
+          barberName: repeatData.barberName,
+          barberPhoto: repeatData.barberPhoto || "",
+        });
+        for (const svc of repeatData.services) {
+          dispatch({
+            type: "TOGGLE_SERVICE",
+            serviceId: svc.id,
+            wixServiceId: svc.wixServiceId,
+            name: svc.name,
+            price: svc.price,
+            duration: svc.durationMinutes,
+            formattedPrice: svc.formattedPrice,
+          });
+        }
+        await findAndShowNextSlots(
+          repeatData.barberSlug,
+          repeatData.services.map((s) => s.wixServiceId).filter(Boolean) as string[],
+          repeatData.barberName
+        );
+        return;
+      }
+      if (actionId === "CHANGE_REPEAT_BARBER") {
+        dispatch({ type: "GOTO_STEP", step: "BOOK_BARBER" });
+        return;
+      }
+      if (actionId === "CHANGE_REPEAT_SERVICES") {
+        const repeatData = session.repeatCardData;
+        if (repeatData) {
+          dispatch({
+            type: "SELECT_BARBER",
+            barberId: repeatData.barberId,
+            barberSlug: repeatData.barberSlug,
+            barberName: repeatData.barberName,
+            barberPhoto: repeatData.barberPhoto || "",
+          });
+        }
+        dispatch({ type: "GOTO_STEP", step: "BOOK_SERVICE" });
+        return;
+      }
+      if (actionId === "SHOW_CUSTOM_DATE_PICKER") {
+        setShowDatePicker(true);
+        dispatch({
+          type: "ADD_MESSAGE",
+          message: {
+            id: `date-picker-${Date.now()}`,
+            role: "bot",
+            type: "text",
+            text: "📅 Escolha uma data no calendário:",
+            timestamp: new Date(),
+          },
+        });
+        dispatch({ type: "GOTO_STEP", step: "BOOK_DATE" });
+        return;
+      }
+      if (actionId === "CONFIRM_MULTI_PACKAGE") {
+        const text = encodeURIComponent(
+          `Olá! Gostaria de confirmar meu agendamento na Léo Nunes Barbearia:\n\n` +
+          `✂️ Barbeiro: ${session.selectedBarberName}\n` +
+          `📋 Serviços: ${(session.selectedServiceNames || []).join(" + ")}\n` +
+          `📅 Data: ${formatDateBR(session.selectedDate || "")}\n` +
+          `⏰ Horário: ${session.selectedTime} (Fortaleza)\n` +
+          `👤 Nome: ${session.customerName}\n` +
+          `📱 Telefone: ${session.customerPhone}\n` +
+          `💰 Total: ${formatPrice(parseTotalPrice(session))}\n` +
+          `💳 Forma de Pagamento: Na barbearia ao finalizar\n\n` +
+          `Por favor, confirmem o encaixe para mim!`
+        );
+        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, "_blank");
+        return;
+      }
       if (actionId === "DO_CANCEL") {
         dispatch({ type: "ADD_MESSAGE", message: { id: `user-cancel-${Date.now()}`, role: "user", type: "text", text: "❌ Confirmar cancelamento", timestamp: new Date() } });
         dispatch({ type: "ADD_MESSAGE", message: { id: `loading-cancel-${Date.now()}`, role: "bot", type: "loading", timestamp: new Date() } });
@@ -1669,7 +2221,37 @@ export function ChatbotWidget() {
                 return (
                   <div key={msg.id} id={`chat-msg-${msg.id}`} className="flex flex-col gap-2">
                     <MessageBubble message={{ ...msg, type: "text" }} />
-                    <BarberCards dispatch={dispatch} />
+                    <BarberCards
+                      dispatch={dispatch}
+                      onSelect={
+                        session.step === "FIND_NEXT_SLOT"
+                          ? (barber) => {
+                              dispatch({
+                                type: "SELECT_BARBER",
+                                barberId: barber.id,
+                                barberSlug: barber.slug,
+                                barberName: barber.name,
+                                barberPhoto: barber.photo,
+                              });
+                              findAndShowNextSlots(barber.slug, [], barber.name);
+                            }
+                          : undefined
+                      }
+                    />
+                  </div>
+                );
+              }
+
+              if (msg.type === "repeat_card" && msg.repeatCard) {
+                return (
+                  <div key={msg.id} id={`chat-msg-${msg.id}`} className="flex flex-col gap-2">
+                    {msg.text && <MessageBubble message={{ ...msg, type: "text" }} />}
+                    <RepeatCard
+                      data={msg.repeatCard}
+                      onRepeat={() => handleButtonAction("CONFIRM_REPEAT_SLOTS")}
+                      onChangeBarber={() => handleButtonAction("CHANGE_REPEAT_BARBER")}
+                      onChangeServices={() => handleButtonAction("CHANGE_REPEAT_SERVICES")}
+                    />
                   </div>
                 );
               }

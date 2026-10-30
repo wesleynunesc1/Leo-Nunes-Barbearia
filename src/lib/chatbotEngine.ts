@@ -59,18 +59,50 @@ const BTN_SERVICES: ChatButton = { id: "SHOW_SERVICES_MENU", label: "💈 Ver Se
 
 // ─── Estado inicial ───────────────────────────────────────────────────────────
 
-export function createInitialSession(): ChatbotSession {
+export function createInitialSession(member?: any): ChatbotSession {
+  if (member && member.name) {
+    const firstName = member.name.trim().split(" ")[0];
+    const welcome = botText(
+      `Olá, **${firstName}**! 👋 Que bom ter você de volta à **Léo Nunes Barbearia**.\n\nJá tenho seus dados de cadastro. Como posso ajudar hoje?`
+    );
+    const menu = buildMainMenu(member);
+    return {
+      step: "MAIN_MENU",
+      messages: [welcome, menu],
+      customerName: member.name,
+      customerEmail: member.email || "",
+      customerPhone: member.phone || "",
+    };
+  }
+
   const welcome = botText(
     "Olá! Seja bem-vindo à **Léo Nunes Barbearia** ✂️\n\nSou o assistente virtual da barbearia. Como posso te ajudar hoje?"
   );
-  const menu = buildMainMenu();
+  const menu = buildMainMenu(null);
   return {
     step: "MAIN_MENU",
     messages: [welcome, menu],
   };
 }
 
-function buildMainMenu(): ChatMessage {
+export function buildMainMenu(member?: any): ChatMessage {
+  if (member && member.name) {
+    return {
+      id: msgId(),
+      role: "bot",
+      type: "buttons",
+      text: "Escolha uma das opções abaixo:",
+      buttons: [
+        { id: "GOTO_STEP:BOOK_BARBER", label: "✂️ Agendar Horário", variant: "primary" },
+        { id: "REPEAT_LAST_BOOKING", label: "🔁 Repetir Meu Último Agendamento", variant: "primary" },
+        { id: "FIND_NEXT_SLOT", label: "⚡ Encontrar Próximo Horário", variant: "secondary" },
+        { id: "SHOW_MY_BOOKINGS", label: "📅 Meus Agendamentos", variant: "secondary" },
+        { id: "GOTO_WHATSAPP", label: "💬 Falar com a Equipe", variant: "ghost" },
+      ],
+      timestamp: new Date(),
+    };
+  }
+
   return {
     id: msgId(),
     role: "bot",
@@ -95,13 +127,13 @@ export function chatbotReducer(
 ): ChatbotSession {
   switch (action.type) {
     case "RESTART":
-      return createInitialSession();
+      return createInitialSession(session.customerName ? { name: session.customerName, email: session.customerEmail, phone: session.customerPhone } : null);
 
     case "MAIN_MENU": {
       const msgs = [
         ...session.messages,
         userText("🏠 Menu Principal"),
-        buildMainMenu(),
+        buildMainMenu(session.customerName ? { name: session.customerName } : null),
       ];
       return { ...session, step: "MAIN_MENU", messages: msgs };
     }
@@ -161,6 +193,133 @@ export function chatbotReducer(
         },
       ];
       return { ...session, step: "MY_BOOKINGS", messages: msgs, isLoading: true };
+    }
+
+    case "REPEAT_LAST_BOOKING": {
+      const msgs = [
+        ...session.messages,
+        userText("🔁 Repetir Meu Último Agendamento"),
+        {
+          id: msgId(),
+          role: "bot" as const,
+          type: "loading" as const,
+          text: "Consultando seu histórico oficial na barbearia...",
+          timestamp: new Date(),
+        },
+      ];
+      return { ...session, step: "REPEAT_PROMPT", messages: msgs, isLoading: true };
+    }
+
+    case "SHOW_REPEAT_CARD": {
+      const msgs = [
+        ...session.messages.filter((m) => m.type !== "loading"),
+        botText("Encontrei seu último atendimento! ✂️\n\nQuer repetir o mesmo serviço com seu barbeiro?"),
+        {
+          id: msgId(),
+          role: "bot" as const,
+          type: "repeat_card" as const,
+          repeatCard: action.data,
+          timestamp: new Date(),
+        },
+      ];
+      return {
+        ...session,
+        step: "REPEAT_PROMPT",
+        messages: msgs,
+        isLoading: false,
+        repeatCardData: action.data,
+      };
+    }
+
+    case "FIND_NEXT_SLOT": {
+      const msgs = [
+        ...session.messages,
+        userText("⚡ Encontrar Próximo Horário"),
+        botText("Com qual barbeiro você deseja encontrar o próximo horário disponível?"),
+        {
+          id: msgId(),
+          role: "bot" as const,
+          type: "barber_cards" as const,
+          timestamp: new Date(),
+        },
+      ];
+      return {
+        ...session,
+        step: "FIND_NEXT_SLOT",
+        messages: msgs,
+      };
+    }
+
+    case "EDIT_CUSTOMER_DATA": {
+      const msgs = [
+        ...session.messages,
+        userText("✏️ Alterar Meus Dados"),
+        botText("Por favor, digite seu **nome completo**:"),
+        {
+          id: msgId(),
+          role: "bot" as const,
+          type: "input_request" as const,
+          inputRequest: {
+            placeholder: "Seu nome completo",
+            type: "text" as const,
+            validation: "name" as const,
+          },
+          timestamp: new Date(),
+        },
+      ];
+      return {
+        ...session,
+        step: "BOOK_CUSTOMER_NAME",
+        messages: msgs,
+      };
+    }
+
+    case "SYNC_MEMBER": {
+      const member = action.member;
+      if (member && member.name) {
+        const firstName = member.name.trim().split(" ")[0];
+        const isFresh = session.messages.length <= 2 && (session.step === "MAIN_MENU" || session.step === "WELCOME");
+        if (isFresh) {
+          const welcome = botText(
+            `Olá, **${firstName}**! 👋 Que bom ter você de volta à **Léo Nunes Barbearia**.\n\nJá tenho seus dados de cadastro. Como posso ajudar hoje?`
+          );
+          const menu = buildMainMenu(member);
+          return {
+            ...session,
+            step: "MAIN_MENU",
+            messages: [welcome, menu],
+            customerName: member.name,
+            customerEmail: member.email || "",
+            customerPhone: member.phone || "",
+          };
+        }
+        return {
+          ...session,
+          customerName: session.customerName || member.name,
+          customerEmail: session.customerEmail || member.email || "",
+          customerPhone: session.customerPhone || member.phone || "",
+        };
+      } else {
+        const isFresh = session.messages.length <= 2 && (session.step === "MAIN_MENU" || session.step === "WELCOME");
+        const msgs = isFresh
+          ? [
+              botText("Olá! Seja bem-vindo à **Léo Nunes Barbearia** ✂️\n\nSou o assistente virtual da barbearia. Como posso te ajudar hoje?"),
+              buildMainMenu(null),
+            ]
+          : session.messages;
+
+        return {
+          ...session,
+          customerName: undefined,
+          customerEmail: undefined,
+          customerPhone: undefined,
+          activeBookingId: undefined,
+          activeBookingDetail: undefined,
+          repeatCardData: undefined,
+          messages: msgs,
+          step: isFresh ? "MAIN_MENU" : session.step,
+        };
+      }
     }
 
     case "GOTO_WHATSAPP": {
@@ -306,8 +465,82 @@ export function chatbotReducer(
     }
 
     case "SELECT_TIME": {
-      const totalPrice = (session.selectedServicePrices || []).reduce((s, p) => s + p, 0);
-      const totalDuration = (session.selectedServiceDurations || []).reduce((s, d) => s + d, 0);
+      const hasValidName = Boolean(session.customerName && session.customerName.trim().length >= 2);
+      const hasValidPhone = Boolean(session.customerPhone && session.customerPhone.trim().replace(/\D/g, "").length >= 8);
+
+      if (hasValidName && hasValidPhone) {
+        // Cliente autenticado com cadastro completo: não pedir novamente dados válidos
+        const sessionWithTime = {
+          ...session,
+          selectedTime: action.time,
+          selectedSlotMetadata: action.metadata,
+          isLoading: false,
+        };
+        return buildConfirmStep(sessionWithTime, session.customerEmail || "", true);
+      }
+
+      if (hasValidName && !hasValidPhone) {
+        // Nome disponível mas telefone ausente: solicitar apenas o telefone com DDD
+        const firstName = session.customerName!.trim().split(" ")[0];
+        const msgs = [
+          ...session.messages,
+          userText(`⏰ ${action.time}`),
+          botText(
+            `${firstName}, encontrei sua conta! Para continuar e confirmar seu agendamento, só preciso confirmar seu telefone com DDD:\nEx: (85) 99999-9999`
+          ),
+          {
+            id: msgId(),
+            role: "bot" as const,
+            type: "input_request" as const,
+            inputRequest: {
+              placeholder: "(85) 99999-9999",
+              type: "tel" as const,
+              validation: "phone" as const,
+            },
+            timestamp: new Date(),
+          },
+        ];
+        return {
+          ...session,
+          step: "BOOK_CUSTOMER_PHONE",
+          messages: msgs,
+          selectedTime: action.time,
+          selectedSlotMetadata: action.metadata,
+          isLoading: false,
+        };
+      }
+
+      if (!hasValidName && hasValidPhone) {
+        // Telefone cadastrado mas nome ausente: solicitar apenas o nome
+        const msgs = [
+          ...session.messages,
+          userText(`⏰ ${action.time}`),
+          botText(
+            `Horário **${action.time}** selecionado para **${formatDate(session.selectedDate || "")}**.\n\nPor favor, informe seu **nome completo**:`
+          ),
+          {
+            id: msgId(),
+            role: "bot" as const,
+            type: "input_request" as const,
+            inputRequest: {
+              placeholder: "Seu nome completo",
+              type: "text" as const,
+              validation: "name" as const,
+            },
+            timestamp: new Date(),
+          },
+        ];
+        return {
+          ...session,
+          step: "BOOK_CUSTOMER_NAME",
+          messages: msgs,
+          selectedTime: action.time,
+          selectedSlotMetadata: action.metadata,
+          isLoading: false,
+        };
+      }
+
+      // Cliente sem cadastro prévio: fluxo padrão
       const msgs = [
         ...session.messages,
         userText(`⏰ ${action.time}`),
@@ -337,6 +570,11 @@ export function chatbotReducer(
     }
 
     case "SET_CUSTOMER_NAME": {
+      const hasValidPhone = Boolean(session.customerPhone && session.customerPhone.trim().replace(/\D/g, "").length >= 8);
+      if (hasValidPhone) {
+        return buildConfirmStep({ ...session, customerName: action.name }, session.customerEmail || "", true);
+      }
+
       const msgs = [
         ...session.messages,
         userText(action.name),
@@ -357,6 +595,11 @@ export function chatbotReducer(
     }
 
     case "SET_CUSTOMER_PHONE": {
+      const hasValidName = Boolean(session.customerName && session.customerName.trim().length >= 2);
+      if (hasValidName) {
+        return buildConfirmStep({ ...session, customerPhone: action.phone }, session.customerEmail || "", true);
+      }
+
       const msgs = [
         ...session.messages,
         userText(action.phone),
@@ -499,9 +742,10 @@ export function chatbotReducer(
 
 // ─── Funções auxiliares ────────────────────────────────────────────────────────
 
-function buildConfirmStep(session: ChatbotSession, email: string): ChatbotSession {
+function buildConfirmStep(session: ChatbotSession, email: string, isAutoFilled?: boolean): ChatbotSession {
   const totalPrice = (session.selectedServicePrices || []).reduce((s, p) => s + p, 0);
   const totalDuration = (session.selectedServiceDurations || []).reduce((s, d) => s + d, 0);
+  const isMulti = (session.selectedServiceIds || []).length > 1;
 
   const summary = {
     barberName: session.selectedBarberName || "",
@@ -520,9 +764,27 @@ function buildConfirmStep(session: ChatbotSession, email: string): ChatbotSessio
     customerEmail: email,
   };
 
+  const confirmText = isAutoFilled
+    ? "Identifiquei sua conta e preenchi seus dados cadastrados. Confira todos os detalhes do seu agendamento antes de confirmar:"
+    : "Revise os detalhes do seu agendamento antes de confirmar:";
+
+  const confirmButtons: ChatButton[] = isMulti
+    ? [
+        { id: "CONFIRM_MULTI_PACKAGE", label: "💬 Confirmar Pacote via WhatsApp", variant: "primary" as const },
+        { id: "EDIT_CUSTOMER_DATA", label: "✏️ Alterar Meus Dados", variant: "secondary" as const },
+        { id: "GOTO_STEP:BOOK_DATE", label: "📅 Mudar Data/Hora", variant: "ghost" as const },
+        { id: "MAIN_MENU", label: "❌ Cancelar", variant: "ghost" as const },
+      ]
+    : [
+        { id: "CONFIRM_BOOKING", label: "✅ Confirmar Agendamento", variant: "primary" as const },
+        { id: "EDIT_CUSTOMER_DATA", label: "✏️ Alterar Meus Dados", variant: "secondary" as const },
+        { id: "GOTO_STEP:BOOK_DATE", label: "📅 Mudar Data/Hora", variant: "ghost" as const },
+        { id: "MAIN_MENU", label: "❌ Cancelar", variant: "ghost" as const },
+      ];
+
   const msgs = [
-    ...(email ? [userText(email)] : []),
-    botText("Revise os detalhes do seu agendamento:"),
+    ...(email && !isAutoFilled ? [userText(email)] : []),
+    botText(confirmText),
     {
       id: msgId(),
       role: "bot" as const,
@@ -535,11 +797,7 @@ function buildConfirmStep(session: ChatbotSession, email: string): ChatbotSessio
       role: "bot" as const,
       type: "buttons" as const,
       text: "Tudo certo? Confirme para reservar seu horário:",
-      buttons: [
-        { id: "CONFIRM_BOOKING", label: "✅ Confirmar Agendamento", variant: "primary" as const },
-        { id: "GOTO_STEP:BOOK_DATE", label: "📅 Mudar Data/Hora", variant: "ghost" as const },
-        { id: "MAIN_MENU", label: "❌ Cancelar", variant: "ghost" as const },
-      ],
+      buttons: confirmButtons,
       timestamp: new Date(),
     },
   ];
@@ -548,7 +806,7 @@ function buildConfirmStep(session: ChatbotSession, email: string): ChatbotSessio
     ...session,
     step: "BOOK_CONFIRM",
     messages: [...session.messages, ...msgs],
-    customerEmail: email || undefined,
+    customerEmail: email || session.customerEmail || undefined,
   };
 }
 

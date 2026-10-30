@@ -20,6 +20,8 @@ export type ChatbotStepId =
   | "BOOK_RESULT"
   | "MY_BOOKINGS"
   | "BOOKING_DETAIL"
+  | "REPEAT_PROMPT"
+  | "FIND_NEXT_SLOT"
   | "CANCEL_CONFIRM"
   | "CANCEL_RESULT"
   | "RESCHEDULE_DATE"
@@ -43,9 +45,30 @@ export type ChatMessageType =
   | "booking_result"
   | "bookings_list"
   | "booking_detail"
+  | "repeat_card"
   | "loading"
   | "error"
   | "input_request";
+
+export interface RepeatCardData {
+  barberId: string;
+  barberSlug: string;
+  barberName: string;
+  barberPhoto?: string;
+  services: {
+    id: string;
+    wixServiceId?: string;
+    name: string;
+    price: number;
+    formattedPrice: string;
+    durationMinutes: number;
+  }[];
+  totalPrice: number;
+  formattedTotalPrice: string;
+  totalDuration: number;
+  lastDate?: string;
+  isMultiService: boolean;
+}
 
 export interface ChatButton {
   id: string;
@@ -145,6 +168,7 @@ export interface ChatMessage {
   };
   bookingsList?: MemberBookingItem[];
   bookingDetail?: MemberBookingItem;
+  repeatCard?: RepeatCardData;
   inputRequest?: {
     placeholder: string;
     type: "text" | "tel" | "email";
@@ -180,6 +204,9 @@ export interface ChatbotSession {
   rescheduleDate?: string;
   rescheduleTime?: string;
 
+  // Dados da repetição
+  repeatCardData?: RepeatCardData;
+
   // Estado da UI
   isLoading?: boolean;
   error?: string;
@@ -207,6 +234,11 @@ export type ChatbotAction =
   | { type: "SELECT_RESCHEDULE_TIME"; time: string; metadata?: any }
   | { type: "CONFIRM_RESCHEDULE" }
   | { type: "GOTO_WHATSAPP" }
+  | { type: "REPEAT_LAST_BOOKING" }
+  | { type: "SHOW_REPEAT_CARD"; data: RepeatCardData }
+  | { type: "FIND_NEXT_SLOT" }
+  | { type: "EDIT_CUSTOMER_DATA" }
+  | { type: "SYNC_MEMBER"; member: any }
   | { type: "SET_LOADING"; loading: boolean }
   | { type: "SET_ERROR"; error: string }
   | { type: "ADD_MESSAGE"; message: ChatMessage };
