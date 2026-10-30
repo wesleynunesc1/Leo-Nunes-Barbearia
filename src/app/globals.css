@@ -826,4 +826,47 @@ html {
   }
 }
 
+/* =========================================================================
+   12. NOVO MENU MOBILE FLUTUANTE ANIMADO (EXPANSÃO ELEGANTE DE CIMA PARA BAIXO)
+   ========================================================================= */
+@keyframes mobileMenuExpand {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.mobile-menu-floating {
+  animation: mobileMenuExpand 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: top center;
+}
+
+@keyframes mobileMenuItemFade {
+  0% {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mobile-menu-item-stagger {
+  animation: mobileMenuItemFade 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-menu-floating,
+  .mobile-menu-item-stagger {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+
 

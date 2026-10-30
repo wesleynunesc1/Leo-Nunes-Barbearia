@@ -16,6 +16,8 @@ export function Header() {
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const profileMobileTriggerRef = useRef<HTMLButtonElement>(null);
   const profileDesktopTriggerRef = useRef<HTMLButtonElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const mobileMenuTriggerRef = useRef<HTMLButtonElement>(null);
   const navLinks = [
     { href: "/#inicio", label: "Início" },
     { href: "/#servicos", label: "Serviços" },
@@ -54,7 +56,7 @@ export function Header() {
     };
   }, [mobileMenuOpen]);
 
-  // Fechar menu de perfil ao clicar fora ou pressionar ESC
+  // Fechar menu de perfil e menu mobile flutuante ao clicar fora ou pressionar ESC
   useEffect(() => {
     function handleClickOutside(event: MouseEvent | TouchEvent) {
       const target = event.target as Node;
@@ -66,15 +68,24 @@ export function Header() {
       ) {
         setProfileMenuOpen(false);
       }
+
+      if (
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(target) &&
+        !mobileMenuTriggerRef.current?.contains(target)
+      ) {
+        setMobileMenuOpen(false);
+      }
     }
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         setProfileMenuOpen(false);
+        setMobileMenuOpen(false);
       }
     }
 
-    if (profileMenuOpen) {
+    if (profileMenuOpen || mobileMenuOpen) {
       document.addEventListener("mousedown", handleClickOutside);
       document.addEventListener("touchstart", handleClickOutside, { passive: true });
       document.addEventListener("keydown", handleKeyDown);
@@ -84,7 +95,7 @@ export function Header() {
       document.removeEventListener("touchstart", handleClickOutside);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [profileMenuOpen]);
+  }, [profileMenuOpen, mobileMenuOpen]);
 
   const memberInitials = member?.name
     ? member.name
@@ -237,17 +248,18 @@ export function Header() {
               Agendar
             </button>
             <button
+              ref={mobileMenuTriggerRef}
               type="button"
               onClick={() => {
                 setMobileMenuOpen(!mobileMenuOpen);
                 if (profileMenuOpen) setProfileMenuOpen(false);
               }}
-              className="p-2 text-[#A6AEA8] hover:text-[#F5F7F3] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#25C440]"
+              className="p-2 text-[#A6AEA8] hover:text-[#F5F7F3] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#25C440] transition-colors cursor-pointer"
               aria-expanded={mobileMenuOpen}
-              aria-label="Abrir menu de navegação"
+              aria-label={mobileMenuOpen ? "Fechar menu de navegação" : "Abrir menu de navegação"}
               id="mobile-menu-trigger"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-6 h-6 text-[#25C440]" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
@@ -327,12 +339,29 @@ export function Header() {
         </div>
       )}
 
-      {/* Mobile Drawer Menu */}
+      {/* Backdrop transparente/escurecido suave para fechar ao tocar fora no mobile */}
       {mobileMenuOpen && (
-        <div className="sm:hidden absolute inset-x-0 top-full max-h-[calc(100vh-100%)] overflow-y-auto bg-[#080B09] border-b border-white/[0.08] px-5 pt-4 pb-8 space-y-4 shadow-2xl animate-in slide-in-from-top duration-200 z-50">
+        <div
+          onClick={() => setMobileMenuOpen(false)}
+          className="sm:hidden fixed inset-0 z-40 bg-black/40 backdrop-blur-[2px] transition-opacity duration-300"
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Novo Menu Mobile Flutuante e Compacto (Expansão de cima para baixo com cantos arredondados) */}
+      {mobileMenuOpen && (
+        <div
+          ref={mobileMenuRef}
+          role="dialog"
+          aria-label="Menu de navegação mobile"
+          className="mobile-menu-floating sm:hidden absolute inset-x-3.5 top-full mt-2 bg-[#090E0B]/98 backdrop-blur-2xl border border-white/[0.1] rounded-3xl shadow-[0_16px_50px_rgba(0,0,0,0.92),0_0_1px_rgba(37,196,64,0.4)] p-4 max-h-[calc(100vh-80px)] overflow-y-auto z-50 flex flex-col space-y-3.5"
+        >
           <div className="flex flex-col space-y-1">
             {member ? (
-              <div className="bg-[#121813] border border-[#25C440]/25 rounded-2xl p-3 mb-2 space-y-2">
+              <div
+                style={{ animationDelay: "40ms" }}
+                className="mobile-menu-item-stagger bg-[#111713] border border-[#25C440]/25 rounded-2xl p-3 mb-1.5 space-y-2 shadow-inner"
+              >
                 <div className="flex items-center gap-2.5 pb-2 border-b border-white/[0.08]">
                   {member.avatarUrl ? (
                     <div className="relative w-7 h-7 rounded-full overflow-hidden ring-1 ring-[#25C440]/40 shrink-0">
@@ -352,7 +381,7 @@ export function Header() {
                   <Link
                     href="/minha-conta"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="px-2.5 py-1.5 rounded-lg bg-white/[0.04] text-xs font-medium text-[#C8D5CA] hover:text-white flex items-center gap-1.5 justify-center"
+                    className="px-2.5 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-xs font-medium text-[#C8D5CA] hover:text-white flex items-center gap-1.5 justify-center transition-colors"
                   >
                     <User className="w-3 h-3 text-[#25C440]" />
                     <span>Minha Conta</span>
@@ -360,7 +389,7 @@ export function Header() {
                   <Link
                     href="/minha-conta/agendamentos"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="px-2.5 py-1.5 rounded-lg bg-white/[0.04] text-xs font-medium text-[#C8D5CA] hover:text-white flex items-center gap-1.5 justify-center"
+                    className="px-2.5 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-xs font-medium text-[#C8D5CA] hover:text-white flex items-center gap-1.5 justify-center transition-colors"
                   >
                     <Calendar className="w-3 h-3 text-[#25C440]" />
                     <span>Agendamentos</span>
@@ -372,7 +401,7 @@ export function Header() {
                     setMobileMenuOpen(false);
                     await logout();
                   }}
-                  className="w-full text-center text-[11px] text-red-400 hover:text-red-300 pt-1 border-t border-white/[0.06] flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="w-full text-center text-[11px] text-red-400/90 hover:text-red-300 pt-1 border-t border-white/[0.06] flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
                 >
                   <LogOut className="w-3 h-3" />
                   <span>Sair da Conta</span>
@@ -382,51 +411,56 @@ export function Header() {
               <Link
                 href="/login"
                 onClick={() => setMobileMenuOpen(false)}
-                className="text-base font-bold text-[#25C440] py-3 px-3.5 rounded-xl bg-[#121813] border border-[#25C440]/25 transition-colors flex items-center justify-between mb-1"
+                style={{ animationDelay: "40ms" }}
+                className="mobile-menu-item-stagger text-sm font-bold text-[#25C440] py-2.5 px-3.5 rounded-xl bg-[#111713] border border-[#25C440]/25 hover:bg-[#162019] transition-colors flex items-center justify-between mb-1 shadow-sm"
               >
                 <span className="flex items-center gap-2">
-                  <User className="w-4 h-4" />
+                  <User className="w-4 h-4 text-[#25C440]" />
                   <span>Área do Cliente (Entrar / Cadastrar)</span>
                 </span>
                 <span className="text-[#25C440] text-xs">→</span>
               </Link>
             )}
 
-            {navLinks.map((link) => (
+            {navLinks.map((link, idx) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="text-base font-medium text-[#F5F7F3] hover:text-[#25C440] py-3 px-3.5 rounded-xl hover:bg-[#121813] transition-colors flex items-center justify-between"
+                style={{ animationDelay: `${(idx + 2) * 35}ms` }}
+                className="mobile-menu-item-stagger text-sm font-medium text-[#F5F7F3] hover:text-[#25C440] py-2.5 px-3.5 rounded-xl hover:bg-white/[0.04] transition-colors flex items-center justify-between group"
               >
                 <span>{link.label}</span>
-                <span className="text-[#25C440] text-xs">→</span>
+                <span className="text-[#25C440]/60 group-hover:text-[#25C440] group-hover:translate-x-0.5 text-xs transition-all">→</span>
               </Link>
             ))}
           </div>
 
-          <div className="pt-4 border-t border-[#202A22] space-y-4">
+          <div
+            style={{ animationDelay: `${(navLinks.length + 3) * 35}ms` }}
+            className="mobile-menu-item-stagger pt-3 border-t border-white/[0.08] space-y-3"
+          >
             <button
               type="button"
               onClick={() => {
                 setMobileMenuOpen(false);
                 openBooking();
               }}
-              className="w-full flex items-center justify-center gap-2 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold py-3.5 rounded-xl text-center btn-green-glow text-sm cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold py-3.5 rounded-xl text-center shadow-[0_0_20px_rgba(37,196,64,0.3)] hover:shadow-[0_0_25px_rgba(37,196,64,0.45)] text-sm cursor-pointer transition-all active:scale-[0.98]"
             >
-              <Calendar className="w-4 h-4" />
+              <Calendar className="w-4 h-4 stroke-[2.2]" />
               <span>Agendar Horário Agora</span>
             </button>
 
-            <div className="text-xs text-[#A6AEA8] space-y-2 pt-1 bg-[#101611] p-3.5 rounded-xl border border-[#202A22]">
-              <p className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-[#25C440] shrink-0" />
-                <span>Rua Joaquim Nogueira Lopes, 180, Pacajus</span>
-              </p>
-              <p className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-[#25C440] shrink-0" />
+            {/* Contato direto por telefone (endereço físico removido do menu mobile conforme solicitado) */}
+            <div className="flex items-center justify-center text-xs text-[#A6AEA8] bg-white/[0.02] p-2.5 rounded-xl border border-white/[0.05]">
+              <a
+                href="tel:85992227064"
+                className="flex items-center gap-2 hover:text-[#25C440] transition-colors"
+              >
+                <Phone className="w-3.5 h-3.5 text-[#25C440] shrink-0" />
                 <span>(85) 99222-7064</span>
-              </p>
+              </a>
             </div>
           </div>
         </div>
