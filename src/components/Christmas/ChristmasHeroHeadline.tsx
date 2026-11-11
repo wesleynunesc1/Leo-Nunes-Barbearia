@@ -33,9 +33,8 @@ export function ChristmasHeroHeadline({
       {/* Identificador Superior Limpo — Versão Fim de Ano */}
       <div className="flex items-center gap-2.5">
         <div className="w-6 sm:w-8 h-[2px] bg-[#25C440]" aria-hidden="true" />
-        <span className="text-[11px] sm:text-xs font-mono font-bold uppercase tracking-[0.24em] text-[#25C440] flex items-center gap-1.5">
-          <span>{badge}</span>
-          <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#E5C158] animate-pulse" />
+        <span className="text-[11px] sm:text-xs font-mono font-bold uppercase tracking-[0.24em] text-[#25C440]">
+          {badge}
         </span>
       </div>
 
