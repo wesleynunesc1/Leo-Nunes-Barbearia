@@ -35,8 +35,8 @@ export function ChristmasHeroHeadline({
               style={{
                 width: "1.32em",
                 maxWidth: "none",
-                top: "calc(-0.33em - 15px)",
-                left: "calc(-0.09em - 20px)",
+                top: "calc(-0.33em - 3px)",
+                left: "calc(-0.09em - 25px)",
                 transform: "rotate(5deg)",
                 transformOrigin: "center bottom",
               }}
