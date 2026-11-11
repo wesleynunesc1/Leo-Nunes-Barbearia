@@ -26,12 +26,21 @@ import {
 } from "@/components/MotionSystem";
 import { BookingTriggerButton } from "@/components/BookingTriggerButton";
 import { HeroVideo } from "@/components/HeroVideo";
+import {
+  isChristmasCampaignActive,
+  CHRISTMAS_CAMPAIGN_CONFIG,
+} from "@/config/christmasCampaign";
+import { ChristmasHeroHeadline } from "@/components/Christmas/ChristmasHeroHeadline";
+import { ChristmasHeroAtmosphere } from "@/components/Christmas/ChristmasHeroAtmosphere";
+import { ChristmasFeatureCards } from "@/components/Christmas/ChristmasFeatureCards";
 
 export default async function HomePage() {
   const [barbers, institutional] = await Promise.all([
     getDynamicBarbers(),
     getDynamicInstitutional(),
   ]);
+
+  const isChristmas = isChristmasCampaignActive();
 
   return (
     <div className="pb-16 sm:pb-24 overflow-x-hidden" id="inicio">
@@ -46,6 +55,9 @@ export default async function HomePage() {
         {/* Subtle Ambient Mouse Tracking Glow */}
         <PointerAura />
 
+        {/* Detalhes Festivos Discretos (Campanha Fim de Ano) */}
+        {isChristmas && <ChristmasHeroAtmosphere />}
+
         {/* Hero Video Background - Execução contínua ininterrupta (Desktop e Mobile) */}
         <HeroVideo />
 
@@ -54,28 +66,37 @@ export default async function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
             {/* Left Content (Columns 1-8) - Reposicionado 75px mais para baixo no mobile */}
             <div className="lg:col-span-8 space-y-3 sm:space-y-3.5 text-left pt-16 xs:pt-20 sm:pt-0">
-              {/* Identificador Superior Limpo */}
-              <div className="flex items-center gap-2.5">
-                <div className="w-6 sm:w-8 h-[2px] bg-[#25C440]" aria-hidden="true" />
-                <span className="text-[11px] sm:text-xs font-mono font-bold uppercase tracking-[0.24em] text-[#25C440]">
-                  {institutional.hero.badge}
-                </span>
-              </div>
+              {isChristmas ? (
+                <ChristmasHeroHeadline
+                  badge={CHRISTMAS_CAMPAIGN_CONFIG.texts.heroBadge}
+                  subheadline={CHRISTMAS_CAMPAIGN_CONFIG.texts.heroSubheadline}
+                />
+              ) : (
+                <>
+                  {/* Identificador Superior Limpo */}
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-6 sm:w-8 h-[2px] bg-[#25C440]" aria-hidden="true" />
+                    <span className="text-[11px] sm:text-xs font-mono font-bold uppercase tracking-[0.24em] text-[#25C440]">
+                      {institutional.hero.badge}
+                    </span>
+                  </div>
 
-              {/* Headline nítida com sombra cinematográfica para contraste perfeito sobre a imagem */}
-              <h1 className="font-heading font-black text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-[58px] xl:text-[66px] tracking-tight uppercase leading-[0.98] drop-shadow-[0_2px_14px_rgba(0,0,0,0.85)]">
-                <span className="text-[#FFFFFF] block">
-                  {institutional.hero.headlineLine1}
-                </span>
-                <span className="text-[#25C440] block mt-1 sm:mt-1.5">
-                  {institutional.hero.headlineLine2}
-                </span>
-              </h1>
+                  {/* Headline nítida com sombra cinematográfica para contraste perfeito sobre a imagem */}
+                  <h1 className="font-heading font-black text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-[58px] xl:text-[66px] tracking-tight uppercase leading-[0.98] drop-shadow-[0_2px_14px_rgba(0,0,0,0.85)]">
+                    <span className="text-[#FFFFFF] block">
+                      {institutional.hero.headlineLine1}
+                    </span>
+                    <span className="text-[#25C440] block mt-1 sm:mt-1.5">
+                      {institutional.hero.headlineLine2}
+                    </span>
+                  </h1>
 
-              {/* Subtitle Paragraph calibrado com contraste elevado */}
-              <p className="text-xs sm:text-base text-[#D4DDD6] max-w-lg leading-relaxed font-normal drop-shadow-[0_1px_8px_rgba(0,0,0,0.95)]">
-                {institutional.hero.subheadline}
-              </p>
+                  {/* Subtitle Paragraph calibrado com contraste elevado */}
+                  <p className="text-xs sm:text-base text-[#D4DDD6] max-w-lg leading-relaxed font-normal drop-shadow-[0_1px_8px_rgba(0,0,0,0.95)]">
+                    {institutional.hero.subheadline}
+                  </p>
+                </>
+              )}
 
               {/* Action Buttons Row - 100% responsivo para toque no mobile */}
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-1">
@@ -117,125 +138,129 @@ export default async function HomePage() {
         </div>
 
         {/* =====================================================================
-            INFINITE CONTINUOUS MARQUEE TICKER (Carrossel Contínuo de Destaques)
+            FAIXA INFORMATIVA ABAIXO DA HERO (Campanha de Natal vs Padrão)
            ===================================================================== */}
-        <div className="relative z-20 w-full border-t border-[#1D2720]/90 bg-[#080B09]/95 backdrop-blur-md py-3 overflow-hidden">
-          <div className="marquee-container">
-            <div className="marquee-track">
-              {/* Set 1 */}
-              {[
-                {
-                  icon: Clock,
-                  title: "Atendimento com hora marcada",
-                  subtitle: "Seu tempo é valioso",
-                },
-                {
-                  icon: Users,
-                  title: "4 barbeiros especialistas",
-                  subtitle: "Experiência e técnica",
-                },
-                {
-                  icon: Scissors,
-                  title: "Produtos profissionais",
-                  subtitle: "Resultado superior",
-                },
-                {
-                  icon: CheckCircle2,
-                  title: "Visagismo exclusivo",
-                  subtitle: "Alinhado ao seu rosto",
-                },
-                {
-                  icon: Flame,
-                  title: "Barboterapia completa",
-                  subtitle: "Toalha quente & relaxamento",
-                },
-                {
-                  icon: MapPin,
-                  title: "Pacajus — Ceará",
-                  subtitle: "Referência desde 2015",
-                },
-                {
-                  icon: Calendar,
-                  title: "Agendamento online 24h",
-                  subtitle: "Sem filas de espera",
-                },
-              ].map((item, idx) => {
-                const IconComp = item.icon;
-                return (
-                  <div key={`m1-${idx}`} className="marquee-item group cursor-default">
-                    <div className="w-8 h-8 rounded-lg bg-[#142016] text-[#25C440] border border-[#25C440]/30 flex items-center justify-center shrink-0 group-hover:bg-[#25C440] group-hover:text-[#080B09] transition-colors">
-                      <IconComp className="w-4 h-4 stroke-[2]" />
+        {isChristmas ? (
+          <ChristmasFeatureCards />
+        ) : (
+          <div className="relative z-20 w-full border-t border-[#1D2720]/90 bg-[#080B09]/95 backdrop-blur-md py-3 overflow-hidden">
+            <div className="marquee-container">
+              <div className="marquee-track">
+                {/* Set 1 */}
+                {[
+                  {
+                    icon: Clock,
+                    title: "Atendimento com hora marcada",
+                    subtitle: "Seu tempo é valioso",
+                  },
+                  {
+                    icon: Users,
+                    title: "4 barbeiros especialistas",
+                    subtitle: "Experiência e técnica",
+                  },
+                  {
+                    icon: Scissors,
+                    title: "Produtos profissionais",
+                    subtitle: "Resultado superior",
+                  },
+                  {
+                    icon: CheckCircle2,
+                    title: "Visagismo exclusivo",
+                    subtitle: "Alinhado ao seu rosto",
+                  },
+                  {
+                    icon: Flame,
+                    title: "Barboterapia completa",
+                    subtitle: "Toalha quente & relaxamento",
+                  },
+                  {
+                    icon: MapPin,
+                    title: "Pacajus — Ceará",
+                    subtitle: "Referência desde 2015",
+                  },
+                  {
+                    icon: Calendar,
+                    title: "Agendamento online 24h",
+                    subtitle: "Sem filas de espera",
+                  },
+                ].map((item, idx) => {
+                  const IconComp = item.icon;
+                  return (
+                    <div key={`m1-${idx}`} className="marquee-item group cursor-default">
+                      <div className="w-8 h-8 rounded-lg bg-[#142016] text-[#25C440] border border-[#25C440]/30 flex items-center justify-center shrink-0 group-hover:bg-[#25C440] group-hover:text-[#080B09] transition-colors">
+                        <IconComp className="w-4 h-4 stroke-[2]" />
+                      </div>
+                      <div className="text-left">
+                        <p className="font-heading font-bold text-xs sm:text-sm text-[#FFFFFF] group-hover:text-[#25C440] transition-colors leading-tight">
+                          {item.title}
+                        </p>
+                        <p className="text-[10px] sm:text-[11px] text-[#8E9B91] font-light leading-tight mt-0.5">
+                          {item.subtitle}
+                        </p>
+                      </div>
                     </div>
-                    <div className="text-left">
-                      <p className="font-heading font-bold text-xs sm:text-sm text-[#FFFFFF] group-hover:text-[#25C440] transition-colors leading-tight">
-                        {item.title}
-                      </p>
-                      <p className="text-[10px] sm:text-[11px] text-[#8E9B91] font-light leading-tight mt-0.5">
-                        {item.subtitle}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
 
-              {/* Set 2 (Duplicado para loop infinito sem emenda) */}
-              {[
-                {
-                  icon: Clock,
-                  title: "Atendimento com hora marcada",
-                  subtitle: "Seu tempo é valioso",
-                },
-                {
-                  icon: Users,
-                  title: "4 barbeiros especialistas",
-                  subtitle: "Experiência e técnica",
-                },
-                {
-                  icon: Scissors,
-                  title: "Produtos profissionais",
-                  subtitle: "Resultado superior",
-                },
-                {
-                  icon: CheckCircle2,
-                  title: "Visagismo exclusivo",
-                  subtitle: "Alinhado ao seu rosto",
-                },
-                {
-                  icon: Flame,
-                  title: "Barboterapia completa",
-                  subtitle: "Toalha quente & relaxamento",
-                },
-                {
-                  icon: MapPin,
-                  title: "Pacajus — Ceará",
-                  subtitle: "Referência desde 2015",
-                },
-                {
-                  icon: Calendar,
-                  title: "Agendamento online 24h",
-                  subtitle: "Sem filas de espera",
-                },
-              ].map((item, idx) => {
-                const IconComp = item.icon;
-                return (
-                  <div key={`m2-${idx}`} className="marquee-item group cursor-default" aria-hidden="true">
-                    <div className="w-8 h-8 rounded-lg bg-[#142016] text-[#25C440] border border-[#25C440]/30 flex items-center justify-center shrink-0 group-hover:bg-[#25C440] group-hover:text-[#080B09] transition-colors">
-                      <IconComp className="w-4 h-4 stroke-[2]" />
+                {/* Set 2 (Duplicado para loop infinito sem emenda) */}
+                {[
+                  {
+                    icon: Clock,
+                    title: "Atendimento com hora marcada",
+                    subtitle: "Seu tempo é valioso",
+                  },
+                  {
+                    icon: Users,
+                    title: "4 barbeiros especialistas",
+                    subtitle: "Experiência e técnica",
+                  },
+                  {
+                    icon: Scissors,
+                    title: "Produtos profissionais",
+                    subtitle: "Resultado superior",
+                  },
+                  {
+                    icon: CheckCircle2,
+                    title: "Visagismo exclusivo",
+                    subtitle: "Alinhado ao seu rosto",
+                  },
+                  {
+                    icon: Flame,
+                    title: "Barboterapia completa",
+                    subtitle: "Toalha quente & relaxamento",
+                  },
+                  {
+                    icon: MapPin,
+                    title: "Pacajus — Ceará",
+                    subtitle: "Referência desde 2015",
+                  },
+                  {
+                    icon: Calendar,
+                    title: "Agendamento online 24h",
+                    subtitle: "Sem filas de espera",
+                  },
+                ].map((item, idx) => {
+                  const IconComp = item.icon;
+                  return (
+                    <div key={`m2-${idx}`} className="marquee-item group cursor-default" aria-hidden="true">
+                      <div className="w-8 h-8 rounded-lg bg-[#142016] text-[#25C440] border border-[#25C440]/30 flex items-center justify-center shrink-0 group-hover:bg-[#25C440] group-hover:text-[#080B09] transition-colors">
+                        <IconComp className="w-4 h-4 stroke-[2]" />
+                      </div>
+                      <div className="text-left">
+                        <p className="font-heading font-bold text-xs sm:text-sm text-[#FFFFFF] group-hover:text-[#25C440] transition-colors leading-tight">
+                          {item.title}
+                        </p>
+                        <p className="text-[10px] sm:text-[11px] text-[#8E9B91] font-light leading-tight mt-0.5">
+                          {item.subtitle}
+                        </p>
+                      </div>
                     </div>
-                    <div className="text-left">
-                      <p className="font-heading font-bold text-xs sm:text-sm text-[#FFFFFF] group-hover:text-[#25C440] transition-colors leading-tight">
-                        {item.title}
-                      </p>
-                      <p className="text-[10px] sm:text-[11px] text-[#8E9B91] font-light leading-tight mt-0.5">
-                        {item.subtitle}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </section>
 
 
