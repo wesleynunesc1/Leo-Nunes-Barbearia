@@ -1,4 +1,5 @@
 import { P, OUTLINE, Pivot } from './shared.jsx';
+import GiftBox from './Gift.jsx';
 
 function Bow({ x, y, color }) {
   return (
@@ -24,16 +25,21 @@ function Presents() {
         <rect x={508} y={46} width={6} height={64} fill={P.red} />
         <Bow x={511} y={46} color={P.red} />
       </g>
-      <g transform="rotate(-4 483 90)">
+      {/* caixa verde: é esta que o Papai Noel pega (some da pilha quando vai para a mão) */}
+      <g className="cx-pile-green" transform="rotate(-4 483 90)">
         <rect x={467} y={68} width={31} height={50} rx={2.5} fill={P.green} {...OUTLINE} />
         <rect x={479.5} y={68} width={6} height={50} fill={P.gold} />
         <rect x={467} y={82} width={31} height={5} fill={P.gold} />
         <rect x={467} y={68} width={31} height={50} rx={2.5} fill="none" {...OUTLINE} />
+        <Bow x={482.5} y={68} color={P.gold} />
       </g>
-      <g transform="rotate(-10 481 58)">
-        <rect x={471} y={49} width={20} height={18} rx={2} fill={P.navy} {...OUTLINE} />
-        <rect x={479} y={49} width={4} height={18} fill={P.goldLight} />
-        <Bow x={481} y={49} color={P.goldLight} />
+      {/* a caixinha azul fica em cima da verde: cai no lugar quando a verde é retirada */}
+      <g className="cx-pile-navy">
+        <g transform="rotate(-10 481 58)">
+          <rect x={471} y={49} width={20} height={18} rx={2} fill={P.navy} {...OUTLINE} />
+          <rect x={479} y={49} width={4} height={18} fill={P.goldLight} />
+          <Bow x={481} y={49} color={P.goldLight} />
+        </g>
       </g>
     </Pivot>
   );
@@ -49,6 +55,10 @@ function Santa() {
       <Pivot x={437} y={90} className="cx-wave-arm">
         <path d="M437 90 L456 56" stroke={P.ink} strokeWidth={17} strokeLinecap="round" />
         <path d="M437 90 L456 56" stroke={P.red} strokeWidth={12.2} strokeLinecap="round" />
+        {/* presente na mão (visível só entre pegar e lançar) */}
+        <g className="cx-santa-gift" transform="translate(458 36)">
+          <GiftBox />
+        </g>
         <Pivot x={457} y={54} className="cx-wave-hand">
           <ellipse cx={451.5} cy={43} rx={3.6} ry={5} transform="rotate(-35 451.5 43)" fill={P.green} {...OUTLINE} strokeWidth={2} />
           <path
@@ -63,6 +73,7 @@ function Santa() {
       </Pivot>
 
       {/* cabeça */}
+      <Pivot x={406} y={50} className="cx-santa-turn">
       <Pivot x={407} y={70} className="cx-santa-head">
         {/* gorro */}
         <Pivot x={418} y={34} className="cx-hat">
@@ -93,6 +104,7 @@ function Santa() {
           fill={P.cream}
           {...OUTLINE}
         />
+      </Pivot>
       </Pivot>
     </g>
   );

@@ -4,6 +4,12 @@ import { useEffect, useRef, useState } from 'react';
 import Reindeer from './characters/Reindeer.jsx';
 import SantaSleigh from './characters/SantaSleigh.jsx';
 import Sparkles from './characters/Sparkles.jsx';
+import Barber01 from './characters/barbers/Barber01.jsx';
+import Barber02 from './characters/barbers/Barber02.jsx';
+import Barber03 from './characters/barbers/Barber03.jsx';
+import Barber04 from './characters/barbers/Barber04.jsx';
+import GiftFlight from './characters/GiftFlight.jsx';
+import { createStory } from './story.js';
 import './ChristmasExpress.css';
 
 const REDUCED_QUERY = '(prefers-reduced-motion: reduce)';
@@ -26,23 +32,26 @@ function usePrefersReducedMotion() {
 }
 
 /**
- * Christmas Express — rena puxando o trenó do Papai Noel, da direita para a esquerda.
+ * Christmas Express 2.0 — a rena puxa o trenó do Papai Noel e os quatro barbeiros correm
+ * atrás. No meio da travessia o Noel lança um presente, que o barbeiro 04 pega no ar.
  *
  * Coloque dentro de um contêiner com `position: relative` (a faixa de cards).
  * O componente é um overlay decorativo: `pointer-events: none`, `aria-hidden`.
  *
  * @param {object}  props
- * @param {number}  [props.duration=10]  Segundos de cada travessia.
+ * @param {number}  [props.duration=15]  Segundos de cada travessia (a cena do presente escala junto).
  * @param {number}  [props.pause=5]      Segundos de pausa antes de recomeçar.
  * @param {'static'|'hide'} [props.reducedMotion='static']
  *        Com prefers-reduced-motion: 'static' mostra a cena parada; 'hide' não renderiza nada.
+ * @param {boolean} [props.halo=false]   Contorno claro em volta dos personagens (para fundos escuros).
  * @param {string}  [props.className]
  * @param {object}  [props.style]        Útil para as variáveis CSS (--cx-height, --cx-offset-y, --cx-z).
  */
 export default function ChristmasExpress({
-  duration = 10,
+  duration = 15,
   pause = 5,
   reducedMotion = 'static',
+  halo = false,
   className = '',
   style,
 }) {
@@ -72,14 +81,16 @@ export default function ChristmasExpress({
       { duration: total * 1000, iterations: Infinity, easing: 'linear' }
     );
 
+    // Cena do presente: mesma duração e mesmo relógio da travessia.
+    const anims = [travelAnim, ...createStory(root, travel, total)];
+
     let inView = false;
     let pageVisible = !document.hidden;
 
     const sync = () => {
       const playing = inView && pageVisible;
       root.dataset.playing = playing ? 'true' : 'false'; // o CSS pausa os ciclos internos
-      if (playing) travelAnim.play();
-      else travelAnim.pause();
+      anims.forEach((a) => (playing ? a.play() : a.pause()));
     };
 
     let observer = null;
@@ -106,7 +117,7 @@ export default function ChristmasExpress({
     return () => {
       if (observer) observer.disconnect();
       document.removeEventListener('visibilitychange', onVisibility);
-      travelAnim.cancel();
+      anims.forEach((a) => a.cancel());
       delete root.dataset.playing;
     };
   }, [duration, pause, reduced]);
@@ -116,7 +127,7 @@ export default function ChristmasExpress({
   return (
     <div
       ref={rootRef}
-      className={`cx-root ${className}`.trim()}
+      className={`cx-root ${halo ? 'cx-root--halo ' : ''}${className}`.trim()}
       style={style}
       data-reduced={reduced ? 'true' : 'false'}
       aria-hidden="true"
@@ -124,7 +135,7 @@ export default function ChristmasExpress({
       <div ref={trackRef} className="cx-track">
         <svg
           className="cx-art"
-          viewBox="0 0 760 200"
+          viewBox="0 0 915 200"
           xmlns="http://www.w3.org/2000/svg"
           focusable="false"
           role="presentation"
@@ -132,6 +143,12 @@ export default function ChristmasExpress({
           <Sparkles />
           <Reindeer />
           <SantaSleigh />
+          {/* barbeiros, do mais próximo ao mais distante do trenó: 03 · 02 · 01 · 04 */}
+          <g transform="translate(620 188)"><Barber03 /></g>
+          <g transform="translate(692 188)"><Barber02 /></g>
+          <g transform="translate(764 188)"><Barber01 /></g>
+          <g transform="translate(862 188)"><Barber04 /></g>
+          <GiftFlight />
         </svg>
       </div>
     </div>

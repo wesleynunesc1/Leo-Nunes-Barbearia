@@ -11,7 +11,7 @@
   --cx-stride: 0.56s;                    /* duração de uma passada da rena */
 
   /* --- internos --- */
-  --cx-ratio: 3.8;                       /* largura/altura do viewBox (760/200) */
+  --cx-ratio: 4.575;                     /* largura/altura do viewBox (915/200) */
 
   position: absolute;
   top: 0;
@@ -212,6 +212,107 @@
 }
 
 /* --------------------------------------------------------------------------
+   Barbeiros — um ciclo de corrida comum, parametrizado por variáveis:
+   cada um tem passada, amplitude e inclinação próprias.
+   -------------------------------------------------------------------------- */
+.cx-barber {
+  --cx-bs: 0.48s;      /* duração da passada */
+  --cx-bp: 0;          /* defasagem do barbeiro (0–1) */
+  --cx-th-a: 50deg;    /* coxa à frente / atrás */
+  --cx-th-b: -34deg;
+  --cx-sh: -98deg;     /* flexão máxima do joelho */
+  --cx-ar-a: 46deg;    /* braço à frente / atrás */
+  --cx-ar-b: -46deg;
+  --cx-fo-a: 92deg;    /* antebraço */
+  --cx-fo-b: 74deg;
+  --cx-bob: 3;         /* oscilação vertical (unidades do viewBox) */
+  animation: cx-b-bob calc(var(--cx-bs) / 2) ease-in-out infinite alternate;
+}
+/* 01 — animado */
+.cx-barber--b01 { --cx-bs: 0.48s; --cx-bp: 0.3; --cx-bob: 4; }
+/* 02 — determinado, braços fortes */
+.cx-barber--b02 { --cx-bs: 0.45s; --cx-bp: 0.65; --cx-th-a: 56deg; --cx-th-b: -38deg; --cx-ar-a: 64deg; --cx-ar-b: -60deg; --cx-fo-a: 102deg; --cx-fo-b: 88deg; --cx-bob: 2.6; }
+/* 03 — solto, sorrindo */
+.cx-barber--b03 { --cx-bs: 0.52s; --cx-bp: 0; --cx-th-a: 46deg; --cx-th-b: -30deg; --cx-ar-a: 40deg; --cx-ar-b: -40deg; --cx-bob: 3.2; }
+/* 04 — passadas curtas e rápidas */
+.cx-barber--b04 { --cx-bs: 0.38s; --cx-bp: 0.45; --cx-th-a: 38deg; --cx-th-b: -26deg; --cx-sh: -84deg; --cx-bob: 2.4; }
+
+@keyframes cx-b-bob {
+  from { transform: translateY(0); }
+  to   { transform: translateY(calc(var(--cx-bob) * -1px)); }
+}
+
+.cx-b-lean { animation: cx-b-lean calc(var(--cx-bs) / 2) ease-in-out infinite alternate; }
+@keyframes cx-b-lean {
+  from { transform: rotate(calc(var(--cx-lean, -9deg) - 1.2deg)); }
+  to   { transform: rotate(calc(var(--cx-lean, -9deg) + 1.2deg)); }
+}
+
+.cx-b-headjoint { animation: cx-b-head calc(var(--cx-bs) / 2) ease-in-out infinite alternate; }
+@keyframes cx-b-head {
+  from { transform: rotate(calc(var(--cx-lean, -9deg) * -0.7 + 1.5deg)); }
+  to   { transform: rotate(calc(var(--cx-lean, -9deg) * -0.7 - 1.5deg)); }
+}
+
+.cx-b-thigh { animation: cx-b-thigh var(--cx-bs) infinite; }
+.cx-b-shin  { animation: cx-b-shin  var(--cx-bs) linear infinite; }
+@keyframes cx-b-thigh {
+  0%   { transform: rotate(var(--cx-th-a)); animation-timing-function: cubic-bezier(.35, 0, .65, 1); }
+  50%  { transform: rotate(var(--cx-th-b)); animation-timing-function: cubic-bezier(.35, 0, .65, 1); }
+  100% { transform: rotate(var(--cx-th-a)); }
+}
+@keyframes cx-b-shin {
+  0%   { transform: rotate(-14deg); }
+  24%  { transform: rotate(-10deg); }
+  50%  { transform: rotate(-46deg); }
+  74%  { transform: rotate(var(--cx-sh)); }
+  100% { transform: rotate(-14deg); }
+}
+
+/* Braços do 01, 02 e 03 (os do 04 são conduzidos pela história: ele precisa parar o
+   balanço para estender os braços e carregar o presente — ver story.js) */
+.cx-b-upper, .cx-b-fore { animation: var(--cx-bs) ease-in-out infinite; }
+.cx-b-upper { animation-name: cx-b-upper; }
+.cx-b-fore  { animation-name: cx-b-fore; }
+.cx-barber--b04 .cx-b-upper, .cx-barber--b04 .cx-b-fore { animation-name: none; }
+@keyframes cx-b-upper {
+  0%, 100% { transform: rotate(var(--cx-ar-a)); }
+  50%      { transform: rotate(var(--cx-ar-b)); }
+}
+@keyframes cx-b-fore {
+  0%, 100% { transform: rotate(var(--cx-fo-a)); }
+  50%      { transform: rotate(var(--cx-fo-b)); }
+}
+
+/* movimento secundário do cabelo comprido do 03 */
+.cx-b-hairtail { animation: cx-b-hairtail calc(var(--cx-bs) / 2) ease-in-out infinite alternate; }
+@keyframes cx-b-hairtail {
+  from { transform: rotate(-16deg); }
+  to   { transform: rotate(14deg); }
+}
+
+/* Peças que só aparecem em momentos da história (a WAAPI liga/desliga) */
+.cx-santa-gift,
+.cx-gift-fly,
+.cx-b-heldgift,
+.cx-b-face--alt,
+.cx-catch-burst {
+  opacity: 0;
+}
+
+/* Contorno claro opcional para fundos escuros (prop `halo`) */
+.cx-root--halo .cx-art {
+  filter: drop-shadow(0 0 0.7px rgba(255, 244, 220, 0.95)) drop-shadow(0 0 0.7px rgba(255, 244, 220, 0.95));
+}
+
+/* Barbeiros: perna/braço opostos defasados em meia passada */
+.cx-b-thigh.cx-b--far, .cx-b-upper.cx-b--near { --cx-lp: 0.5; }
+.cx-b-thigh.cx-b--near, .cx-b-upper.cx-b--far { --cx-lp: 0; }
+.cx-barber, .cx-barber * {
+  animation-delay: calc(var(--cx-bs) * (var(--cx-lp, 0) + var(--cx-bp)) * -1);
+}
+
+/* --------------------------------------------------------------------------
    Pausa (fora da viewport / aba em segundo plano) — o JS alterna data-playing
    -------------------------------------------------------------------------- */
 .cx-root[data-playing='false'] .cx-art * {
@@ -226,7 +327,7 @@
 }
 .cx-root[data-reduced='true'] .cx-track {
   left: auto;
-  right: calc(var(--cx-height) * -0.9); /* compensa a área vazia do rastro no viewBox */
+  right: 2%;
   width: auto;
   transform: none;
 }
@@ -240,7 +341,7 @@
   }
   .cx-track {
     left: auto;
-    right: calc(var(--cx-height) * -0.9);
+    right: 2%;
     width: auto;
   }
   .cx-sparkles {
