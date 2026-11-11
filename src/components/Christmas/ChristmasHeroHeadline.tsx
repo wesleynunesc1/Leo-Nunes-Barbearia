@@ -23,9 +23,9 @@ export function ChristmasHeroHeadline({
         }
         @media (min-width: 640px) {
           .gorro-natal-headline {
-            width: 1.32em;
-            top: calc(-0.33em - 1px);
-            left: calc(-0.09em - 27px);
+            width: 1.23em;
+            top: calc(-0.31em - 1px);
+            left: calc(-0.09em - 24px);
           }
         }
       `}</style>
