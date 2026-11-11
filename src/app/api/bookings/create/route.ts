@@ -127,9 +127,9 @@ export async function POST(request: NextRequest) {
     const resolvedWixServiceId = isUuid(serviceId)
       ? serviceId
       : localService?.wixServiceId ||
-        (barber.id === "leo-nunes"
-          ? "71a2e1ca-2bce-410f-8d98-a64a5225a9ab"
-          : "5fdf0f3a-8e3e-4009-8421-4467ef3b3871");
+      (barber.id === "leo-nunes"
+        ? "71a2e1ca-2bce-410f-8d98-a64a5225a9ab"
+        : "5fdf0f3a-8e3e-4009-8421-4467ef3b3871");
 
     let durationMinutes = localService?.durationMinutes || 40;
     let serviceName = localService?.name || "Serviço Barbearia";
@@ -179,8 +179,8 @@ export async function POST(request: NextRequest) {
                 num > 0
                   ? `R$ ${num.toFixed(2).replace(".", ",")}`
                   : officialSvc.name?.toLowerCase().includes("assinatura")
-                  ? "Plano Assinatura"
-                  : "Sob consulta";
+                    ? "Plano Assinatura"
+                    : "Sob consulta";
             }
           }
         }
@@ -218,8 +218,8 @@ export async function POST(request: NextRequest) {
         lockResult.errorCode === "STORAGE_UNAVAILABLE"
           ? 503
           : lockResult.errorCode === "CONCURRENT_REQUEST"
-          ? 429
-          : 409;
+            ? 429
+            : 409;
 
       return NextResponse.json(
         {
@@ -763,7 +763,7 @@ export async function POST(request: NextRequest) {
           url: "/minha-conta/agendamentos",
         }
       ).catch((e) => console.error("[PUSH BOOKING CONFIRM ERROR]", e));
-    } catch {}
+    } catch { }
 
     await releaseBookingLocks(lockKeysToRelease);
     return NextResponse.json(confirmedResponse);
@@ -861,8 +861,8 @@ async function handleMultiServiceBookingFlow({
       const resolvedUuid = isUuid(s.wixServiceId)
         ? s.wixServiceId
         : isUuid(s.id)
-        ? s.id
-        : localService?.wixServiceId;
+          ? s.id
+          : localService?.wixServiceId;
 
       if (!localService && !resolvedUuid) {
         return NextResponse.json(
@@ -974,8 +974,8 @@ async function handleMultiServiceBookingFlow({
         lockResult.errorCode === "STORAGE_UNAVAILABLE"
           ? 503
           : lockResult.errorCode === "CONCURRENT_REQUEST"
-          ? 429
-          : 409;
+            ? 429
+            : 409;
       return NextResponse.json(
         {
           success: false,

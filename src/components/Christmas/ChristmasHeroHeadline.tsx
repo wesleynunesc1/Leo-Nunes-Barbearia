@@ -12,12 +12,12 @@ export function ChristmasHeroHeadline({
 }: ChristmasHeroHeadlineProps) {
   return (
     <>
-      {/* Estilo responsivo calibrado: mobile (20px mais para a direita e levemente menor) vs desktop */}
+      {/* Estilo responsivo calibrado: mobile vs desktop */}
       <style>{`
         .gorro-natal-headline {
           width: 1.18em;
           top: calc(-0.31em - 3px);
-          left: calc(-0.09em - 5px);
+          left: calc(-0.09em - 8px);
           transform: rotate(5deg);
           transform-origin: center bottom;
         }
