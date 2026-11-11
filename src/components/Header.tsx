@@ -197,7 +197,7 @@ export function Header() {
                 aria-label="Menu do Usuário"
               >
                 <User className="w-3.5 h-3.5 text-[#25C440]" />
-                <span>{member.name.split(" ")[0]}</span>
+                <span>{(member.name || "Conta").split(" ")[0]}</span>
                 <span className={`text-[8px] text-[#A6AEA8] transition-transform duration-200 ${profileMenuOpen ? "rotate-180" : ""}`}>
                   ▼
                 </span>

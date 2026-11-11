@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { Scissors, Clock, Check, CalendarCheck, CheckCircle2, Shield, Droplets, Layers, Plus, Trash2, ArrowRight } from "lucide-react";
 import { useBooking } from "@/context/BookingContext";
@@ -21,6 +21,75 @@ export function Step2Service() {
   const [liveServices, setLiveServices] = useState<BarberService[]>(selectedBarber?.services || []);
   const [isLoadingLive, setIsLoadingLive] = useState(false);
   const [limitNotice, setLimitNotice] = useState(false);
+
+  // Âncora para scroll suave até a barra de resumo e botão "Avançar para Data"
+  const summaryRef = useRef<HTMLDivElement>(null);
+  const prevCountRef = useRef(selectedServices.length);
+  const isInitialMount = useRef(true);
+
+  useEffect(() => {
+    // Não disparar âncora no carregamento inicial da etapa
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      prevCountRef.current = selectedServices.length;
+      return;
+    }
+
+    const prevCount = prevCountRef.current;
+    prevCountRef.current = selectedServices.length;
+
+    // Disparar rolagem apenas quando novos serviços forem adicionados
+    if (selectedServices.length === 0 || selectedServices.length <= prevCount) {
+      return;
+    }
+
+    // Aguarda a renderização completa do resumo no DOM
+    const timer = setTimeout(() => {
+      const summaryEl = summaryRef.current;
+      if (!summaryEl) return;
+
+      // Localiza o container que realmente possui a rolagem do modal
+      let scrollContainer: HTMLElement | null = summaryEl.parentElement;
+      while (scrollContainer && scrollContainer !== document.body) {
+        const style = window.getComputedStyle(scrollContainer);
+        if (style.overflowY === "auto" || style.overflowY === "scroll") {
+          break;
+        }
+        scrollContainer = scrollContainer.parentElement;
+      }
+
+      if (!scrollContainer || scrollContainer === document.body) {
+        return;
+      }
+
+      const containerRect = scrollContainer.getBoundingClientRect();
+      const targetRect = summaryEl.getBoundingClientRect();
+
+      // Se o rodapé já estiver completamente visível, não realizar rolagem desnecessária
+      const isAlreadyVisible =
+        targetRect.top >= containerRect.top &&
+        targetRect.bottom <= containerRect.bottom - 8;
+
+      if (isAlreadyVisible) {
+        return;
+      }
+
+      // Respeitar prefers-reduced-motion
+      const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const behavior: ScrollBehavior = prefersReduced ? "auto" : "smooth";
+
+      // Rolar suavemente o container interno garantindo margem de segurança sem movimentar a página externa
+      const delta = targetRect.bottom - containerRect.bottom + 24;
+      if (delta > 0) {
+        scrollContainer.scrollBy({
+          top: delta,
+          behavior,
+        });
+      }
+    }, 60);
+
+    return () => clearTimeout(timer);
+  }, [selectedServices]);
 
   React.useEffect(() => {
     if (!selectedBarber) return;
@@ -258,7 +327,10 @@ export function Step2Service() {
 
       {/* Barra Fixa de Resumo & Avanço (quando há pelo menos 1 serviço selecionado) */}
       {selectedServices.length > 0 && (
-        <div className="p-3.5 rounded-2xl bg-[#0D1610] border border-[#25C440]/50 shadow-[0_4px_25px_rgba(0,0,0,0.5)] flex flex-col sm:flex-row items-center justify-between gap-3 animate-in fade-in slide-in-from-bottom-2 duration-200">
+        <div
+          ref={summaryRef}
+          className="p-3.5 rounded-2xl bg-[#0D1610] border border-[#25C440]/50 shadow-[0_4px_25px_rgba(0,0,0,0.5)] flex flex-col sm:flex-row items-center justify-between gap-3 animate-in fade-in slide-in-from-bottom-2 duration-200"
+        >
           <div className="flex items-center justify-between w-full sm:w-auto gap-4">
             <div>
               <div className="flex items-center gap-2">

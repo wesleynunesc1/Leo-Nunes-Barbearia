@@ -3,6 +3,7 @@
 import React from "react";
 import { Calendar, Scissors, Users, Sparkles, ChevronRight } from "lucide-react";
 import { useBooking } from "@/context/BookingContext";
+import ChristmasExpress from "@/components/christmas-express";
 
 interface ChristmasCardItem {
   id: string;
@@ -109,14 +110,25 @@ export function ChristmasFeatureCards() {
   };
 
   return (
-    <div className="relative z-20 w-full border-t border-b border-[#1E2B21]/90 bg-[#080C09]/95 backdrop-blur-md py-2.5 sm:py-3 overflow-hidden">
+    <div className="relative z-20 w-full bg-[#080C09]/95 backdrop-blur-md py-2.5 sm:py-3">
+      {/* Camada decorativa animada 2D Christmas Express acima dos cards */}
+      <ChristmasExpress
+        duration={10}
+        pause={5}
+        style={{
+          "--cx-height": "clamp(60px, 8vw, 112px)",
+          "--cx-offset-y": "-82%",
+          "--cx-z": "25",
+        } as React.CSSProperties}
+      />
+
       {/* Sutil brilho dourado/champanhe de fundo */}
       <div 
         className="pointer-events-none absolute inset-0 opacity-40 bg-[radial-gradient(ellipse_80%_60%_at_50%_0%,rgba(229,193,88,0.06),transparent)]" 
         aria-hidden="true" 
       />
 
-      <div className="marquee-container !p-0">
+      <div className="marquee-container !p-0 overflow-hidden">
         <div className="marquee-track" style={{ animationDuration: "28s" }}>
           {/* Loop Set 1 */}
           {CHRISTMAS_CARDS.map((card) => renderCard(card, `set1-${card.id}`))}
