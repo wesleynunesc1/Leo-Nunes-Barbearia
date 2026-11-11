@@ -971,7 +971,8 @@ function BookingDetailCard({
 
 export function ChatbotWidget() {
   const { member } = useAuth();
-  const { isModalOpen: isBookingModalOpen } = useBooking();
+  const { isModalOpen: isBookingModalOpen, isAuthModalOpen, openAuthModal } = useBooking();
+  const isAnyModalActive = isBookingModalOpen || isAuthModalOpen;
   const [isOpen, setIsOpen] = useState(false);
   const [session, dispatch] = useReducer(chatbotReducer, member, createInitialSession);
   const [slots, setSlots] = useState<TimeSlotData[]>([]);
@@ -986,6 +987,101 @@ export function ChatbotWidget() {
   const [showRescheduleDatePicker, setShowRescheduleDatePicker] = useState(false);
   const [hasUnread, setHasUnread] = useState(false);
   const [isCanceling, setIsCanceling] = useState(false);
+
+  // Controle de Autenticação Obrigatória no Chatbot
+  const pendingAuthRef = useRef(false);
+  const hasHandledAuthResumeRef = useRef(false);
+  const selectedBarberRef = useRef<string | null>(null);
+  const selectedServicesRef = useRef<string[]>([]);
+
+  useEffect(() => {
+    if (session.selectedBarberId) selectedBarberRef.current = session.selectedBarberId;
+    if (session.selectedServiceIds) selectedServicesRef.current = session.selectedServiceIds;
+  }, [session.selectedBarberId, session.selectedServiceIds]);
+
+  const requestChatbotAuth = useCallback((intendedAction?: string) => {
+    pendingAuthRef.current = true;
+    hasHandledAuthResumeRef.current = false;
+    try {
+      sessionStorage.setItem("leo_chatbot_pending_auth", "true");
+      if (intendedAction) {
+        sessionStorage.setItem("leo_chatbot_pending_intent", intendedAction);
+      }
+    } catch {}
+
+    dispatch({
+      type: "ADD_MESSAGE",
+      message: {
+        id: `auth-req-${Date.now()}`,
+        role: "bot",
+        type: "buttons",
+        text: "✂️ Para agendar seu horário na Leo Nunes Barbearia, primeiro precisamos que você entre na sua conta.\n\nÉ rapidinho! Depois do login, continuamos de onde paramos.",
+        buttons: [
+          { id: "CHATBOT_AUTH_LOGIN", label: "Entrar na minha conta", variant: "primary" },
+          { id: "CHATBOT_AUTH_REGISTER", label: "Criar conta", variant: "secondary" },
+        ],
+        timestamp: new Date(),
+      },
+    });
+  }, []);
+
+  const resumeAfterAuth = useCallback(
+    (currentMember?: any) => {
+      if (hasHandledAuthResumeRef.current) return;
+      hasHandledAuthResumeRef.current = true;
+      pendingAuthRef.current = false;
+
+      try {
+        sessionStorage.removeItem("leo_chatbot_pending_auth");
+        sessionStorage.removeItem("leo_chatbot_resume_after_login");
+        sessionStorage.removeItem("leo_chatbot_pending_intent");
+      } catch {}
+
+      const activeMember = currentMember || member;
+      if (activeMember) {
+        dispatch({ type: "SYNC_MEMBER", member: activeMember });
+      }
+
+      // Mensagem oficial exigida de continuidade
+      dispatch({
+        type: "ADD_MESSAGE",
+        message: {
+          id: `auth-success-${Date.now()}`,
+          role: "bot",
+          type: "text",
+          text: "✅ Prontinho! Agora podemos continuar seu agendamento.\n\nVamos escolher o melhor horário para você?",
+          timestamp: new Date(),
+        },
+      });
+
+      // Retomada inteligente de onde parou preservando contexto
+      const barberId = session.selectedBarberId || selectedBarberRef.current;
+      const serviceIds =
+        session.selectedServiceIds && session.selectedServiceIds.length > 0
+          ? session.selectedServiceIds
+          : selectedServicesRef.current;
+
+      if (barberId && serviceIds.length > 0) {
+        setShowDatePicker(true);
+        dispatch({
+          type: "ADD_MESSAGE",
+          message: {
+            id: `date-picker-${Date.now()}`,
+            role: "bot",
+            type: "text",
+            text: "📅 Escolha uma data para o atendimento:",
+            timestamp: new Date(),
+          },
+        });
+        dispatch({ type: "GOTO_STEP", step: "BOOK_DATE" });
+      } else if (barberId) {
+        dispatch({ type: "GOTO_STEP", step: "BOOK_SERVICE" });
+      } else {
+        dispatch({ type: "GOTO_STEP", step: "BOOK_BARBER" });
+      }
+    },
+    [member, session.selectedBarberId, session.selectedServiceIds]
+  );
 
   // Estados do Microbalão Recorrente e Pulso do Robô
   const [showMicroBubble, setShowMicroBubble] = useState(false);
@@ -1037,7 +1133,7 @@ export function ChatbotWidget() {
       }
     } catch {}
 
-    if (isOpen || isBookingModalOpen) return;
+    if (isOpen || isAnyModalActive) return;
 
     let hideTimer: NodeJS.Timeout | null = null;
     let intervalTimer: NodeJS.Timeout | null = null;
@@ -1101,7 +1197,7 @@ export function ChatbotWidget() {
       if (intervalTimer) clearInterval(intervalTimer);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [isOpen, isBookingModalOpen, handleDismissBubble]);
+  }, [isOpen, isAnyModalActive, handleDismissBubble]);
 
   // Sincronização dinâmica de autenticação (login / logout)
   useEffect(() => {
@@ -1112,9 +1208,40 @@ export function ChatbotWidget() {
     } else if (!prevMemberRef.current && member) {
       // Login: sincroniza sessão e dados
       dispatch({ type: "SYNC_MEMBER", member });
+      if (pendingAuthRef.current) {
+        resumeAfterAuth(member);
+      }
     }
     prevMemberRef.current = member;
-  }, [member]);
+  }, [member, resumeAfterAuth]);
+
+  // Notificação de auth completada em tempo real (BookingAuthModal fechado com sucesso)
+  useEffect(() => {
+    const handleAuthCompleted = () => {
+      resumeAfterAuth(member);
+    };
+
+    window.addEventListener("chatbotAuthCompleted", handleAuthCompleted);
+    return () => {
+      window.removeEventListener("chatbotAuthCompleted", handleAuthCompleted);
+    };
+  }, [resumeAfterAuth, member]);
+
+  // Retomada automática após redirect completo OAuth (Google / Wix)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const shouldResume = sessionStorage.getItem("leo_chatbot_resume_after_login");
+      if (shouldResume === "true" && member) {
+        sessionStorage.removeItem("leo_chatbot_resume_after_login");
+        setIsOpen(true);
+        const timer = setTimeout(() => {
+          resumeAfterAuth(member);
+        }, 350);
+        return () => clearTimeout(timer);
+      }
+    } catch {}
+  }, [member, resumeAfterAuth]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -1779,6 +1906,12 @@ export function ChatbotWidget() {
   };
 
   const executeBooking = async () => {
+    // 02 — AUTENTICAÇÃO OBRIGATÓRIA NO CHATBOT
+    if (!member) {
+      requestChatbotAuth("EXECUTE_BOOKING");
+      return;
+    }
+
     const body = {
       barberId: session.selectedBarberId,
       barberSlug: session.selectedBarberSlug,
@@ -1809,6 +1942,11 @@ export function ChatbotWidget() {
         body: JSON.stringify(body),
       });
       const data = await res.json();
+
+      if (res.status === 401 || data.errorCode === "AUTH_ERROR") {
+        requestChatbotAuth("EXECUTE_BOOKING");
+        return;
+      }
 
       dispatch({
         type: "ADD_MESSAGE",
@@ -2130,23 +2268,43 @@ export function ChatbotWidget() {
   const handleButtonAction = useCallback(
     async (actionId: string) => {
       // Ações especiais
+      if (actionId === "CHATBOT_AUTH_LOGIN") {
+        openAuthModal("chatbot", "login");
+        return;
+      }
+      if (actionId === "CHATBOT_AUTH_REGISTER") {
+        openAuthModal("chatbot", "register");
+        return;
+      }
       if (actionId === "WHATSAPP_OPEN") {
         window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_TEXT}`, "_blank");
         return;
       }
       if (actionId === "GOTO_LOGIN") {
-        window.location.href = "/login?redirect=/minha-conta/agendamentos";
+        openAuthModal("chatbot", "login");
         return;
       }
       if (actionId === "START_BOOKING" || actionId === "BOOK_AGAIN") {
+        if (!member) {
+          requestChatbotAuth(actionId);
+          return;
+        }
         dispatch({ type: "GOTO_STEP", step: "BOOK_BARBER" });
         return;
       }
       if (actionId === "REPEAT_LAST_BOOKING") {
+        if (!member) {
+          requestChatbotAuth(actionId);
+          return;
+        }
         await fetchRepeatLastBooking();
         return;
       }
       if (actionId === "FIND_NEXT_SLOT") {
+        if (!member) {
+          requestChatbotAuth(actionId);
+          return;
+        }
         dispatch({ type: "FIND_NEXT_SLOT" });
         return;
       }
@@ -2155,6 +2313,10 @@ export function ChatbotWidget() {
         return;
       }
       if (actionId === "CONFIRM_REPEAT_SLOTS") {
+        if (!member) {
+          requestChatbotAuth(actionId);
+          return;
+        }
         const repeatData = session.repeatCardData;
         if (!repeatData) return;
         dispatch({
@@ -2284,6 +2446,10 @@ export function ChatbotWidget() {
         return;
       }
       if (actionId === "CONFIRM_BOOKING") {
+        if (!member) {
+          requestChatbotAuth(actionId);
+          return;
+        }
         dispatch({ type: "CONFIRM_BOOKING" });
         await executeBooking();
         return;
@@ -2352,6 +2518,10 @@ export function ChatbotWidget() {
       // Ações GOTO_STEP
       if (actionId.startsWith("GOTO_STEP:")) {
         const stepId = actionId.split(":")[1] as any;
+        if ((stepId === "BOOK_BARBER" || stepId === "BOOK_SERVICE" || stepId === "BOOK_DATE") && !member) {
+          requestChatbotAuth(actionId);
+          return;
+        }
         if (stepId === "BOOK_DATE") {
           setShowDatePicker(true);
           dispatch({
@@ -2444,7 +2614,7 @@ export function ChatbotWidget() {
   return (
     <>
       {/* Microbalão Animado Saindo do Botão Flutuante */}
-      {!isOpen && !isMobileMenuOpen && !isBookingModalOpen && showMicroBubble && (
+      {!isOpen && !isMobileMenuOpen && !isAnyModalActive && showMicroBubble && (
         <div
           key={`micro-bubble-${microBubbleKey}`}
           role="status"
@@ -2480,10 +2650,10 @@ export function ChatbotWidget() {
         </div>
       )}
 
-      {/* Botão flutuante (Oculto completamente quando o BookingModal está aberto ou temporariamente no mobile quando o menu está aberto) */}
+      {/* Botão flutuante (Oculto completamente quando qualquer modal de agendamento/login está aberto ou no mobile quando o menu está aberto) */}
       <div
         className={`fixed z-[60] bottom-[calc(env(safe-area-inset-bottom,0px)+1rem)] right-4 sm:bottom-[calc(1.5rem+60px)] sm:right-6 transition-all duration-200 ${
-          isBookingModalOpen
+          isAnyModalActive
             ? "opacity-0 pointer-events-none scale-0 invisible"
             : isMobileMenuOpen
             ? "opacity-0 pointer-events-none scale-90 sm:opacity-100 sm:pointer-events-auto sm:scale-100"
@@ -2491,7 +2661,7 @@ export function ChatbotWidget() {
         }`}
       >
         {/* Anel de Pulso Elegante (Executa sincronizado com o surgimento do microbalão) */}
-        {!isOpen && !isMobileMenuOpen && !isBookingModalOpen && hasPulsed && (
+        {!isOpen && !isMobileMenuOpen && !isAnyModalActive && hasPulsed && (
           <span
             key={`pulse-${microBubbleKey}`}
             className="bot-pulse-ring absolute inset-0 rounded-full border-2 border-[#25C440] pointer-events-none"
@@ -2615,20 +2785,29 @@ export function ChatbotWidget() {
                     <MessageBubble message={{ ...msg, type: "text" }} />
                     <BarberCards
                       dispatch={dispatch}
-                      onSelect={
-                        session.step === "FIND_NEXT_SLOT"
-                          ? (barber) => {
-                              dispatch({
-                                type: "SELECT_BARBER",
-                                barberId: barber.id,
-                                barberSlug: barber.slug,
-                                barberName: barber.name,
-                                barberPhoto: barber.photo,
-                              });
-                              findAndShowNextSlots(barber.slug, [], barber.name);
-                            }
-                          : undefined
-                      }
+                      onSelect={(barber) => {
+                        dispatch({
+                          type: "SELECT_BARBER",
+                          barberId: barber.id,
+                          barberSlug: barber.slug,
+                          barberName: barber.name,
+                          barberPhoto: barber.photo,
+                        });
+
+                        if (session.step === "FIND_NEXT_SLOT") {
+                          if (!member) {
+                            requestChatbotAuth("FIND_NEXT_SLOT");
+                            return;
+                          }
+                          findAndShowNextSlots(barber.slug, [], barber.name);
+                          return;
+                        }
+
+                        if (!member) {
+                          requestChatbotAuth("SELECT_BARBER");
+                          return;
+                        }
+                      }}
                     />
                   </div>
                 );
@@ -2657,6 +2836,10 @@ export function ChatbotWidget() {
                       dispatch={dispatch}
                       scrollContainerRef={messagesContainerRef}
                       onProceed={() => {
+                        if (!member) {
+                          requestChatbotAuth("PROCEED_TO_DATE");
+                          return;
+                        }
                         setShowDatePicker(true);
                         dispatch({
                           type: "ADD_MESSAGE",
@@ -2845,6 +3028,10 @@ export function ChatbotWidget() {
 
 // Helper para obter slug do barbeiro pelo nome
 function getBarberSlugFromName(name: string): string {
-  const barber = BARBERS.find((b) => b.name.toLowerCase() === name.toLowerCase());
+  const lower = name.toLowerCase().trim();
+  if (lower.includes("aleffer") || lower.includes("neymar")) {
+    return "aleffer-nunes";
+  }
+  const barber = BARBERS.find((b) => b.name.toLowerCase() === lower);
   return barber?.slug || "leo-nunes";
 }

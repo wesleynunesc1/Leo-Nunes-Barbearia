@@ -114,7 +114,7 @@ export function Footer() {
               </li>
               <li>
                 <Link href="/agendar/aleffer-nunes" className="hover:text-[#25C440] transition-colors flex items-center justify-between group">
-                  <span>Aleffer Nunes</span>
+                  <span>Neymar Aleffer</span>
                   <span className="text-xs text-[#25C440] opacity-0 group-hover:opacity-100 transition-opacity">Ver agenda →</span>
                 </Link>
               </li>

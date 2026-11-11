@@ -1,8 +1,9 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from "react";
 import { Barber, BarberService, getAllBarbers, getBarberBySlug, getBarberById } from "@/data/barbers";
 import { BookingCustomer, BookingCreateResponse, SelectedServiceItem } from "@/types/booking";
+import { useAuth } from "@/context/AuthContext";
 
 interface OpenBookingOptions {
   barberSlug?: string;
@@ -13,6 +14,9 @@ interface OpenBookingOptions {
 
 interface BookingContextType {
   isModalOpen: boolean;
+  isAuthModalOpen: boolean;
+  authSource: "booking" | "chatbot";
+  authInitialTab: "login" | "register";
   step: 1 | 2 | 3 | 4 | 5;
   selectedBarber: Barber | null;
   selectedService: BarberService | null; // Retrocompatibilidade (retorna o 1º serviço ou null)
@@ -28,6 +32,13 @@ interface BookingContextType {
 
   openBooking: (options?: OpenBookingOptions) => void;
   closeBooking: () => void;
+  openAuthModal: (
+    source?: "booking" | "chatbot",
+    initialTab?: "login" | "register",
+    onCustomSuccess?: () => void
+  ) => void;
+  closeAuthModal: () => void;
+  onAuthSuccess: () => void;
   goToStep: (step: 1 | 2 | 3 | 4 | 5) => void;
   selectBarber: (barber: Barber) => void;
   selectService: (service: BarberService) => void; // Seleciona único serviço e avança
@@ -45,7 +56,12 @@ interface BookingContextType {
 const BookingContext = createContext<BookingContextType | undefined>(undefined);
 
 export function BookingProvider({ children }: { children: React.ReactNode }) {
+  const { member } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authSource, setAuthSource] = useState<"booking" | "chatbot">("booking");
+  const [authInitialTab, setAuthInitialTab] = useState<"login" | "register">("login");
+  const customAuthSuccessRef = useRef<(() => void) | undefined>(undefined);
   const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
   const [selectedBarber, setSelectedBarber] = useState<Barber | null>(null);
   const [selectedServices, setSelectedServices] = useState<BarberService[]>([]);
@@ -60,6 +76,9 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
   });
   const [bookingResult, setBookingResult] = useState<BookingCreateResponse | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Guarda seleção pendente caso o visitante precise se autenticar antes de prosseguir
+  const pendingOptionsRef = useRef<OpenBookingOptions | undefined>(undefined);
 
   // Getter de retrocompatibilidade para o primeiro serviço
   const selectedService = selectedServices[0] || null;
@@ -79,7 +98,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     setIsSubmitting(false);
   }, []);
 
-  const openBooking = useCallback((options?: OpenBookingOptions) => {
+  const executeOpenBooking = useCallback((options?: OpenBookingOptions) => {
     setBookingResult(null);
     setIsSubmitting(false);
 
@@ -118,6 +137,82 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     setStep(1);
     setIsModalOpen(true);
   }, []);
+
+  const openAuthModal = useCallback(
+    (
+      source: "booking" | "chatbot" = "booking",
+      initialTab: "login" | "register" = "login",
+      onCustomSuccess?: () => void
+    ) => {
+      setAuthSource(source);
+      setAuthInitialTab(initialTab);
+      customAuthSuccessRef.current = onCustomSuccess;
+      setIsAuthModalOpen(true);
+    },
+    []
+  );
+
+  const closeAuthModal = useCallback(() => {
+    setIsAuthModalOpen(false);
+    customAuthSuccessRef.current = undefined;
+  }, []);
+
+  const onAuthSuccess = useCallback(() => {
+    if (customAuthSuccessRef.current) {
+      const cb = customAuthSuccessRef.current;
+      customAuthSuccessRef.current = undefined;
+      cb();
+      return;
+    }
+
+    if (authSource === "chatbot") {
+      // Notifica o chatbot para continuar a conversa de onde parou
+      window.dispatchEvent(new CustomEvent("chatbotAuthCompleted"));
+      return;
+    }
+
+    const pending = pendingOptionsRef.current;
+    pendingOptionsRef.current = undefined;
+    executeOpenBooking(pending);
+  }, [authSource, executeOpenBooking]);
+
+  const openBooking = useCallback((options?: OpenBookingOptions) => {
+    // 02 — LOGIN OBRIGATÓRIO ANTES DO AGENDAMENTO
+    // Se o usuário não estiver autenticado no Wix Members, abre o modal de autenticação
+    if (!member) {
+      pendingOptionsRef.current = options;
+      setAuthSource("booking");
+      // Salva no sessionStorage para persistir mesmo em recarregamentos ou redirecionamento OAuth
+      if (typeof window !== "undefined" && options) {
+        try {
+          sessionStorage.setItem("leo_pending_booking_options", JSON.stringify(options));
+        } catch {}
+      }
+      setIsAuthModalOpen(true);
+      return;
+    }
+
+    executeOpenBooking(options);
+  }, [member, executeOpenBooking]);
+
+  // Recupera fluxo pendente após redirecionamento de login (OAuth ou reload)
+  useEffect(() => {
+    if (member && typeof window !== "undefined") {
+      const resume = sessionStorage.getItem("leo_resume_booking_after_login");
+      const savedOptions = sessionStorage.getItem("leo_pending_booking_options");
+      if (resume) {
+        sessionStorage.removeItem("leo_resume_booking_after_login");
+        sessionStorage.removeItem("leo_pending_booking_options");
+        let parsedOptions: OpenBookingOptions | undefined = undefined;
+        if (savedOptions) {
+          try {
+            parsedOptions = JSON.parse(savedOptions);
+          } catch {}
+        }
+        executeOpenBooking(parsedOptions);
+      }
+    }
+  }, [member, executeOpenBooking]);
 
   const closeBooking = useCallback(() => {
     setIsModalOpen(false);
@@ -292,18 +387,25 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
   // Fecha modal com a tecla ESC
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isModalOpen) {
-        closeBooking();
+      if (e.key === "Escape") {
+        if (isAuthModalOpen) {
+          closeAuthModal();
+        } else if (isModalOpen) {
+          closeBooking();
+        }
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isModalOpen, closeBooking]);
+  }, [isModalOpen, isAuthModalOpen, closeBooking, closeAuthModal]);
 
   return (
     <BookingContext.Provider
       value={{
         isModalOpen,
+        isAuthModalOpen,
+        authSource,
+        authInitialTab,
         step,
         selectedBarber,
         selectedService,
@@ -318,6 +420,9 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
         totalDurationMinutes,
         openBooking,
         closeBooking,
+        openAuthModal,
+        closeAuthModal,
+        onAuthSuccess,
         goToStep,
         selectBarber,
         selectService,

@@ -10,7 +10,7 @@ import { BookingTriggerButton } from "@/components/BookingTriggerButton";
 export const metadata: Metadata = {
   title: "Agendar Horário",
   description:
-    "Selecione o profissional de sua preferência na Leo Nunes Barbearia em Pacajus - CE: Leo Nunes, Aleffer Nunes, Hélio Victor ou Guilherme Oliveira.",
+    "Selecione o profissional de sua preferência na Leo Nunes Barbearia em Pacajus - CE: Leo Nunes, Neymar Aleffer, Hélio Victor ou Guilherme Oliveira.",
   alternates: {
     canonical: "/agendar",
   },

@@ -138,7 +138,9 @@ export async function GET(
     const matchedBarber = BARBERS.find(
       (b) =>
         (resourceId && b.resourceId === resourceId) ||
-        b.name.toLowerCase() === resourceName.toLowerCase()
+        b.name.toLowerCase() === resourceName.toLowerCase() ||
+        (resourceName.toLowerCase().includes("neymar") && b.slug === "aleffer-nunes") ||
+        (resourceName.toLowerCase().includes("aleffer") && b.slug === "aleffer-nunes")
     );
 
     // Avaliação final de regras de negócio para exibição clara

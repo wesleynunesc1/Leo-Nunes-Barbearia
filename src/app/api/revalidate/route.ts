@@ -61,6 +61,7 @@ async function handleRevalidation(request: NextRequest) {
           "/agendar",
           "/agendar/leo-nunes",
           "/agendar/aleffer-nunes",
+          "/agendar/neymar-aleffer",
           "/agendar/helio-victor",
           "/agendar/guilherme-oliveira",
         ];

@@ -14,9 +14,11 @@ interface PageProps {
 
 export async function generateStaticParams() {
   const barbers = await getDynamicBarbers();
-  return barbers.map((b) => ({
+  const paths: Array<{ slug: string }> = barbers.map((b) => ({
     slug: b.slug,
   }));
+  paths.push({ slug: "neymar-aleffer" });
+  return paths;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

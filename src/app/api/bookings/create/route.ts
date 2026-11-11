@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     timeParam = time || "";
     phoneParam = (customer?.phone || "").replace(/\D/g, "");
 
-    // Identificação segura de membro autenticado (se houver sessão ativa no backend)
+    // Identificação segura de membro autenticado (obrigatória para realizar agendamentos)
     let authenticatedMemberContactId: string | undefined = undefined;
     let authenticatedMemberId: string | undefined = undefined;
     const authCookie = request.cookies.get(AUTH_COOKIE_NAME)?.value;
@@ -46,8 +46,19 @@ export async function POST(request: NextRequest) {
           authenticatedMemberId = member.id;
         }
       } catch {
-        // Ignora silenciosamente para visitantes
+        // Sessão com formato inválido
       }
+    }
+
+    // 0. BLOQUEIO DE SEGURANÇA: REQUISIÇÕES NÃO AUTENTICADAS (HTTP 401)
+    if (!authenticatedMemberId && !authenticatedMemberContactId) {
+      const errorResponse: BookingCreateResponse = {
+        success: false,
+        status: "ERROR",
+        errorCode: "AUTH_ERROR",
+        message: "É necessário estar autenticado para realizar um agendamento. Faça login com sua conta Wix.",
+      };
+      return NextResponse.json(errorResponse, { status: 401 });
     }
 
     // 1. Validações fundamentais de entrada

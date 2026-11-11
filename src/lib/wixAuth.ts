@@ -307,9 +307,12 @@ export async function getMemberBookings(contactId: string): Promise<{
       }
 
       const serviceName = b.bookedEntity?.title || "Atendimento na Barbearia";
-      const barberName =
+      let barberName =
         b.bookedEntity?.slot?.resource?.name ||
         "Profissional Léo Nunes Barbearia";
+      if (barberName.toLowerCase().includes("aleffer") || barberName.toLowerCase().includes("neymar")) {
+        barberName = "Neymar Aleffer";
+      }
 
       items.push({
         id: b._id,

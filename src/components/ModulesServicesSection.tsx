@@ -206,7 +206,7 @@ export function ModulesServicesSection() {
                   Consulte os horários e valores com cada profissional
                 </h4>
                 <p className="text-xs sm:text-sm text-[#8E9B91] max-w-xl">
-                  Escolha entre Léo Nunes, Aleffer Nunes, Hélio Victor ou Guilherme Oliveira e visualize a agenda completa online.
+                  Escolha entre Léo Nunes, Neymar Aleffer, Hélio Victor ou Guilherme Oliveira e visualize a agenda completa online.
                 </p>
               </div>
 

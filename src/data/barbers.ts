@@ -13,7 +13,7 @@ export interface BarberService {
 
 export interface Barber {
   id: string;
-  slug: "leo-nunes" | "aleffer-nunes" | "helio-victor" | "guilherme-oliveira";
+  slug: "leo-nunes" | "aleffer-nunes" | "helio-victor" | "guilherme-oliveira" | "neymar-aleffer";
   name: string;
   role: string;
   tagline: string;
@@ -149,7 +149,7 @@ export const BARBERS: Barber[] = [
   {
     id: "aleffer-nunes",
     slug: "aleffer-nunes",
-    name: "Aleffer Nunes",
+    name: "Neymar Aleffer",
     role: "Barber Profissional",
     tagline: "Técnica apurada, degradês limpos e atendimento atencioso aos mínimos detalhes.",
     photo: "/images/barbers/aleffer-nunes.webp",
@@ -477,10 +477,16 @@ export function getAllBarbers(): Barber[] {
 }
 
 export function getBarberBySlug(slug: string): Barber | undefined {
+  if (slug === "neymar-aleffer") {
+    return BARBERS.find((b) => b.slug === "aleffer-nunes");
+  }
   return BARBERS.find((b) => b.slug === slug);
 }
 
 export function getBarberById(id: string): Barber | undefined {
+  if (id === "neymar-aleffer") {
+    return BARBERS.find((b) => b.id === "aleffer-nunes");
+  }
   return BARBERS.find((b) => b.id === id);
 }
 

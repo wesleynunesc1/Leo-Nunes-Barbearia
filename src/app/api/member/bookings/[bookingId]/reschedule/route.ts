@@ -178,7 +178,9 @@ export async function POST(
     const matchedBarber = BARBERS.find(
       (b) =>
         (resourceId && b.resourceId === resourceId) ||
-        b.name.toLowerCase() === resourceName.toLowerCase()
+        b.name.toLowerCase() === resourceName.toLowerCase() ||
+        (resourceName.toLowerCase().includes("neymar") && b.slug === "aleffer-nunes") ||
+        (resourceName.toLowerCase().includes("aleffer") && b.slug === "aleffer-nunes")
     );
 
     const barberId = matchedBarber ? matchedBarber.id : "aleffer-nunes";

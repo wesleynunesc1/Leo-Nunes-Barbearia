@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     "Barboterapia Pacajus CE",
     "Agendamento barbearia Pacajus",
     "Leo Nunes",
-    "Aleffer Nunes",
+    "Neymar Aleffer",
     "Hélio Victor",
     "Guilherme Oliveira",
     "Salão masculino Pacajus",

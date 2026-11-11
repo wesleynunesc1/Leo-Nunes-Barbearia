@@ -317,7 +317,7 @@ export default async function HomePage() {
                     Escolha o Barbeiro
                   </h3>
                   <p className="text-xs sm:text-sm text-[#9BA59E] leading-relaxed">
-                    Selecione o profissional de sua preferência: Léo Nunes, Aleffer Nunes, Hélio Victor ou Guilherme Oliveira.
+                    Selecione o profissional de sua preferência: Léo Nunes, Neymar Aleffer, Hélio Victor ou Guilherme Oliveira.
                   </p>
                 </div>
               </ScrollReveal>

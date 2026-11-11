@@ -19,6 +19,7 @@ export const BARBER_RESOURCE_SLUG_MAP: Record<string, string> = {
 export const SLUG_TO_RESOURCE_ID_MAP: Record<string, string> = {
   "leo-nunes": "76570209-101f-409b-af97-b445bdb63125",
   "aleffer-nunes": "ea570fb8-8b9c-493d-af1b-437f2b7a9883",
+  "neymar-aleffer": "ea570fb8-8b9c-493d-af1b-437f2b7a9883",
   "helio-victor": "9ede92c1-dc85-4536-895f-5a9ec6665612",
   "guilherme-oliveira": "106d620c-2150-4558-98bb-ad2777bd32e3",
 };
@@ -400,6 +401,9 @@ export async function getDynamicBarbers(): Promise<Barber[]> {
  */
 export async function getDynamicBarberBySlug(slug: string): Promise<Barber | undefined> {
   const barbers = await getDynamicBarbers();
+  if (slug === "neymar-aleffer") {
+    return barbers.find((b) => b.slug === "aleffer-nunes");
+  }
   return barbers.find((b) => b.slug === slug);
 }
 
@@ -408,5 +412,8 @@ export async function getDynamicBarberBySlug(slug: string): Promise<Barber | und
  */
 export async function getDynamicBarberById(id: string): Promise<Barber | undefined> {
   const barbers = await getDynamicBarbers();
+  if (id === "neymar-aleffer") {
+    return barbers.find((b) => b.id === "aleffer-nunes");
+  }
   return barbers.find((b) => b.id === id);
 }

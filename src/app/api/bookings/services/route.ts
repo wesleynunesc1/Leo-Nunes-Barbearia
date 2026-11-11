@@ -27,8 +27,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    const targetSlug = barberSlug === "neymar-aleffer" ? "aleffer-nunes" : barberSlug;
+    const targetId = barberId === "neymar-aleffer" ? "aleffer-nunes" : barberId;
     const barber = barbers.find((b) =>
-      barberSlug ? b.slug === barberSlug : b.id === barberId
+      targetSlug ? b.slug === targetSlug : b.id === targetId
     );
 
     if (!barber) {
