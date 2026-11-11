@@ -16,16 +16,16 @@ export function ChristmasHeroHeadline({
       <style>{`
         .gorro-natal-headline {
           width: 1.18em;
-          top: calc(-0.31em - 3px);
-          left: calc(-0.09em - 8px);
+          top: calc(-0.31em - 1px);
+          left: calc(-0.09em - 10px);
           transform: rotate(5deg);
           transform-origin: center bottom;
         }
         @media (min-width: 640px) {
           .gorro-natal-headline {
             width: 1.32em;
-            top: calc(-0.33em - 3px);
-            left: calc(-0.09em - 25px);
+            top: calc(-0.33em - 1px);
+            left: calc(-0.09em - 27px);
           }
         }
       `}</style>
