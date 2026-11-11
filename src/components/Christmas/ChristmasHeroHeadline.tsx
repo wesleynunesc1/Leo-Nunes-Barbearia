@@ -12,6 +12,24 @@ export function ChristmasHeroHeadline({
 }: ChristmasHeroHeadlineProps) {
   return (
     <>
+      {/* Estilo responsivo calibrado: mobile (20px mais para a direita e levemente menor) vs desktop */}
+      <style>{`
+        .gorro-natal-headline {
+          width: 1.18em;
+          top: calc(-0.31em - 3px);
+          left: calc(-0.09em - 5px);
+          transform: rotate(5deg);
+          transform-origin: center bottom;
+        }
+        @media (min-width: 640px) {
+          .gorro-natal-headline {
+            width: 1.32em;
+            top: calc(-0.33em - 3px);
+            left: calc(-0.09em - 25px);
+          }
+        }
+      `}</style>
+
       {/* Identificador Superior Limpo — Versão Fim de Ano */}
       <div className="flex items-center gap-2.5">
         <div className="w-6 sm:w-8 h-[2px] bg-[#25C440]" aria-hidden="true" />
@@ -31,15 +49,7 @@ export function ChristmasHeroHeadline({
               src="/images/christmas/gorro_natal_trimmed.webp"
               alt=""
               aria-hidden="true"
-              className="pointer-events-none absolute select-none drop-shadow-[0_4px_16px_rgba(0,0,0,0.75)] z-20"
-              style={{
-                width: "1.32em",
-                maxWidth: "none",
-                top: "calc(-0.33em - 3px)",
-                left: "calc(-0.09em - 25px)",
-                transform: "rotate(5deg)",
-                transformOrigin: "center bottom",
-              }}
+              className="gorro-natal-headline pointer-events-none absolute select-none drop-shadow-[0_4px_16px_rgba(0,0,0,0.75)] z-20 max-w-none"
             />
           </span>
           {" ANO TERMINA."}
