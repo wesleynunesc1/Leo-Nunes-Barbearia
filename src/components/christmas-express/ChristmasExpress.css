@@ -1,17 +1,17 @@
 /* ==========================================================================
-   Christmas Express — estilos
+   Christmas Express 3.0 — estilos
    Todas as classes usam o prefixo .cx- para não colidir com o site.
    ========================================================================== */
 
 .cx-root {
   /* --- ajustes públicos (sobrescreva via style/className) --- */
-  --cx-height: clamp(64px, 13vw, 136px); /* altura do conjunto: mobile → desktop */
-  --cx-offset-y: -88%;                   /* 0% = topo da faixa; negativo sobe */
+  --cx-height: clamp(84px, 11vw, 150px); /* altura da faixa: ~84px no celular → 150px no desktop */
+  --cx-offset-y: -100%;                  /* -100% = faixa inteira acima dos cards; 0% = alinhada ao topo */
   --cx-z: 5;
   --cx-stride: 0.56s;                    /* duração de uma passada da rena */
 
   /* --- internos --- */
-  --cx-ratio: 4.575;                     /* largura/altura do viewBox (915/200) */
+  --cx-ratio: 4.5045;                    /* largura/altura do viewBox (1000/222) */
 
   position: absolute;
   top: 0;
@@ -27,21 +27,154 @@
   contain: layout style;
 }
 
+/* --------------------------------------------------------------------------
+   Cenário fixo. Transparente fora do que está desenhado; as bordas se dissolvem
+   com máscaras, então não aparece nenhum retângulo sobre o fundo do site.
+   -------------------------------------------------------------------------- */
+.cx-scenery,
+.cx-stars,
+.cx-snowfall {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+/* brilho noturno: uma névoa azulada que nasce do chão e some para cima e para os lados */
+.cx-backdrop {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: radial-gradient(ellipse 72% 125% at 50% 100%, rgba(104, 140, 214, 0.3) 0%, rgba(64, 92, 168, 0.15) 46%, rgba(40, 60, 120, 0) 78%);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+}
+
+/* pontinhos luminosos */
+.cx-star {
+  --cx-dur: 3.4s;
+  position: absolute;
+  width: max(2px, calc(var(--cx-height) * 0.02 * var(--cx-s, 1)));
+  height: max(2px, calc(var(--cx-height) * 0.02 * var(--cx-s, 1)));
+  border-radius: 50%;
+  background: #fff6d8;
+  box-shadow: 0 0 4px 1px rgba(255, 232, 160, 0.65);
+  animation: cx-twinkle var(--cx-dur) ease-in-out infinite;
+}
+.cx-star:nth-child(3n) { --cx-dur: 4.6s; background: #eaf2ff; box-shadow: 0 0 4px 1px rgba(190, 215, 255, 0.6); }
+.cx-star:nth-child(4n) { --cx-dur: 2.6s; }
+@keyframes cx-twinkle {
+  0%, 100% { opacity: 0.25; }
+  50%      { opacity: 1; }
+}
+
+/* pinheiros nas pontas (ficam atrás dos personagens e do primeiro plano de neve) */
+.cx-trees {
+  position: absolute;
+  bottom: 14%;
+  height: 60%;
+  width: auto;
+  aspect-ratio: 176 / 118;
+  overflow: visible;
+}
+.cx-trees--left  { left: 0.8%; }
+.cx-trees--right { right: 0.8%; }
+.cx-tree-light {
+  --cx-dur: 2.6s;
+  animation: cx-twinkle var(--cx-dur) ease-in-out infinite;
+}
+
+/* chão nevado: estica na largura, some nas pontas e embaixo */
+.cx-ground {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 21.7%;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
+}
+
+/* neve caindo: poucos flocos, só transform/opacity */
+.cx-flake {
+  position: absolute;
+  top: -4%;
+  width: max(2px, calc(var(--cx-height) * 0.026 * var(--cx-s, 1)));
+  height: max(2px, calc(var(--cx-height) * 0.026 * var(--cx-s, 1)));
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0;
+  animation: cx-fall var(--cx-dur, 8s) linear infinite;
+  will-change: transform;
+}
+@keyframes cx-fall {
+  0%   { opacity: 0; transform: translate3d(0, 0, 0); }
+  10%  { opacity: 0.85; }
+  78%  { opacity: 0.85; }
+  100% { opacity: 0; transform: translate3d(calc(var(--cx-height) * var(--cx-drift, 0.2)), calc(var(--cx-height) * 0.86), 0); }
+}
+
+.cx-scenery * {
+  animation-delay: calc(var(--cx-dur, 3s) * var(--cx-phase, 0) * -1);
+}
+
+/* --------------------------------------------------------------------------
+   A pista: tudo o que atravessa a tela. Começa encostada do lado de fora da borda
+   direita; o JS anima o transform (ver planTravel em story.js).
+   -------------------------------------------------------------------------- */
 .cx-track {
   position: absolute;
   top: 0;
   left: 100%;
   height: 100%;
-  /* largura do contêiner + largura do conjunto → translateX(-100%) = travessia completa */
-  width: calc(100% + var(--cx-height) * var(--cx-ratio));
+  width: calc(var(--cx-height) * var(--cx-ratio));
   will-change: transform;
 }
 
 .cx-art {
+  position: relative;
   display: block;
   height: 100%;
-  width: calc(var(--cx-height) * var(--cx-ratio));
+  width: 100%;
   overflow: visible;
+}
+
+/* Rastro na neve. A janela (.cx-trail) anda com o conjunto; as marcas (.cx-trail-marks) recebem
+   o movimento inverso e ficam paradas no chão. Três fileiras, cada uma começa atrás de quem a
+   deixa: cascos da rena · patins do trenó · pegadas dos barbeiros. Somem aos poucos lá atrás. */
+.cx-trail {
+  position: absolute;
+  left: 12%;
+  width: 140%;
+  top: 84.9%;
+  height: 9.8%;
+  overflow: hidden;
+  -webkit-mask-image:
+    linear-gradient(90deg, transparent 4%, #000 9%, #000 58%, transparent 100%),
+    linear-gradient(90deg, transparent 28%, #000 32%, #000 58%, transparent 100%),
+    linear-gradient(90deg, transparent 34%, #000 39%, #000 58%, transparent 100%);
+  mask-image:
+    linear-gradient(90deg, transparent 4%, #000 9%, #000 58%, transparent 100%),
+    linear-gradient(90deg, transparent 28%, #000 32%, #000 58%, transparent 100%),
+    linear-gradient(90deg, transparent 34%, #000 39%, #000 58%, transparent 100%);
+  -webkit-mask-size: 100% 34%;
+  mask-size: 100% 34%;
+  -webkit-mask-position: 0 0, 0 50%, 0 100%;
+  mask-position: 0 0, 0 50%, 0 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+.cx-trail-marks {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -300vw;
+  width: 700vw;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='132' height='22' viewBox='0 0 132 22'%3E%3Cg fill='%2390ABCF'%3E%3Cpath d='M8 2.2h2.2v2.6H8zM11 2.2h2.2v2.6H11zM41 4.4h2.2V7H41zM44 4.4h2.2V7H44zM74 2.2h2.2v2.6H74zM77 2.2h2.2v2.6H77zM107 4.4h2.2V7H107zM110 4.4h2.2V7H110z' opacity='.75'/%3E%3Cpath d='M0 9.4h132v1H0zM0 12.4h132v1H0z' opacity='.5'/%3E%3Cg opacity='.8'%3E%3Cellipse cx='14' cy='16.6' rx='5.4' ry='1.7'/%3E%3Cellipse cx='47' cy='19.6' rx='5.4' ry='1.7'/%3E%3Cellipse cx='80' cy='16.6' rx='5.4' ry='1.7'/%3E%3Cellipse cx='113' cy='19.6' rx='5.4' ry='1.7'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat-x left center / auto 100%;
+  will-change: transform;
 }
 
 /* --------------------------------------------------------------------------
@@ -206,6 +339,40 @@
   100% { opacity: 0; transform: translate(var(--cx-dx), var(--cx-dy)) scale(0.25) rotate(170deg); }
 }
 
+/* Noel balança de leve no banco, meio passo atrás do trenó (reage à corrida da rena) */
+.cx-santa-sway {
+  --cx-dur: calc(var(--cx-stride) * 2);
+  --cx-phase: 0.34;
+  animation: cx-santa-sway var(--cx-dur) ease-in-out infinite;
+}
+@keyframes cx-santa-sway {
+  0%, 100% { transform: rotate(1.6deg); }
+  50%      { transform: rotate(-1.9deg); }
+}
+
+/* Neve levantada pelos pés, cascos e patins */
+.cx-snowpuff {
+  opacity: 0;
+  animation: cx-snowpuff var(--cx-dur) linear infinite;
+}
+@keyframes cx-snowpuff {
+  0%   { opacity: 0; transform: translate(0, 0) scale(0.3); }
+  10%  { opacity: 0.95; }
+  45%  { opacity: 0.8; transform: translate(calc(var(--cx-dx) * 0.55), var(--cx-dy)) scale(0.95); }
+  100% { opacity: 0; transform: translate(var(--cx-dx), calc(var(--cx-dy) * 0.4)) scale(1.1); }
+}
+
+/* Riscos de vento rente ao chão */
+.cx-streak {
+  opacity: 0;
+  animation: cx-streak var(--cx-dur) linear infinite;
+}
+@keyframes cx-streak {
+  0%   { opacity: 0; transform: translateX(-12px); }
+  25%  { opacity: 0.6; }
+  100% { opacity: 0; transform: translateX(96px); }
+}
+
 /* Defasagem: precisa vir depois dos shorthands `animation` acima */
 .cx-art * {
   animation-delay: calc(var(--cx-dur, var(--cx-stride)) * var(--cx-phase, 0) * -1);
@@ -226,7 +393,8 @@
   --cx-fo-a: 92deg;    /* antebraço */
   --cx-fo-b: 74deg;
   --cx-bob: 3;         /* oscilação vertical (unidades do viewBox) */
-  animation: cx-b-bob calc(var(--cx-bs) / 2) ease-in-out infinite alternate;
+  --cx-lp: -0.08;      /* um sobe-e-desce por passo: mais baixo logo depois do pé tocar o chão */
+  animation: cx-b-bob calc(var(--cx-bs) / 4) ease-in-out infinite alternate;
 }
 /* 01 — animado */
 .cx-barber--b01 { --cx-bs: 0.48s; --cx-bp: 0.3; --cx-bob: 4; }
@@ -284,6 +452,16 @@
   50%      { transform: rotate(var(--cx-fo-b)); }
 }
 
+/* O 03 (quase tropeço) e o 04 (captura do presente) têm o corpo inteiro conduzido pela linha do
+   tempo — story.js gera o mesmo ciclo de corrida com os valores de RUN_CYCLE (config.js) e encaixa
+   os trechos de história no meio. Aqui só desligamos os ciclos CSS deles. */
+.cx-barber--b03,
+.cx-barber--b03 :not(.cx-b-hairtail),
+.cx-barber--b04,
+.cx-barber--b04 * {
+  animation: none;
+}
+
 /* movimento secundário do cabelo comprido do 03 */
 .cx-b-hairtail { animation: cx-b-hairtail calc(var(--cx-bs) / 2) ease-in-out infinite alternate; }
 @keyframes cx-b-hairtail {
@@ -296,7 +474,14 @@
 .cx-gift-fly,
 .cx-b-heldgift,
 .cx-b-face--alt,
-.cx-catch-burst {
+.cx-catch-burst,
+.cx-deer-eye--shut,
+.cx-deer-mouth--alt,
+.cx-santa-mouth--alt,
+.cx-sneeze-cloud,
+.cx-sneeze-flake,
+.cx-spray-bit,
+.cx-sweat-drop {
   opacity: 0;
 }
 
@@ -313,38 +498,132 @@
 }
 
 /* --------------------------------------------------------------------------
+   Duende — passadas rápidas e exageradas; braços, pernas, cabeça e gorro têm
+   ciclos próprios (o gorro em dois segmentos, com atraso, para "chicotear").
+   -------------------------------------------------------------------------- */
+.cx-elf {
+  --cx-es: 0.3s;      /* duração da passada */
+  --cx-lp: -0.08;
+  animation: cx-elf-bob calc(var(--cx-es) / 4) ease-in-out infinite alternate;
+}
+@keyframes cx-elf-bob {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-2.6px); }
+}
+
+.cx-elf-thigh { animation: cx-elf-thigh var(--cx-es) infinite; }
+.cx-elf-shin  { animation: cx-elf-shin  var(--cx-es) linear infinite; }
+@keyframes cx-elf-thigh {
+  0%   { transform: rotate(64deg);  animation-timing-function: cubic-bezier(.35, 0, .65, 1); }
+  50%  { transform: rotate(-48deg); animation-timing-function: cubic-bezier(.35, 0, .65, 1); }
+  100% { transform: rotate(64deg); }
+}
+@keyframes cx-elf-shin {
+  0%   { transform: rotate(-12deg); }
+  24%  { transform: rotate(-8deg); }
+  50%  { transform: rotate(-58deg); }
+  74%  { transform: rotate(-124deg); }
+  100% { transform: rotate(-12deg); }
+}
+
+.cx-elf-lean { --cx-lp: 0; animation: cx-elf-lean calc(var(--cx-es) / 2) ease-in-out infinite alternate; }
+@keyframes cx-elf-lean {
+  from { transform: rotate(-15deg); }
+  to   { transform: rotate(-9deg); }
+}
+
+.cx-elf-head { --cx-lp: 0.2; animation: cx-elf-head calc(var(--cx-es) / 2) ease-in-out infinite alternate; }
+@keyframes cx-elf-head {
+  from { transform: rotate(7deg); }
+  to   { transform: rotate(14deg); }
+}
+
+/* braços: seguram o presentinho à frente e sacodem alternados */
+.cx-elf-upper, .cx-elf-fore { animation: calc(var(--cx-es) / 2) ease-in-out infinite alternate; }
+.cx-elf-upper.cx-elf--near { --cx-lp: 0;   animation-name: cx-elf-upper-near; }
+.cx-elf-upper.cx-elf--far  { --cx-lp: 0.5; animation-name: cx-elf-upper-far; }
+.cx-elf-fore.cx-elf--near  { animation-name: cx-elf-fore-near; }
+.cx-elf-fore.cx-elf--far   { animation-name: cx-elf-fore-far; }
+@keyframes cx-elf-upper-near { from { transform: rotate(64deg); } to { transform: rotate(82deg); } }
+@keyframes cx-elf-upper-far  { from { transform: rotate(70deg); } to { transform: rotate(88deg); } }
+@keyframes cx-elf-fore-near  { from { transform: rotate(18deg); } to { transform: rotate(6deg); } }
+@keyframes cx-elf-fore-far   { from { transform: rotate(14deg); } to { transform: rotate(2deg); } }
+
+.cx-elf-gift { --cx-lp: 0.3; animation: cx-elf-gift calc(var(--cx-es) / 2) ease-in-out infinite alternate; }
+@keyframes cx-elf-gift {
+  from { transform: translateY(0.8px) rotate(-7deg); }
+  to   { transform: translateY(-1.6px) rotate(8deg); }
+}
+
+/* gorro: a base balança pouco; a ponta vem atrasada e balança mais; o guizo, mais ainda */
+.cx-elf-hat     { --cx-lp: 0.1;  animation: cx-elf-hat     var(--cx-es) ease-in-out infinite alternate; }
+.cx-elf-hat-tip { --cx-lp: 0.35; animation: cx-elf-hat-tip var(--cx-es) ease-in-out infinite alternate; }
+.cx-elf-bell    { --cx-lp: 0.6;  animation: cx-elf-bell    var(--cx-es) ease-in-out infinite alternate; }
+@keyframes cx-elf-hat     { from { transform: rotate(-6deg); }  to { transform: rotate(5deg); } }
+@keyframes cx-elf-hat-tip { from { transform: rotate(-16deg); } to { transform: rotate(15deg); } }
+@keyframes cx-elf-bell    { from { transform: rotate(-28deg); } to { transform: rotate(26deg); } }
+
+.cx-elf-ear { --cx-lp: 0.45; animation: cx-elf-ear var(--cx-es) ease-in-out infinite alternate; }
+@keyframes cx-elf-ear { from { transform: rotate(-7deg); } to { transform: rotate(6deg); } }
+
+/* perna oposta defasada em meia passada (as variáveis vêm do atributo style, em Elf.jsx) */
+.cx-elf, .cx-elf * {
+  animation-delay: calc(var(--cx-es) * var(--cx-lp, 0) * -1);
+}
+
+/* --------------------------------------------------------------------------
+   Telas pequenas: menos enfeites (a fluidez dos personagens vem primeiro)
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .cx-flake:nth-child(n + 8),
+  .cx-star:nth-child(2n),
+  .cx-tree--extra {
+    display: none;
+  }
+  .cx-trees { height: 54%; }
+}
+
+/* --------------------------------------------------------------------------
    Pausa (fora da viewport / aba em segundo plano) — o JS alterna data-playing
    -------------------------------------------------------------------------- */
-.cx-root[data-playing='false'] .cx-art * {
+.cx-root[data-playing='false'] * {
   animation-play-state: paused;
 }
 
 /* --------------------------------------------------------------------------
-   prefers-reduced-motion: cena estática, encostada à direita, sem partículas
+   prefers-reduced-motion: cenário e personagens parados, sem partículas
    -------------------------------------------------------------------------- */
-.cx-root[data-reduced='true'] .cx-art * {
+.cx-root[data-reduced='true'] * {
   animation: none;
 }
 .cx-root[data-reduced='true'] .cx-track {
-  left: auto;
-  right: 2%;
-  width: auto;
-  transform: none;
+  left: 50%;
+  transform: translateX(-50%);
 }
-.cx-root[data-reduced='true'] .cx-sparkles {
+.cx-root[data-reduced='true'] .cx-sparkles,
+.cx-root[data-reduced='true'] .cx-snowkick,
+.cx-root[data-reduced='true'] .cx-streaks,
+.cx-root[data-reduced='true'] .cx-snowfall,
+.cx-root[data-reduced='true'] .cx-trail {
   display: none;
+}
+.cx-root[data-reduced='true'] .cx-star {
+  opacity: 0.8;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cx-art * {
+  .cx-root * {
     animation: none !important;
   }
   .cx-track {
-    left: auto;
-    right: 2%;
-    width: auto;
+    left: 50%;
+    transform: translateX(-50%);
   }
-  .cx-sparkles {
+  .cx-sparkles,
+  .cx-snowkick,
+  .cx-streaks,
+  .cx-snowfall,
+  .cx-trail {
     display: none;
   }
 }

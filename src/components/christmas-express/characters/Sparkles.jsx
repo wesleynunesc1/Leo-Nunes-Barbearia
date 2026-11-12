@@ -3,7 +3,7 @@ import { P } from './shared.jsx';
 const STAR = 'M0 -6 C0.9 -1.6 1.6 -0.9 6 0 C1.6 0.9 0.9 1.6 0 6 C-0.9 1.6 -1.6 0.9 -6 0 C-1.6 -0.9 -0.9 -1.6 0 -6 Z';
 
 /**
- * Partículas douradas. Cada uma nasce em (x, y), deriva `dx`/`dy` unidades
+ * Partículas douradas do rastro do trenó. (Na 3.0 a poeira dos cascos virou neve — ver SnowFx.jsx.) Cada uma nasce em (x, y), deriva `dx`/`dy` unidades
  * para trás (direita) e some. Como o conjunto anda para a esquerda, elas
  * parecem ficar "paradas no ar", formando o rastro.
  * phase: 0–1 (defasagem) · dur: segundos · s: escala · c: cor · dot: círculo em vez de estrela
@@ -19,10 +19,6 @@ const TRAIL = [
   { x: 552, y: 66, dx: 130, dy: 12, phase: 0.63, dur: 1.6, s: 0.8, c: P.goldLight },
   { x: 550, y: 178, dx: 176, dy: -6, phase: 0.47, dur: 1.5, s: 1.1, c: P.gold },
   { x: 546, y: 112, dx: 90, dy: 4, phase: 0.93, dur: 1.1, s: 0.5, c: P.goldDark, dot: true },
-  // poeira dourada dos cascos
-  { x: 150, y: 184, dx: 120, dy: -8, phase: 0.12, dur: 1.1, s: 0.7, c: P.goldLight },
-  { x: 210, y: 186, dx: 100, dy: -12, phase: 0.6, dur: 1.0, s: 0.5, c: P.gold, dot: true },
-  { x: 120, y: 187, dx: 90, dy: -5, phase: 0.8, dur: 0.9, s: 0.45, c: P.gold, dot: true },
 ];
 
 export default function Sparkles() {

@@ -9,3 +9,8 @@ export { default as Barber03 } from './characters/barbers/Barber03.jsx';
 export { default as Barber04 } from './characters/barbers/Barber04.jsx';
 export { default as GiftBox } from './characters/Gift.jsx';
 export { default as GiftFlight } from './characters/GiftFlight.jsx';
+export { default as Elf } from './characters/Elf.jsx';
+export { default as Scenery } from './scene/Scenery.jsx';
+export { GroundShadow, SnowKick, WindStreaks, SneezeCloud, StumbleSpray, SweatDrops } from './characters/SnowFx.jsx';
+export { T as TIMELINE, planTravel } from './story.js';
+export { VIEW_BOX, GROUND_Y, LANE } from './geometry.js';

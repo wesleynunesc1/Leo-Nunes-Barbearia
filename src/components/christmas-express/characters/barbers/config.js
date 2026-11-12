@@ -63,3 +63,15 @@ export const RUN_POSE = {
   b03: { lean: -7, legN: [-30, -58], legF: [50, -40], armN: [40, 84], armF: [-44, 74] },
   b04: { lean: -12, legN: [40, -34], legF: [-28, -78], armN: [-38, 86], armF: [36, 96] },
 };
+
+/**
+ * Ciclo de corrida do 03 e do 04, que na versão 3.0 é conduzido pela linha do tempo
+ * (story.js) em vez do CSS: o 03 precisa interromper a passada para o quase tropeço e o 04
+ * para pegar o presente. Os valores são os mesmos que o CSS usava na 2.0.
+ * bs: duração da passada (s) · bp: defasagem (0–1) · th: coxa [frente, trás] · sh: flexão
+ * máxima do joelho · ar/fo: braço e antebraço [frente, trás] · bob: oscilação vertical.
+ */
+export const RUN_CYCLE = {
+  b03: { bs: 0.52, bp: 0, th: [46, -30], sh: -98, ar: [40, -40], fo: [92, 74], bob: 3.2, lean: -7 },
+  b04: { bs: 0.38, bp: 0.45, th: [38, -26], sh: -84, bob: 2.4, lean: -12 },
+};

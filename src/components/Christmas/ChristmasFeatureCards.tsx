@@ -111,14 +111,17 @@ export function ChristmasFeatureCards() {
 
   return (
     <div className="relative z-20 w-full bg-[#080C09]/95 backdrop-blur-md py-2.5 sm:py-3">
-      {/* Camada decorativa animada 2D Christmas Express 2.0 acima dos cards */}
+      {/* Camada decorativa animada 2D Christmas Express 3.0 acima dos cards */}
       <ChristmasExpress
-        duration={15}
+        duration={24}
+        exit={4}
         pause={5}
-        halo={true}
+        backdrop="soft"
+        snowfall={true}
+        halo={false}
         style={{
-          "--cx-height": "clamp(65px, 8.5vw, 122px)",
-          "--cx-offset-y": "-80%",
+          "--cx-height": "clamp(65px, 9vw, 125px)",
+          "--cx-offset-y": "-100%",
           "--cx-z": "25",
         } as React.CSSProperties}
       />

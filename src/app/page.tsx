@@ -62,7 +62,7 @@ export default async function HomePage() {
         <HeroVideo />
 
         {/* Main Content Area (Left Column Content + Right Floating Tag) */}
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-6 sm:pt-12 lg:pt-16 pb-9 sm:pb-6">
+        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-6 sm:pt-12 lg:pt-16 pb-16 sm:pb-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
             {/* Left Content (Columns 1-8) - Reposicionado 75px mais para baixo no mobile */}
             <div className="lg:col-span-8 space-y-3 sm:space-y-3.5 text-left pt-16 xs:pt-20 sm:pt-0">

@@ -305,10 +305,19 @@ export default function BarberHead({ b, view = 'side', mood = 'calm', alt, uid =
       <path d={`M${f(earX + 0.9)} -1.2 q-2.2 1.4 -0.4 3.6`} fill="none" stroke={P.ink} strokeWidth={1.1} strokeLinecap="round" opacity={0.7} />
       <SideHair b={b} />
       <circle cx={f(fx + rx * 0.52)} cy={5.4} r={2.9} fill={b.blush} opacity={0.4} />
-      <Brow x={e2} w={2.5} tilt={-m.tilt} lift={m.lift} />
-      <Brow x={e1} tilt={m.tilt} lift={m.lift} />
-      <Eye x={e2} rx={1.35} />
-      <Eye x={e1} rx={b.id === 'b04' ? 1.8 : 1.6} />
+      {/* sobrancelhas e olhos em grupos próprios: a história levanta umas e arregala os outros */}
+      <g className="cx-b-brows">
+        <Brow x={e2} w={2.5} tilt={-m.tilt} lift={m.lift} />
+        <Brow x={e1} tilt={m.tilt} lift={m.lift} />
+      </g>
+      <g transform={`translate(${f(fx)} -1.4)`}>
+        <g className="cx-b-eyes">
+          <g transform={`translate(${f(-fx)} 1.4)`}>
+            <Eye x={e2} rx={1.35} />
+            <Eye x={e1} rx={b.id === 'b04' ? 1.8 : 1.6} />
+          </g>
+        </g>
+      </g>
       <path d={`M${f(fx + 0.4)} -0.4 C${f(fx - 1.2)} 1.8 ${f(fx - 4)} 3.2 ${f(fx - 3.2)} 4.8 C${f(fx - 2.6)} 5.8 ${f(fx - 1)} 5.6 ${f(fx - 0.2)} 5`} fill="none" stroke={P.ink} strokeWidth={1.5} strokeLinecap="round" />
       {/* duas bocas sobrepostas: a história alterna a opacidade (ex.: sorriso ↔ surpresa) */}
       <g className="cx-b-face--main"><Mouth x={f(fx - 0.5)} mood={m.mouth} /></g>

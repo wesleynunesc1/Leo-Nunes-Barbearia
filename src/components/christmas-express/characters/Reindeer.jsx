@@ -1,4 +1,5 @@
 import { P, OUTLINE, Pivot } from './shared.jsx';
+import { GroundShadow, SnowKick } from './SnowFx.jsx';
 
 /**
  * Perna em dois segmentos (coxa + canela) com casco.
@@ -33,8 +34,17 @@ function Antler({ d, tines, color }) {
   );
 }
 
+/**
+ * Rena. Na 3.0 ganhou o espirro: a cabeça fica dentro de um grupo extra (cx-deer-sneeze) que a
+ * linha do tempo gira por cima do balanço normal; olho, boca e focinho têm estados alternativos.
+ * As pernas continuam no ciclo de galope do CSS o tempo todo — ela nunca para de correr.
+ */
 export default function Reindeer() {
   return (
+    <g className="cx-deer-jolt">
+      <GroundShadow x={160} y={191} rx={58} ry={5} />
+      <SnowKick x={140} y={187} dur="var(--cx-stride)" n={2} reach={34} size={2.8} />
+      <SnowKick x={206} y={187} dur="var(--cx-stride)" phase={0.5} n={2} reach={30} size={2.4} />
     <Pivot x={156} y={130} className="cx-deer">
       {/* pernas do lado oposto (atrás do corpo) */}
       <Leg x={131} y={122} kind="front" phase={0.1} far />
@@ -74,6 +84,7 @@ export default function Reindeer() {
       <circle cx={189} cy={119} r={8} fill={P.fur} />
 
       {/* pescoço + cabeça */}
+      <Pivot x={110} y={104} className="cx-deer-sneeze">
       <Pivot x={110} y={104} className="cx-deer-head">
         <Antler
           color="#D8BC86"
@@ -93,13 +104,24 @@ export default function Reindeer() {
           {...OUTLINE}
         />
         <path d="M46 58 C41 65 45 73 54 73 C62 74 67 69 65 63 C61 58 52 55 46 58 Z" fill={P.furLight} />
-        <ellipse cx={46.5} cy={60} rx={5.6} ry={4.8} fill={P.ink} />
-        <ellipse cx={45} cy={58.4} rx={1.8} ry={1.2} fill="#fff" opacity={0.75} />
-        <path d="M52 68.5 q5 3.2 10.5 0" fill="none" stroke={P.ink} strokeWidth={1.8} strokeLinecap="round" />
+        {/* focinho: treme antes do espirro */}
+        <Pivot x={46.5} y={60} className="cx-deer-nose">
+          <ellipse cx={46.5} cy={60} rx={5.6} ry={4.8} fill={P.ink} />
+          <ellipse cx={45} cy={58.4} rx={1.8} ry={1.2} fill="#fff" opacity={0.75} />
+        </Pivot>
+        <path className="cx-deer-mouth--main" d="M52 68.5 q5 3.2 10.5 0" fill="none" stroke={P.ink} strokeWidth={1.8} strokeLinecap="round" />
+        <ellipse className="cx-deer-mouth--alt" cx={56.5} cy={69.4} rx={4.2} ry={3.4} fill="#7C2A2A" stroke={P.ink} strokeWidth={1.6} />
         <circle cx={67} cy={62} r={4} fill={P.blush} opacity={0.45} />
-        <ellipse cx={75} cy={51} rx={3.1} ry={3.6} fill={P.ink} />
-        <circle cx={74} cy={49.6} r={1.1} fill="#fff" />
-        <path d="M70 44.5 q5 -3 10 -0.5" fill="none" stroke={P.ink} strokeWidth={1.8} strokeLinecap="round" />
+        {/* olho aberto / olho apertado (a história alterna a opacidade) */}
+        <g className="cx-deer-eye--open">
+          <ellipse cx={75} cy={51} rx={3.1} ry={3.6} fill={P.ink} />
+          <circle cx={74} cy={49.6} r={1.1} fill="#fff" />
+          <path d="M70 44.5 q5 -3 10 -0.5" fill="none" stroke={P.ink} strokeWidth={1.8} strokeLinecap="round" />
+        </g>
+        <g className="cx-deer-eye--shut" fill="none" stroke={P.ink} strokeLinecap="round">
+          <path d="M71 50.4 L78.6 52.4 L71.6 54.2" strokeWidth={1.9} strokeLinejoin="round" />
+          <path d="M70.4 46.4 q4.6 0.4 9 2.6" strokeWidth={1.8} />
+        </g>
         <Antler
           color={P.antler}
           d="M86 39 C86 25 93 15 105 9"
@@ -114,6 +136,8 @@ export default function Reindeer() {
           <circle cx={94.4} cy={104.2} r={1.2} fill={P.goldLight} />
         </Pivot>
       </Pivot>
+      </Pivot>
     </Pivot>
+    </g>
   );
 }

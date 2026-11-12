@@ -1,5 +1,6 @@
 import { P, OUTLINE, Pivot } from './shared.jsx';
 import GiftBox from './Gift.jsx';
+import { GroundShadow, SnowKick } from './SnowFx.jsx';
 
 function Bow({ x, y, color }) {
   return (
@@ -45,9 +46,15 @@ function Presents() {
   );
 }
 
+/**
+ * Papai Noel. Dois grupos extras em volta do corpo (pivô no quadril):
+ * cx-santa-sway  — balanço contínuo no banco (CSS), meio passo atrás do trenó;
+ * cx-santa-react — solavancos pontuais da história (o espirro da rena puxa as rédeas).
+ */
 function Santa() {
   return (
-    <g>
+    <Pivot x={412} y={124} className="cx-santa-react">
+    <Pivot x={412} y={124} className="cx-santa-sway">
       {/* tronco */}
       <path d="M381 124 C375 92 390 72 412 72 C437 72 449 94 445 124 Z" fill={P.red} {...OUTLINE} />
 
@@ -90,6 +97,16 @@ function Santa() {
         />
         {/* olhos sorridentes + sobrancelhas */}
         <path d="M393.4 51 q2.6 -3.2 5.2 0 M404.4 51 q2.6 -3.2 5.2 0" fill="none" stroke={P.ink} strokeWidth={1.9} strokeLinecap="round" />
+        {/* sorriso (e a risada aberta, que a história liga quando ele pega o presente e no aceno final) */}
+        <path className="cx-santa-mouth--main" d="M395.4 69.4 q4.6 4.2 9.2 0" fill="none" stroke={P.ink} strokeWidth={1.7} strokeLinecap="round" />
+        <path
+          className="cx-santa-mouth--alt"
+          d="M394.2 68.2 q5.8 1.8 11.6 0 q-0.6 7.2 -5.8 7.4 q-5.2 -0.2 -5.8 -7.4 Z"
+          fill="#7C2A2A"
+          stroke={P.ink}
+          strokeWidth={1.5}
+          strokeLinejoin="round"
+        />
         {/* bigode de barbeiro (handlebar) */}
         <path
           d="M400 60 C394 57 388 62 382 56 C382 66 393 69 400 64.5 C407 69 417 66 418 56 C412 62 406 57 400 60 Z"
@@ -106,7 +123,8 @@ function Santa() {
         />
       </Pivot>
       </Pivot>
-    </g>
+    </Pivot>
+    </Pivot>
   );
 }
 
@@ -119,6 +137,11 @@ const RUNNER =
 
 export default function SantaSleigh() {
   return (
+    <g className="cx-sleigh-jolt">
+      <GroundShadow x={428} y={191} rx={122} ry={5.4} />
+      {/* neve que os patins levantam */}
+      <SnowKick x={548} y={186} dur={0.5} n={3} reach={40} size={2.8} />
+      <SnowKick x={330} y={187} dur={0.62} phase={0.3} n={2} reach={24} size={2.2} />
     <Pivot x={430} y={186} className="cx-sleigh">
       {/* patins */}
       <path d={RUNNER} fill="none" stroke={P.ink} strokeWidth={8.6} strokeLinecap="round" strokeLinejoin="round" />
@@ -151,5 +174,6 @@ export default function SantaSleigh() {
       <path d="M393 92 L380 100" stroke={P.red} strokeWidth={11.2} strokeLinecap="round" />
       <circle cx={374} cy={102} r={7.6} fill={P.green} {...OUTLINE} strokeWidth={2} />
     </Pivot>
+    </g>
   );
 }
