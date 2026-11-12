@@ -33,6 +33,7 @@ import {
 import { ChristmasHeroHeadline } from "@/components/Christmas/ChristmasHeroHeadline";
 import { ChristmasHeroAtmosphere } from "@/components/Christmas/ChristmasHeroAtmosphere";
 import { ChristmasFeatureCards } from "@/components/Christmas/ChristmasFeatureCards";
+import { ChristmasFrozenHeroButton } from "@/components/Christmas/ChristmasFrozenHeroButton";
 
 export default async function HomePage() {
   const [barbers, institutional] = await Promise.all([
@@ -101,14 +102,18 @@ export default async function HomePage() {
               {/* Action Buttons Row - 100% responsivo para toque no mobile */}
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-1">
                 {/* Primary CTA */}
-                <BookingTriggerButton
-                  id="hero-cta-agendar"
-                  className="btn-shimmer w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-sm sm:text-base px-7 py-3.5 sm:py-4 rounded-xl shadow-[0_0_25px_rgba(37,196,64,0.35)] hover:shadow-[0_0_35px_rgba(37,196,64,0.5)] transition-all duration-300 transform active:scale-95 group cursor-pointer"
-                >
-                  <Calendar className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 stroke-[2.2]" />
-                  <span>Agendar meu horário</span>
-                  <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 stroke-[2.5] transition-transform duration-300 group-hover:translate-x-0.5" />
-                </BookingTriggerButton>
+                {isChristmas ? (
+                  <ChristmasFrozenHeroButton />
+                ) : (
+                  <BookingTriggerButton
+                    id="hero-cta-agendar"
+                    className="btn-shimmer w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-[#25C440] hover:bg-[#2CD64A] text-[#080B09] font-extrabold text-sm sm:text-base px-7 py-3.5 sm:py-4 rounded-xl shadow-[0_0_25px_rgba(37,196,64,0.35)] hover:shadow-[0_0_35px_rgba(37,196,64,0.5)] transition-all duration-300 transform active:scale-95 group cursor-pointer"
+                  >
+                    <Calendar className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 stroke-[2.2]" />
+                    <span>Agendar meu horário</span>
+                    <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 stroke-[2.5] transition-transform duration-300 group-hover:translate-x-0.5" />
+                  </BookingTriggerButton>
+                )}
 
                 {/* Secondary CTA */}
                 <a

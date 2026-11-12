@@ -324,6 +324,86 @@ html {
   transform: scale(0.97);
 }
 
+/* =========================================================================
+   BOTÃO NATALINO CONGELADO (Hero Primary CTA)
+   Fundo verde natalino, bordas congeladas, cristais e iluminação neon suave
+   ========================================================================= */
+.btn-frozen-christmas {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0F6327 0%, #198039 48%, #0C5220 100%);
+  border: 1px solid rgba(220, 248, 255, 0.55);
+  box-shadow: 0 0 18px rgba(37, 196, 64, 0.65), 0 0 36px rgba(37, 196, 64, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.5), inset 0 -1px 2px rgba(0, 0, 0, 0.4);
+  animation: frozenGlowPulse 4s ease-in-out infinite;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.3s ease,
+              filter 0.3s ease;
+}
+
+/* Reflexo luminoso discreto a cada 6 segundos */
+.btn-frozen-christmas::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 80px;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.15) 20%,
+    rgba(255, 255, 255, 0.65) 50%,
+    rgba(255, 255, 255, 0.15) 80%,
+    transparent 100%
+  );
+  transform: skewX(-24deg);
+  pointer-events: none;
+  animation: frozenSweep 6s ease-in-out infinite;
+  z-index: 8;
+}
+
+@keyframes frozenSweep {
+  0%, 75% {
+    left: -120%;
+    opacity: 0;
+  }
+  80% {
+    opacity: 0.8;
+  }
+  90%, 100% {
+    left: 190%;
+    opacity: 0;
+  }
+}
+
+@keyframes frozenGlowPulse {
+  0%, 100% {
+    box-shadow: 0 0 16px rgba(37, 196, 64, 0.55), 0 0 32px rgba(37, 196, 64, 0.25), inset 0 1px 2px rgba(255, 255, 255, 0.5), inset 0 -1px 2px rgba(0, 0, 0, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(37, 196, 64, 0.85), 0 0 48px rgba(37, 196, 64, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.7), inset 0 -1px 2px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.btn-frozen-christmas:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 0 26px rgba(37, 196, 64, 0.9), 0 0 54px rgba(37, 196, 64, 0.5), inset 0 1px 3px rgba(255, 255, 255, 0.75);
+  transform: scale(1.02);
+}
+
+.btn-frozen-christmas:active {
+  transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-frozen-christmas {
+    animation: none !important;
+  }
+  .btn-frozen-christmas::before {
+    display: none !important;
+  }
+}
+
 /* 2. Efeito Foco & Desfoque de Vizinhos (Card Focus & Siblings Blur) */
 @media (min-width: 768px) {
   .focus-cards-group {
