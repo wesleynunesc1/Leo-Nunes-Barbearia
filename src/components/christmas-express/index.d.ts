@@ -1,7 +1,7 @@
 import type { CSSProperties, JSX } from 'react';
 
 export interface ChristmasExpressProps {
-  /** Segundos da história (da entrada ao aceno final). Toda a coreografia escala junto. Padrão: 24 */
+  /** Segundos da história (da entrada ao grupo reunido depois da queda). Toda a coreografia escala junto. Padrão: 32 */
   duration?: number;
   /** Segundos da saída acelerada, depois da história. Padrão: 4 */
   exit?: number;
@@ -48,10 +48,14 @@ export function WindStreaks(): JSX.Element;
 export function SneezeCloud(): JSX.Element;
 export function StumbleSpray(): JSX.Element;
 export function SweatDrops(): JSX.Element;
+export function SneezeBall(): JSX.Element;
+export function GustLines(): JSX.Element;
+export function Bits(props: { cls: string; n?: number; r?: number }): JSX.Element;
+export function BreathPuffs(props?: { n?: number }): JSX.Element;
 
 export const VIEW_BOX: string;
 export const GROUND_Y: number;
 export const LANE: { b03: number; b02: number; b01: number; b04: number; elf: number };
-/** Tempos da coreografia, em segundos-base (história de 24 s). */
+/** Tempos da coreografia, em segundos-base (história de 32 s). */
 export const TIMELINE: Record<string, number>;
 export function planTravel(o: { W: number; L: number; exit?: number }): { frames: { t: number; x: number }[]; end: number };

@@ -11,6 +11,6 @@ export { default as GiftBox } from './characters/Gift.jsx';
 export { default as GiftFlight } from './characters/GiftFlight.jsx';
 export { default as Elf } from './characters/Elf.jsx';
 export { default as Scenery } from './scene/Scenery.jsx';
-export { GroundShadow, SnowKick, WindStreaks, SneezeCloud, StumbleSpray, SweatDrops } from './characters/SnowFx.jsx';
+export { GroundShadow, SnowKick, WindStreaks, SneezeCloud, SneezeBall, GustLines, StumbleSpray, SweatDrops, Bits, BreathPuffs } from './characters/SnowFx.jsx';
 export { T as TIMELINE, planTravel } from './story.js';
 export { VIEW_BOX, GROUND_Y, LANE } from './geometry.js';

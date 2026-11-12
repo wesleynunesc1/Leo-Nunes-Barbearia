@@ -11,9 +11,9 @@ import Barber02 from './characters/barbers/Barber02.jsx';
 import Barber03 from './characters/barbers/Barber03.jsx';
 import Barber04 from './characters/barbers/Barber04.jsx';
 import GiftFlight from './characters/GiftFlight.jsx';
-import { SneezeCloud, WindStreaks } from './characters/SnowFx.jsx';
+import { GustLines, SneezeBall, SneezeCloud, WindStreaks } from './characters/SnowFx.jsx';
 import { BASE, createStory, planTravel } from './story.js';
-import { GROUND_Y, LANE, VIEW_BOX } from './geometry.js';
+import { GROUND_Y, LANE, VIEW, VIEW_BOX } from './geometry.js';
 import './ChristmasExpress.css';
 
 const REDUCED_QUERY = '(prefers-reduced-motion: reduce)';
@@ -36,7 +36,7 @@ function usePrefersReducedMotion() {
 }
 
 /**
- * Christmas Express 3.0 — faixa natalina: chão nevado, pinheiros nas pontas e a perseguição
+ * Christmas Express 3.1 — faixa natalina: chão nevado, pinheiros nas pontas e a perseguição
  * atravessando da direita para a esquerda. A rena puxa o trenó do Papai Noel (e espirra neve),
  * os quatro barbeiros correm atrás (o 03 quase tropeça), o duende tenta acompanhar, o Noel
  * lança um presente e o barbeiro 04 pega no ar.
@@ -45,7 +45,7 @@ function usePrefersReducedMotion() {
  * O componente é um overlay decorativo: `pointer-events: none`, `aria-hidden`.
  *
  * @param {object}  props
- * @param {number}  [props.duration=24]  Segundos da história (da entrada ao aceno final). Tudo escala junto.
+ * @param {number}  [props.duration=32]  Segundos da história (da entrada ao aceno final). Tudo escala junto.
  * @param {number}  [props.exit=4]     Segundos da saída acelerada, depois da história.
  * @param {number}  [props.pause=5]      Segundos de pausa, com tudo fora da tela, antes de recomeçar.
  * @param {'soft'|'none'} [props.backdrop='soft']  Brilho noturno azulado atrás da cena (sem bordas duras).
@@ -57,7 +57,7 @@ function usePrefersReducedMotion() {
  * @param {object}  [props.style]        Útil para as variáveis CSS (--cx-height, --cx-offset-y, --cx-z).
  */
 export default function ChristmasExpress({
-  duration = 24,
+  duration = BASE,
   exit = 4,
   pause = 5,
   backdrop = 'soft',
@@ -146,7 +146,7 @@ export default function ChristmasExpress({
       }
 
       // 3) a história: mesmo relógio da travessia
-      anims.push(...createStory(root, { scale, total, endBase }));
+      anims.push(...createStory(root, { scale, total, endBase, travel: { frames: plan.frames, unit: L / VIEW.w } }));
 
       if (at) anims.forEach((a) => { a.currentTime = at; });
       root.dataset.ready = 'true';
@@ -224,12 +224,15 @@ export default function ChristmasExpress({
           <Reindeer />
           <SantaSleigh />
           {/* barbeiros, do mais próximo ao mais distante do trenó: 03 · 02 · 01 · 04 — e o duende por último */}
-          <g transform={`translate(${LANE.b03} ${GROUND_Y})`}><Barber03 /></g>
           <g transform={`translate(${LANE.b02} ${GROUND_Y})`}><Barber02 /></g>
           <g transform={`translate(${LANE.b01} ${GROUND_Y})`}><Barber01 /></g>
+          {/* o 03 é desenhado depois do 02 e do 01: na queda final ele volta pela "pista da frente" */}
+          <g transform={`translate(${LANE.b03} ${GROUND_Y})`}><Barber03 /></g>
+          <g transform={`translate(${LANE.b03} ${GROUND_Y - 108})`}><GustLines /></g>
           <g transform={`translate(${LANE.b04} ${GROUND_Y})`}><Barber04 /></g>
           <g transform={`translate(${LANE.elf} ${GROUND_Y})`}><Elf /></g>
           <SneezeCloud />
+          <SneezeBall />
           <GiftFlight />
         </svg>
       </div>

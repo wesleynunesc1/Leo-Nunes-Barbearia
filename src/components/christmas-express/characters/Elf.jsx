@@ -27,9 +27,9 @@ function Joint({ x = 0, y = 0, angle = 0, className, style, children }) {
 function Leg({ far, thigh, shin }) {
   const lp = far ? 0.5 : 0;
   return (
-    <Joint x={far ? 1 : -0.5} y={-24} angle={thigh} className="cx-elf-thigh" style={{ '--cx-lp': lp }}>
+    <Joint x={far ? 1 : -0.5} y={-24} angle={thigh} className={`cx-elf-thigh ${far ? 'cx-elf--far' : 'cx-elf--near'}`} style={{ '--cx-lp': lp }}>
       <rect x={-3.6} y={-3} width={7.2} height={15} rx={3.5} fill={far ? E.redDark : E.red} {...O} />
-      <Joint y={11} angle={shin} className="cx-elf-shin" style={{ '--cx-lp': lp }}>
+      <Joint y={11} angle={shin} className={`cx-elf-shin ${far ? 'cx-elf--far' : 'cx-elf--near'}`} style={{ '--cx-lp': lp }}>
         {/* meia listrada */}
         <rect x={-3} y={-2.5} width={6} height={12} rx={3} fill={E.cream} {...O} />
         <path d="M-3 1.6 h6 M-3 5.2 h6" stroke={far ? E.redDark : E.red} strokeWidth={1.7} />
@@ -69,14 +69,22 @@ function Arm({ far, upper, fore, children }) {
 
 /**
  * Duende natalino (vista lateral, correndo para a esquerda). Origem = chão, sob o quadril.
- * Braços, pernas, cabeça e gorro têm ciclos próprios (classes cx-elf-* no CSS); a linha do
- * tempo só mexe no grupo externo (cx-elf-drift) para ele ficar para trás e correr para alcançar.
+ * Na 3.1 braços, pernas, tronco e cabeça são conduzidos pela linha do tempo (story.js), com o
+ * mesmo ciclo de corrida de antes, para ele poder pedir carona, pular nas costas do 04, descer
+ * e incentivar. Gorro, guizo e orelha continuam com os ciclos CSS (movimento secundário).
  */
 export default function Elf() {
   return (
     <g className="cx-elf-drift">
-      <GroundShadow rx={11} ry={3} y={2.4} />
-      <SnowKick x={7} y={0} dur={0.3} n={2} reach={18} size={2} />
+      <g className="cx-elf-shadow">
+        <GroundShadow rx={11} ry={3} y={2.4} />
+      </g>
+      <g className="cx-elf-kick">
+        <SnowKick x={7} y={0} dur={0.3} n={2} reach={18} size={2} />
+      </g>
+      {/* cx-elf-lift: saltos e a carona nas costas do 04 · cx-elf-tilt: inclinação do corpo inteiro */}
+      <g className="cx-elf-lift">
+      <g className="cx-elf-tilt">
       <g className="cx-elf">
         <Leg far thigh={-40} shin={-70} />
         <Leg thigh={52} shin={-16} />
@@ -139,6 +147,8 @@ export default function Elf() {
             </Arm>
           </g>
         </Joint>
+      </g>
+      </g>
       </g>
     </g>
   );

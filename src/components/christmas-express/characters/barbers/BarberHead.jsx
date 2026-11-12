@@ -287,9 +287,12 @@ export default function BarberHead({ b, view = 'side', mood = 'calm', alt, uid =
     <g className="cx-b-head">
       {b.id === 'b03' && (
         // mecha da nuca: grupo próprio para o movimento secundário (pivô no topo da mecha)
+        // cx-b-hairgust: a rajada de vento (linha do tempo) joga a mecha para trás, por cima do balanço normal
         <g transform="translate(13 3)">
-          <g className="cx-b-hairtail">
-            <path d="M-4 1 C-4.6 8 -2.4 13.6 2 16.4 C6.4 18.8 10.6 16.2 9.6 12.4 C7.4 14 5.4 12.4 5.4 9 C5.8 5 5.4 1.6 4.4 -1.6 Z" {...HAIR} />
+          <g className="cx-b-hairgust">
+            <g className="cx-b-hairtail">
+              <path d="M-4 1 C-4.6 8 -2.4 13.6 2 16.4 C6.4 18.8 10.6 16.2 9.6 12.4 C7.4 14 5.4 12.4 5.4 9 C5.8 5 5.4 1.6 4.4 -1.6 Z" {...HAIR} />
+            </g>
           </g>
         </g>
       )}
@@ -304,6 +307,17 @@ export default function BarberHead({ b, view = 'side', mood = 'calm', alt, uid =
       <ellipse cx={earX} cy={0.8} rx={big ? 3.5 : 3} ry={big ? 4.9 : 4.4} fill={b.skin} {...SK} strokeWidth={1.9} />
       <path d={`M${f(earX + 0.9)} -1.2 q-2.2 1.4 -0.4 3.6`} fill="none" stroke={P.ink} strokeWidth={1.1} strokeLinecap="round" opacity={0.7} />
       <SideHair b={b} />
+      {b.id === 'b03' && (
+        // fios arrepiados pela rajada: só aparecem enquanto o cabelo está bagunçado (o penteado continua por baixo)
+        <g transform="translate(5 -19)">
+          <g className="cx-b-hairmess">
+            <path d="M-9 3 C-11 -6 -6 -12 2 -13.4 C-1 -9 -1 -4 1 2 Z" {...HAIR} />
+            <path d="M0 3 C1 -7 8 -11.6 16 -9.6 C11 -7 9 -3 9.6 3.6 Z" {...HAIR} />
+            <path d="M8 5 C12 -3 18 -4.6 23 -1 C18 0 15.6 3 15 8 Z" {...HAIR} />
+            <path d="M-15 5 C-20 1 -21 -5 -17.6 -9 C-16.6 -4 -13.6 -1 -10.6 2 Z" {...HAIR} />
+          </g>
+        </g>
+      )}
       <circle cx={f(fx + rx * 0.52)} cy={5.4} r={2.9} fill={b.blush} opacity={0.4} />
       {/* sobrancelhas e olhos em grupos próprios: a história levanta umas e arregala os outros */}
       <g className="cx-b-brows">
@@ -322,6 +336,17 @@ export default function BarberHead({ b, view = 'side', mood = 'calm', alt, uid =
       {/* duas bocas sobrepostas: a história alterna a opacidade (ex.: sorriso ↔ surpresa) */}
       <g className="cx-b-face--main"><Mouth x={f(fx - 0.5)} mood={m.mouth} /></g>
       {alt && <g className="cx-b-face--alt"><Mouth x={f(fx - 0.5)} mood={alt} /></g>}
+      {(b.id === 'b02' || b.id === 'b04') && (
+        // neve grudada no rosto por um instante (espirro da rena no 02; queda do 04)
+        <g className="cx-b-snowface">
+          <g fill="#fff" stroke="#C3D6EE" strokeWidth={1.2}>
+            <circle cx={f(fx - 3)} cy={1} r={8} />
+            <circle cx={f(fx + 4)} cy={-4.5} r={6} />
+            <circle cx={f(fx - 1)} cy={8} r={5.4} />
+          </g>
+          <circle cx={f(fx - 1)} cy={1} r={7} fill="#fff" />
+        </g>
+      )}
       {b.glasses === 'face' && (
         <FaceGlasses lenses={[[e1, 4.5], [e2, 3.5]]} temples={[`M${f(e1 + 4.5)} -3.2 L${f(earX - 0.6)} -3.4`]} />
       )}

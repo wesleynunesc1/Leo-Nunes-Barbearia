@@ -126,3 +126,69 @@ export function SweatDrops() {
     </g>
   );
 }
+
+/** Punhado de bolinhas de neve para rajadas rápidas (a linha do tempo anima cada uma: `${cls}--${i}`). */
+export function Bits({ cls, n = 6, r = 2 }) {
+  return (
+    <g>
+      {Array.from({ length: n }, (_, i) => (
+        <circle key={i} className={`cx-bit ${cls} ${cls}--${i}`} r={r * (1 + (i % 3) * 0.3)} fill={i % 3 === 2 ? SNOW.soft : SNOW.white} />
+      ))}
+    </g>
+  );
+}
+
+/** Bafinhos de cansaço (o 04 ofegante): nuvenzinhas que saem da boca e somem. */
+export function BreathPuffs({ n = 4 }) {
+  return (
+    <g>
+      {Array.from({ length: n }, (_, i) => (
+        <g key={i} className={`cx-bit cx-pant cx-pant--${i}`}>
+          <circle cx={0} cy={0} r={3.4} fill={SNOW.white} stroke={SNOW.shade} strokeWidth={0.9} />
+          <circle cx={3.4} cy={1.2} r={2.4} fill={SNOW.white} stroke={SNOW.shade} strokeWidth={0.9} />
+          <circle cx={1.4} cy={0.6} r={2.6} fill={SNOW.white} />
+        </g>
+      ))}
+    </g>
+  );
+}
+
+/**
+ * A neve do espirro que voa para trás e acerta o barbeiro 02. Três grupos aninhados
+ * (x linear · y em arco · giro), como o presente, para a trajetória ficar suave.
+ */
+export function SneezeBall() {
+  return (
+    <g className="cx-sneeze-ball">
+      <g className="cx-ball-x">
+        <g className="cx-ball-y">
+          <g className="cx-ball-spin">
+            <g stroke={SNOW.shade} strokeWidth={1.1}>
+              <circle cx={-3.4} cy={1} r={5.2} fill={SNOW.white} />
+              <circle cx={3.6} cy={-0.6} r={4.6} fill={SNOW.white} />
+              <circle cx={0.4} cy={-3.6} r={4.4} fill={SNOW.white} />
+            </g>
+            <circle cx={0} cy={0} r={4.8} fill={SNOW.white} />
+            <circle cx={-10} cy={-3} r={1.8} fill={SNOW.white} />
+            <circle cx={-14} cy={3} r={1.3} fill={SNOW.white} />
+            <circle cx={-8} cy={6} r={1.5} fill={SNOW.soft} />
+          </g>
+        </g>
+      </g>
+    </g>
+  );
+}
+
+/** Rajada de vento que bagunça o cabelo do 03: três riscos com voltinha, na altura da cabeça. */
+export function GustLines() {
+  const d = ['M0 0 h44 q9 0 9 -7 q0 -6 -6 -6 q-5 0 -5 5', 'M0 0 h58', 'M0 0 h36 q8 0 8 6 q0 5 -5 5'];
+  return (
+    <g className="cx-gust">
+      {d.map((path, i) => (
+        <g key={i} transform={`translate(0 ${[-10, 2, 13][i]})`}>
+          <path className={`cx-gust-line cx-gust-line--${i}`} d={path} fill="none" stroke={SNOW.white} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
+        </g>
+      ))}
+    </g>
+  );
+}

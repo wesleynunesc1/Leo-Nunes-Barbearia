@@ -72,6 +72,8 @@ export const RUN_POSE = {
  * máxima do joelho · ar/fo: braço e antebraço [frente, trás] · bob: oscilação vertical.
  */
 export const RUN_CYCLE = {
+  // 01: só o braço da frente é conduzido pela linha do tempo (ele ajeita os óculos); o resto segue no CSS
+  b01: { bs: 0.48, bp: 0.3, ar: [46, -46], fo: [92, 74] },
   b03: { bs: 0.52, bp: 0, th: [46, -30], sh: -98, ar: [40, -40], fo: [92, 74], bob: 3.2, lean: -7 },
   b04: { bs: 0.38, bp: 0.45, th: [38, -26], sh: -84, bob: 2.4, lean: -12 },
 };

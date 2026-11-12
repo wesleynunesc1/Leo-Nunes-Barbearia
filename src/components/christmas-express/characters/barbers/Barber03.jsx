@@ -15,7 +15,10 @@ export default function Barber03() {
       <g className="cx-b03-kick">
         <SnowKick x={9} dur={0.52} />
       </g>
-      <BarberSide b={BARBERS.b03} pose={RUN_POSE.b03} mood="run" alt="wow" uid="b03" />
+      {/* cx-b03-face: vira o corpo inteiro quando ele volta para ajudar o 04 na queda final */}
+      <g className="cx-b03-face">
+        <BarberSide b={BARBERS.b03} pose={RUN_POSE.b03} mood="run" alt="wow" uid="b03" />
+      </g>
       {/* neve espalhada pelo pé que desliza + gotinhas de susto */}
       <g transform="translate(-24 -3)">
         <StumbleSpray />

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Christmas Express 3.0 — estilos
+   Christmas Express 3.1 — estilos
    Todas as classes usam o prefixo .cx- para não colidir com o site.
    ========================================================================== */
 
@@ -481,8 +481,20 @@
 .cx-sneeze-cloud,
 .cx-sneeze-flake,
 .cx-spray-bit,
-.cx-sweat-drop {
+.cx-sweat-drop,
+.cx-bit,
+.cx-b-snowface,
+.cx-b-hairmess,
+.cx-sneeze-ball,
+.cx-gust-line,
+.cx-b04-prone-shadow {
   opacity: 0;
+}
+
+/* 3.1 — o braço da frente do 01 (ajeita os óculos) é conduzido pela linha do tempo */
+.cx-barber--b01 .cx-b-upper.cx-b--near,
+.cx-barber--b01 .cx-b-fore.cx-b--near {
+  animation: none;
 }
 
 /* Contorno claro opcional para fundos escuros (prop `halo`) */
@@ -565,6 +577,18 @@
 
 .cx-elf-ear { --cx-lp: 0.45; animation: cx-elf-ear var(--cx-es) ease-in-out infinite alternate; }
 @keyframes cx-elf-ear { from { transform: rotate(-7deg); } to { transform: rotate(6deg); } }
+
+/* 3.1 — pernas, braços, tronco e cabeça do duende são conduzidos pela linha do tempo (story.js gera
+   o mesmo ciclo); gorro, guizo, orelha e presentinho continuam com os ciclos CSS acima. */
+.cx-elf,
+.cx-elf .cx-elf-thigh,
+.cx-elf .cx-elf-shin,
+.cx-elf .cx-elf-lean,
+.cx-elf .cx-elf-head,
+.cx-elf .cx-elf-upper,
+.cx-elf .cx-elf-fore {
+  animation: none;
+}
 
 /* perna oposta defasada em meia passada (as variáveis vêm do atributo style, em Elf.jsx) */
 .cx-elf, .cx-elf * {
