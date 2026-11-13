@@ -111,9 +111,9 @@ export function ChristmasFeatureCards() {
 
   return (
     <div className="relative z-20 w-full bg-[#080C09]/95 backdrop-blur-md py-2.5 sm:py-3">
-      {/* Camada decorativa animada 2D Christmas Express 3.1 acima dos cards */}
+      {/* Camada decorativa animada 2D Christmas Express 3.0 acima dos cards */}
       <ChristmasExpress
-        duration={32}
+        duration={24}
         exit={4}
         pause={5}
         backdrop="soft"

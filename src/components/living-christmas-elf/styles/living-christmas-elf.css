@@ -1,0 +1,47 @@
+/* Living Christmas Elf 2.3 — layout only. The CTA button keeps its own styles. */
+.lce-wrap {
+  position: relative;
+  display: var(--lce-wrap-display, inline-block);
+}
+
+.lce-layer {
+  --lce-size: clamp(150px, 12.5vw, 190px);   /* elf canvas height (hat tip → boots) */
+  position: absolute;
+  z-index: 3;
+  height: var(--lce-size);
+  width: calc(var(--lce-size) / 1.2);
+  left: 0;
+  top: 0;
+  pointer-events: none;                    /* the button underneath stays 100% clickable */
+  contain: layout style;
+}
+
+.lce-canvas,
+.lce-fx {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  pointer-events: none;
+}
+.lce-fx { overflow: visible; }
+
+.lce-hit {                                  /* head + torso only — always above the button */
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: auto;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.lce-lost .lce-canvas { display: none; }
+.lce-fallback,
+.lce-lost { background: url(/assets/elf-fallback.png) center / contain no-repeat; }
+
+@media (max-width: 640px) {
+  .lce-layer { --lce-size: clamp(124px, 34vw, 146px); }
+}

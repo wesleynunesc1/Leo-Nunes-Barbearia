@@ -100,7 +100,7 @@ export default async function HomePage() {
               )}
 
               {/* Action Buttons Row - 100% responsivo para toque no mobile */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-1">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-3 sm:pt-1">
                 {/* Primary CTA */}
                 {isChristmas ? (
                   <ChristmasFrozenHeroButton />
