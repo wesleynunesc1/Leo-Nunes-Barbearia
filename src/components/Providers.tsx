@@ -6,6 +6,7 @@ import { BookingProvider } from "@/context/BookingContext";
 import { BookingModal } from "@/components/BookingModal/BookingModal";
 import { BookingAuthModal } from "@/components/BookingModal/BookingAuthModal";
 import { ChatbotWidget } from "@/components/Chatbot";
+import { ChristmasAudioManager } from "@/components/Christmas/ChristmasAudioManager";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -15,6 +16,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <BookingModal />
         <BookingAuthModal />
         <ChatbotWidget />
+        <ChristmasAudioManager />
       </BookingProvider>
     </AuthProvider>
   );
