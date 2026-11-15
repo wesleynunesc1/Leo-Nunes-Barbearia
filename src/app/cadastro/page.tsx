@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -19,6 +19,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { WixCaptcha, WixCaptchaHandle } from "@/components/Auth/WixCaptcha";
 
 function GoogleIcon({ className = "w-5 h-5 shrink-0" }: { className?: string }) {
   return (
@@ -57,6 +58,10 @@ function CadastroForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  const captchaRef = useRef<WixCaptchaHandle>(null);
+  const [showVisibleCaptcha, setShowVisibleCaptcha] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOAuthLoading, setIsOAuthLoading] = useState(false);
@@ -120,11 +125,30 @@ function CadastroForm() {
       return;
     }
 
+    // Se o desafio visual foi solicitado pelo Wix, verifica se o usuário marcou o checkbox
+    const currentVisibleToken = captchaRef.current?.getVisibleToken() || captchaToken;
+    if (showVisibleCaptcha && !currentVisibleToken) {
+      setErrorMessage("Por favor, marque a caixa da verificação de segurança (reCAPTCHA) para continuar.");
+      return;
+    }
+
     setIsSubmitting(true);
     setErrorMessage(null);
     setSuccessMessage(null);
 
     try {
+      // 1. Tenta obter token invisível se ainda não tiver um token visível
+      let activeVisibleToken = currentVisibleToken;
+      let invisibleToken: string | null = null;
+
+      if (!activeVisibleToken && captchaRef.current?.isReady) {
+        try {
+          invisibleToken = await captchaRef.current.executeInvisible();
+        } catch (e) {
+          console.warn("[CADASTRO] Falha ao executar invisible token:", e);
+        }
+      }
+
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -133,6 +157,8 @@ function CadastroForm() {
           email: email.trim(),
           password,
           phone: phone.trim(),
+          recaptchaToken: activeVisibleToken || undefined,
+          invisibleRecaptchaToken: invisibleToken || undefined,
           returnUrl: redirectUrl,
         }),
       });
@@ -150,6 +176,15 @@ function CadastroForm() {
         } else {
           router.replace(redirectUrl);
         }
+      } else if (data.requiresCaptcha) {
+        // Wix solicitou desafio visível ou o token anterior expirou
+        setShowVisibleCaptcha(true);
+        setCaptchaToken(null);
+        captchaRef.current?.reset();
+        setErrorMessage(
+          data.error ||
+            "Por segurança, confirme a verificação do reCAPTCHA abaixo para concluir seu cadastro."
+        );
       } else {
         setErrorMessage(data.error || "Não foi possível concluir o cadastro. Verifique os dados.");
       }
@@ -375,6 +410,25 @@ function CadastroForm() {
                 <span>{showPassword ? "Ocultar senhas" : "Ver senhas digitadas"}</span>
               </button>
             </div>
+
+            {/* Componente Oficial de Segurança reCAPTCHA Wix */}
+            <WixCaptcha
+              ref={captchaRef}
+              showVisible={showVisibleCaptcha}
+              onVerify={(token) => {
+                setCaptchaToken(token);
+                setErrorMessage(null);
+              }}
+              onExpired={() => {
+                setCaptchaToken(null);
+                setErrorMessage("A verificação expirou. Por favor, marque a caixa novamente.");
+              }}
+              onError={(msg) => {
+                setCaptchaToken(null);
+                setErrorMessage(msg);
+              }}
+              onFallbackOAuth={handleGoogleSignup}
+            />
 
             <button
               type="submit"

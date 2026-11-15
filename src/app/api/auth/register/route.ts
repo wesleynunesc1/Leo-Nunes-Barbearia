@@ -10,7 +10,18 @@ import { LoginState } from "@wix/sdk";
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email, password, phone, captchaToken, returnUrl: reqReturnUrl } = await request.json();
+    const {
+      name,
+      email,
+      password,
+      phone,
+      captchaToken,
+      recaptchaToken,
+      invisibleRecaptchaToken,
+      invisibleCaptchaToken,
+      returnUrl: reqReturnUrl,
+    } = await request.json();
+
     const returnUrl = reqReturnUrl || "/minha-conta";
 
     if (!name || name.trim().length < 3) {
@@ -39,6 +50,22 @@ export async function POST(request: NextRequest) {
     const origin = host ? `${proto}://${host}` : request.nextUrl.origin;
     const redirectUri = getRedirectUri(origin);
 
+    // Mapeamento compatível com o Wix Headless SDK para tokens de reCAPTCHA
+    const effectiveVisibleToken = (recaptchaToken || captchaToken)?.trim();
+    const effectiveInvisibleToken = (invisibleRecaptchaToken || invisibleCaptchaToken)?.trim();
+
+    const captchaTokensParam: { recaptchaToken?: string; invisibleRecaptchaToken?: string } = {};
+    if (effectiveVisibleToken) {
+      captchaTokensParam.recaptchaToken = effectiveVisibleToken;
+    }
+    if (effectiveInvisibleToken) {
+      captchaTokensParam.invisibleRecaptchaToken = effectiveInvisibleToken;
+      // Garante que o SDK/API envie o token no formato esperado pelo backend Wix
+      if (!captchaTokensParam.recaptchaToken) {
+        captchaTokensParam.recaptchaToken = effectiveInvisibleToken;
+      }
+    }
+
     const client = getWixOAuthClient();
     const regResult = await client.auth.register({
       email: email.trim().toLowerCase(),
@@ -46,10 +73,8 @@ export async function POST(request: NextRequest) {
       profile: {
         nickname: name.trim(),
       },
-      ...(captchaToken && {
-        captchaTokens: {
-          recaptchaToken: captchaToken,
-        },
+      ...(Object.keys(captchaTokensParam).length > 0 && {
+        captchaTokens: captchaTokensParam,
       }),
     });
 
@@ -86,6 +111,15 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    if (regResult.loginState === LoginState.OWNER_APPROVAL_REQUIRED) {
+      return NextResponse.json({
+        success: true,
+        requiresOwnerApproval: true,
+        message:
+          "Cadastro recebido com sucesso! Sua conta está em análise de aprovação pela barbearia.",
+      });
+    }
+
     const errorCode = (regResult as any).errorCode;
     if (errorCode === "emailAlreadyExists") {
       return NextResponse.json(
@@ -104,28 +138,50 @@ export async function POST(request: NextRequest) {
       regResult.loginState === LoginState.USER_CAPTCHA_REQUIRED ||
       regResult.loginState === LoginState.SILENT_CAPTCHA_REQUIRED
     ) {
+      const isExpiredOrInvalid = errorCode === "invalidCaptchaToken";
       return NextResponse.json(
         {
           success: false,
           requiresCaptcha: true,
-          error:
-            "Confirme a verificação de segurança (reCAPTCHA) abaixo para prosseguir com o cadastro, ou utilize o botão oficial Wix ID.",
+          captchaType: "visible",
+          errorCode: errorCode || regResult.loginState,
+          error: isExpiredOrInvalid
+            ? "A verificação de segurança expirou. Por favor, confirme o reCAPTCHA abaixo."
+            : "Por segurança, confirme a verificação do reCAPTCHA abaixo para concluir seu cadastro.",
         },
         { status: 422 }
       );
     }
 
+    // Tratamento amigável de outros erros retornados pela API Wix
+    let clientErrorMessage = "Não foi possível concluir o cadastro. Verifique os dados informados.";
+    const rawError = (regResult as any).error;
+    if (typeof rawError === "string") {
+      try {
+        const parsed = JSON.parse(rawError);
+        if (parsed.message?.toLowerCase().includes("password")) {
+          clientErrorMessage = "A senha deve conter no mínimo 6 caracteres e incluir números ou letras.";
+        } else if (parsed.message?.toLowerCase().includes("email")) {
+          clientErrorMessage = "Informe um endereço de e-mail válido.";
+        }
+      } catch {
+        if (!rawError.startsWith("{")) {
+          clientErrorMessage = rawError;
+        }
+      }
+    }
+
     return NextResponse.json(
       {
         success: false,
-        error: (regResult as any).error || "Não foi possível concluir o cadastro.",
+        error: clientErrorMessage,
       },
       { status: 400 }
     );
   } catch (err: any) {
     console.error("[AUTH REGISTER ERROR]", err);
     return NextResponse.json(
-      { error: "Erro no servidor ao processar cadastro." },
+      { error: "Erro no servidor ao processar cadastro. Tente novamente em instantes." },
       { status: 500 }
     );
   }

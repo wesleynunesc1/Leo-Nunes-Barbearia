@@ -115,7 +115,14 @@ export function generateOAuthData(
   };
 }
 
-export const WIX_RECAPTCHA_SITE_KEY = "6Ld0J8IcAAAAANyrnxzrRlX1xrrdXsOmsepUYosy";
+/**
+ * Chaves públicas oficiais do reCAPTCHA Enterprise configuradas pelo Wix SDK (OAuthStrategy):
+ * - captchaInvisibleSiteKey: Verificação em segundo plano sem atrito para o usuário
+ * - captchaVisibleSiteKey: Desafio interativo explícito ("Não sou um robô" / puzzle de segurança)
+ */
+export const WIX_RECAPTCHA_INVISIBLE_SITE_KEY = "6LdoPaUfAAAAAJphvHoUoOob7mx0KDlXyXlgrx5v";
+export const WIX_RECAPTCHA_VISIBLE_SITE_KEY = "6Ld0J8IcAAAAANyrnxzrRlX1xrrdXsOmsepUYosy";
+export const WIX_RECAPTCHA_SITE_KEY = WIX_RECAPTCHA_VISIBLE_SITE_KEY;
 
 /**
  * Gera a URL oficial de autorização do Wix para redirecionamento

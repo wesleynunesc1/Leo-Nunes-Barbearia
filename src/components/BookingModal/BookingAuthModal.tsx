@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import {
   X,
@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useBooking } from "@/context/BookingContext";
+import { WixCaptcha, WixCaptchaHandle } from "@/components/Auth/WixCaptcha";
 
 function GoogleIcon({ className = "w-5 h-5 shrink-0" }: { className?: string }) {
   return (
@@ -53,6 +54,11 @@ export function BookingAuthModal() {
   const [phone, setPhone] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  const captchaRef = useRef<WixCaptchaHandle>(null);
+  const [showVisibleCaptcha, setShowVisibleCaptcha] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOAuthLoading, setIsOAuthLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -65,10 +71,13 @@ export function BookingAuthModal() {
     }
   }, [isAuthModalOpen, authInitialTab]);
 
-  // Limpa mensagens ao trocar de aba ou fechar
+  // Limpa mensagens e estado de captcha ao trocar de aba ou fechar
   useEffect(() => {
     setErrorMessage(null);
     setSuccessMessage(null);
+    setShowVisibleCaptcha(false);
+    setCaptchaToken(null);
+    captchaRef.current?.reset();
   }, [tab, isAuthModalOpen]);
 
   // Se já estiver logado e o modal estiver aberto, dispara sucesso e fecha
@@ -179,11 +188,30 @@ export function BookingAuthModal() {
       return;
     }
 
+    // Se o desafio visual foi solicitado pelo Wix, verifica se o usuário marcou o checkbox
+    const currentVisibleToken = captchaRef.current?.getVisibleToken() || captchaToken;
+    if (showVisibleCaptcha && !currentVisibleToken) {
+      setErrorMessage("Por favor, marque a caixa da verificação de segurança (reCAPTCHA) para continuar.");
+      return;
+    }
+
     setIsSubmitting(true);
     setErrorMessage(null);
     setSuccessMessage(null);
 
     try {
+      // 1. Tenta obter token invisível se ainda não tiver um token visível
+      let activeVisibleToken = currentVisibleToken;
+      let invisibleToken: string | null = null;
+
+      if (!activeVisibleToken && captchaRef.current?.isReady) {
+        try {
+          invisibleToken = await captchaRef.current.executeInvisible();
+        } catch (e) {
+          console.warn("[BOOKING REGISTER] Falha ao executar invisible token:", e);
+        }
+      }
+
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -192,6 +220,8 @@ export function BookingAuthModal() {
           email: email.trim(),
           password,
           phone: phone.trim(),
+          recaptchaToken: activeVisibleToken || undefined,
+          invisibleRecaptchaToken: invisibleToken || undefined,
           returnUrl: "/",
         }),
       });
@@ -220,6 +250,16 @@ export function BookingAuthModal() {
           closeAuthModal();
           onAuthSuccess();
         }
+      } else if (data.requiresCaptcha) {
+        // Wix solicitou desafio visível ou o token anterior expirou
+        setShowVisibleCaptcha(true);
+        setCaptchaToken(null);
+        captchaRef.current?.reset();
+        setErrorMessage(
+          data.error ||
+          "Por segurança, confirme a verificação do reCAPTCHA abaixo para concluir seu cadastro."
+        );
+        setIsSubmitting(false);
       } else {
         setErrorMessage(data.error || "Não foi possível concluir o cadastro. Verifique os dados.");
         setIsSubmitting(false);
@@ -499,6 +539,25 @@ export function BookingAuthModal() {
                   </div>
                 </div>
               </div>
+
+              {/* Componente Oficial de Segurança reCAPTCHA Wix */}
+              <WixCaptcha
+                ref={captchaRef}
+                showVisible={showVisibleCaptcha}
+                onVerify={(token) => {
+                  setCaptchaToken(token);
+                  setErrorMessage(null);
+                }}
+                onExpired={() => {
+                  setCaptchaToken(null);
+                  setErrorMessage("A verificação expirou. Por favor, marque a caixa novamente.");
+                }}
+                onError={(msg) => {
+                  setCaptchaToken(null);
+                  setErrorMessage(msg);
+                }}
+                onFallbackOAuth={handleGoogleAuth}
+              />
 
               <button
                 type="submit"
